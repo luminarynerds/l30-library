@@ -1,0 +1,2 @@
+patron_barcode,item_barcode,checkout_date,due_date,return_date
+LSC-1234-5678,COPY-0001,2024-01-15,2024-02-05,2024-02-05

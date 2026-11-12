@@ -1,0 +1,26 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Library Service Center PWA Icon Template -->
+  <!-- Based on favicon.svg design, scaled to 512x512 -->
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="#3E362E"/>
+
+  <!-- Left book page -->
+  <path d="M128 112h96c16 0 32 16 32 32v224c0-16-16-32-32-32H128V112z" fill="#C67C48"/>
+
+  <!-- Right book page -->
+  <path d="M384 112h-96c-16 0-32 16-32 32v224c0-16 16-32 32-32h96V112z" fill="#C67C48"/>
+
+  <!-- Book spine/center -->
+  <path d="M256 144v224" stroke="#F9F6F0" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Left page lines -->
+  <path d="M160 176h64M160 224h64M160 272h48" stroke="#F9F6F0" stroke-width="16" stroke-linecap="round"/>
+
+  <!-- Right page lines -->
+  <path d="M288 176h64M288 224h64M288 272h48" stroke="#F9F6F0" stroke-width="16" stroke-linecap="round"/>
+</svg>

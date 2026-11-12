@@ -1,0 +1,456 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "description": "L30 Library System Test Users Configuration",
+    "created": "2026-02-20",
+    "environment": "development",
+    "security_warning": "FOR DEVELOPMENT AND TESTING ONLY - NEVER USE IN PRODUCTION"
+  },
+  "test_users": {
+    "SUPER_ADMIN": [
+      {
+        "email": "superadmin@l30.org",
+        "password": "SuperAdmin@123!",
+        "password_env": "TEST_PASSWORD_SUPERADMIN",
+        "first_name": "Super",
+        "last_name": "Admin",
+        "role": "SUPER_ADMIN",
+        "description": "Super admin with full system access",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": true,
+          "can_manage_law_enforcement": true,
+          "can_manage_staff": true,
+          "can_process_circulation": true,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false,
+          "unrestricted_access": true
+        }
+      }
+    ],
+    "ADMIN": [
+      {
+        "email": "admin@l30.org",
+        "password": "Admin@123!",
+        "password_env": "TEST_PASSWORD_ADMIN",
+        "first_name": "Admin",
+        "last_name": "User",
+        "role": "ADMIN",
+        "description": "Admin account for system management",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": true,
+          "can_manage_law_enforcement": true,
+          "can_manage_staff": true,
+          "can_process_circulation": true,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      },
+      {
+        "email": "admin@l30.org",
+        "password": "Admin123!",
+        "password_env": null,
+        "first_name": "Admin",
+        "last_name": "User",
+        "role": "ADMIN",
+        "description": "Legacy admin test account",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": true,
+          "can_manage_law_enforcement": true,
+          "can_manage_staff": true,
+          "can_process_circulation": true,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      }
+    ],
+    "DIRECTOR": [
+      {
+        "email": "director@l30.org",
+        "password": "Director@123!",
+        "password_env": "TEST_PASSWORD_DIRECTOR",
+        "first_name": "Library",
+        "last_name": "Director",
+        "role": "DIRECTOR",
+        "description": "Library Director with access to sensitive operations",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": true,
+          "can_manage_staff": true,
+          "can_process_circulation": false,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      }
+    ],
+    "LEGAL": [
+      {
+        "email": "legal@l30.org",
+        "password": "Legal@123!",
+        "password_env": "TEST_PASSWORD_LEGAL",
+        "first_name": "Legal",
+        "last_name": "Counsel",
+        "role": "LEGAL",
+        "description": "Legal counsel with access to law enforcement requests",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": true,
+          "can_manage_staff": false,
+          "can_process_circulation": false,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      }
+    ],
+    "STAFF": [
+      {
+        "email": "staff@l30.org",
+        "password": "Staff@123!",
+        "password_env": "TEST_PASSWORD_STAFF",
+        "first_name": "Staff",
+        "last_name": "Member",
+        "role": "STAFF",
+        "description": "General staff member",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "branch_id": null,
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": true,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      },
+      {
+        "email": "staff@l30.org",
+        "password": "Staff123!",
+        "password_env": null,
+        "first_name": "Library",
+        "last_name": "Staff",
+        "role": "STAFF",
+        "description": "Legacy staff test account",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "branch_id": null,
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": true,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      },
+      {
+        "email": "staff.main@l30.org",
+        "password": "StaffMain@123!",
+        "password_env": "TEST_PASSWORD_STAFF_MAIN",
+        "first_name": "Main",
+        "last_name": "Branch Staff",
+        "role": "STAFF",
+        "description": "Staff for main branch",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "branch_id": "main",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": true,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      },
+      {
+        "email": "staff.downtown@l30.org",
+        "password": "StaffDowntown@123!",
+        "password_env": "TEST_PASSWORD_STAFF_DOWNTOWN",
+        "first_name": "Downtown",
+        "last_name": "Branch Staff",
+        "role": "STAFF",
+        "description": "Staff for downtown branch",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "branch_id": "downtown",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": true,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      }
+    ],
+    "PATRON": [
+      {
+        "email": "patron@l30.org",
+        "password": "Patron@123!",
+        "password_env": "TEST_PASSWORD_PATRON",
+        "first_name": "Patron",
+        "last_name": "User",
+        "role": "PATRON",
+        "description": "Regular patron with active status",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": false,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      },
+      {
+        "email": "patron.reader@l30.org",
+        "password": "Patron123!",
+        "password_env": null,
+        "first_name": "Reader",
+        "last_name": "Patron",
+        "role": "PATRON",
+        "description": "Reading-focused patron",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": false,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      },
+      {
+        "email": "patron.active@l30.org",
+        "password": "Patron123!",
+        "password_env": null,
+        "first_name": "Active",
+        "last_name": "Member",
+        "role": "PATRON",
+        "description": "Active patron with testing scenarios",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": false,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false
+        }
+      },
+      {
+        "email": "guardian@l30.org",
+        "password": "Guardian@123!",
+        "password_env": "TEST_PASSWORD_GUARDIAN",
+        "first_name": "Guardian",
+        "last_name": "Parent",
+        "role": "PATRON",
+        "description": "Parent/Guardian for child patron (COPPA)",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": false,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false,
+          "can_manage_child_account": true
+        }
+      }
+    ],
+    "CHILD": [
+      {
+        "email": "child@l30.org",
+        "password": "Child@123!",
+        "password_env": "TEST_PASSWORD_CHILD",
+        "first_name": "Child",
+        "last_name": "User",
+        "role": "CHILD",
+        "description": "Child patron (COPPA compliance)",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "parent_email": "guardian@l30.org",
+        "reading_minutes_owed": 0,
+        "reading_minutes_logged": 0,
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": false,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": true,
+          "age_filtered_content": true,
+          "parental_consent_required": true
+        }
+      }
+    ],
+    "BOOKMOBILE": [
+      {
+        "email": "bookmobile@l30.org",
+        "password": "Bookmobile@123!",
+        "password_env": "TEST_PASSWORD_BOOKMOBILE",
+        "first_name": "Book",
+        "last_name": "Mobile",
+        "role": "BOOKMOBILE",
+        "description": "Bookmobile service staff",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": true,
+          "can_access_catalog": true,
+          "can_perform_reading_minutes": false,
+          "can_manage_mobile_service": true
+        }
+      }
+    ],
+    "HOMEBOND": [
+      {
+        "email": "homebond@l30.org",
+        "password": "HomeDelivery@123!",
+        "password_env": "TEST_PASSWORD_HOMEBOND",
+        "first_name": "Home",
+        "last_name": "Bond",
+        "role": "HOMEBOND",
+        "description": "HomeDelivery delivery service patron",
+        "is_active": true,
+        "email_verified": true,
+        "patron_status": "ACTIVE",
+        "permissions": {
+          "can_manage_users": false,
+          "can_manage_law_enforcement": false,
+          "can_manage_staff": false,
+          "can_process_circulation": false,
+          "can_access_catalog": false,
+          "can_perform_reading_minutes": false,
+          "can_manage_delivery_service": true
+        }
+      }
+    ]
+  },
+  "role_hierarchy": {
+    "SUPER_ADMIN": {
+      "level": 9,
+      "description": "Unrestricted system access"
+    },
+    "ADMIN": {
+      "level": 8,
+      "description": "Full system administration"
+    },
+    "DIRECTOR": {
+      "level": 7,
+      "description": "Strategic and sensitive operations"
+    },
+    "LEGAL": {
+      "level": 6,
+      "description": "Law enforcement and legal requests"
+    },
+    "STAFF": {
+      "level": 5,
+      "description": "Daily operations staff"
+    },
+    "BOOKMOBILE": {
+      "level": 4,
+      "description": "Mobile library service"
+    },
+    "HOMEBOND": {
+      "level": 3,
+      "description": "Home delivery service"
+    },
+    "PATRON": {
+      "level": 2,
+      "description": "Regular patron"
+    },
+    "CHILD": {
+      "level": 1,
+      "description": "Child patron (COPPA)"
+    }
+  },
+  "testing_endpoints": {
+    "login": {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "content_type": "application/x-www-form-urlencoded",
+      "example": "curl -X POST http://localhost:8000/api/v1/auth/login -d 'username=admin@l30.org&password=Admin@123!'"
+    },
+    "current_user": {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "requires_auth": true
+    },
+    "logout": {
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "requires_auth": true
+    },
+    "refresh": {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "requires_auth": false
+    }
+  },
+  "checklist": {
+    "authentication": [
+      "SUPER_ADMIN login succeeds",
+      "ADMIN login succeeds",
+      "DIRECTOR login succeeds",
+      "LEGAL login succeeds",
+      "STAFF login succeeds",
+      "PATRON login succeeds",
+      "CHILD login succeeds",
+      "BOOKMOBILE login succeeds",
+      "HOMEBOND login succeeds",
+      "Login fails with wrong password",
+      "Login fails with non-existent email"
+    ],
+    "authorization": [
+      "SUPER_ADMIN can access all features",
+      "ADMIN can manage users",
+      "DIRECTOR can access sensitive reports",
+      "LEGAL can process law enforcement requests",
+      "STAFF can process circulation",
+      "PATRON can browse catalog",
+      "CHILD cannot access adult materials",
+      "BOOKMOBILE can process mobile checkouts",
+      "HOMEBOND can manage deliveries"
+    ],
+    "permissions": [
+      "PATRON cannot access admin panel",
+      "CHILD reading minutes tracking works",
+      "GUARDIAN can manage child account",
+      "STAFF cannot modify system settings",
+      "LEGAL can only access law enforcement features"
+    ]
+  }
+}

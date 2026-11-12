@@ -1,0 +1,45 @@
+{
+  "$comment": "Auto-generated from app.schemas.fine.FineSummary. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "properties": {
+    "outstanding_count": {
+      "title": "Outstanding Count",
+      "type": "integer"
+    },
+    "paid_count": {
+      "title": "Paid Count",
+      "type": "integer"
+    },
+    "total_outstanding": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Total Outstanding"
+    },
+    "total_paid": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Total Paid"
+    }
+  },
+  "required": [
+    "total_outstanding",
+    "total_paid",
+    "outstanding_count",
+    "paid_count"
+  ],
+  "title": "FineSummary",
+  "type": "object"
+}

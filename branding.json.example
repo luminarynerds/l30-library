@@ -1,0 +1,19 @@
+{
+  "_comment": "Copy this file to branding.json and edit for your library. All fields are optional -- defaults match L30.",
+  "library_name": "Your Library Name",
+  "library_short_name": "YLN",
+  "domain": "https://yourlibrary.org",
+  "contact_email": "hello@yourlibrary.org",
+  "privacy_email": "privacy@yourlibrary.org",
+  "indie_email": "indie@yourlibrary.org",
+  "giving_email": "giving@yourlibrary.org",
+  "phone": "(555) 000-0000",
+  "address_line1": "123 Your Street",
+  "address_line2": "Your City, State ZIP",
+  "primary_color": "#E89B44",
+  "accent_color": "#8B5E5E",
+  "is_demo": false,
+  "bluesky_url": "",
+  "mastodon_url": "",
+  "seasonal_callout_active": false
+}

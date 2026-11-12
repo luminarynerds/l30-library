@@ -1,0 +1,130 @@
+{
+  "$comment": "Auto-generated from app.schemas.fine.PaymentHistoryResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "PaymentMethod": {
+      "enum": [
+        "cash",
+        "card",
+        "check",
+        "online",
+        "waiver",
+        "reading_minutes",
+        "other",
+        "cash",
+        "card",
+        "check",
+        "online",
+        "waiver",
+        "reading_minutes"
+      ],
+      "title": "PaymentMethod",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Amount"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "fine_id": {
+      "title": "Fine Id",
+      "type": "integer"
+    },
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Notes"
+    },
+    "payment_method": {
+      "$ref": "#/$defs/PaymentMethod"
+    },
+    "processed_by_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Processed By Id"
+    },
+    "processed_by_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Processed By Name"
+    },
+    "receipt_number": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Receipt Number"
+    },
+    "user_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "User Id"
+    }
+  },
+  "required": [
+    "id",
+    "fine_id",
+    "user_id",
+    "amount",
+    "payment_method",
+    "notes",
+    "receipt_number",
+    "processed_by_id"
+  ],
+  "title": "PaymentHistoryResponse",
+  "type": "object"
+}

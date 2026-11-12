@@ -1,0 +1,186 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: API Coverage Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      threshold:
+        description: 'Coverage threshold (%)'
+        required: false
+        default: '80'
+      generate_html:
+        description: 'Generate HTML report'
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  coverage-check:
+    name: Check API Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Run API coverage check
+        id: coverage
+        run: |
+          chmod +x ./scripts/check-api-coverage.py
+
+          # Set threshold from input or use default
+          THRESHOLD="${{ github.event.inputs.threshold || '80' }}"
+
+          # Build command
+          CMD="./scripts/check-api-coverage.py --threshold $THRESHOLD"
+
+          # Add HTML flag if requested
+          if [[ "${{ github.event.inputs.generate_html }}" == "true" ]]; then
+            CMD="$CMD --html"
+          fi
+
+          # Run coverage check
+          echo "Running: $CMD"
+          $CMD || exit_code=$?
+
+          # Save exit code for later
+          echo "exit_code=${exit_code:-0}" >> $GITHUB_OUTPUT
+
+          # Always upload artifacts even if check fails
+          exit 0
+
+      - name: Upload JSON report
+        uses: actions/upload-artifact@v7
+        with:
+          name: api-coverage-report
+          path: coverage-report.json
+          retention-days: 30
+
+      - name: Upload HTML report
+        if: github.event.inputs.generate_html == 'true' || contains(github.event.pull_request.labels.*.name, 'coverage-html')
+        uses: actions/upload-artifact@v7
+        with:
+          name: api-coverage-html
+          path: coverage-report.html
+          retention-days: 30
+
+      - name: Read coverage report
+        id: report
+        run: |
+          # Extract key metrics from JSON
+          COVERAGE=$(jq -r '.summary.coverage_percentage' coverage-report.json)
+          TOTAL=$(jq -r '.summary.total_endpoints' coverage-report.json)
+          MATCHED=$(jq -r '.summary.matched' coverage-report.json)
+          UNCOVERED=$(jq -r '.summary.uncovered' coverage-report.json)
+          ORPHANED=$(jq -r '.summary.orphaned' coverage-report.json)
+
+          echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "matched=$MATCHED" >> $GITHUB_OUTPUT
+          echo "uncovered=$UNCOVERED" >> $GITHUB_OUTPUT
+          echo "orphaned=$ORPHANED" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const coverage = parseFloat('${{ steps.report.outputs.coverage }}');
+            const total = '${{ steps.report.outputs.total }}';
+            const matched = '${{ steps.report.outputs.matched }}';
+            const uncovered = '${{ steps.report.outputs.uncovered }}';
+            const orphaned = '${{ steps.report.outputs.orphaned }}';
+
+            // Determine status emoji
+            const statusEmoji = coverage >= 80 ? '✅' : coverage >= 60 ? '⚠️' : '❌';
+            const coverageColor = coverage >= 80 ? '🟢' : coverage >= 60 ? '🟡' : '🔴';
+
+            // Build comment
+            let comment = `## ${statusEmoji} API Coverage Report\n\n`;
+            comment += `### Summary\n`;
+            comment += `| Metric | Value |\n`;
+            comment += `|--------|-------|\n`;
+            comment += `| Coverage | ${coverageColor} **${coverage.toFixed(1)}%** |\n`;
+            comment += `| Total Endpoints | ${total} |\n`;
+            comment += `| Matched | ${matched} |\n`;
+            comment += `| Uncovered | ${uncovered} |\n`;
+            comment += `| Orphaned Calls | ${orphaned} |\n\n`;
+
+            // Add warnings if needed
+            if (orphaned > 0) {
+              comment += `### ⚠️ Critical Issues\n`;
+              comment += `**${orphaned} orphaned API call(s)** detected! These calls will fail at runtime.\n\n`;
+              comment += `Review the full report artifact for details.\n\n`;
+            }
+
+            if (uncovered > 0) {
+              comment += `### 📋 Uncovered Endpoints\n`;
+              comment += `**${uncovered} backend endpoint(s)** are not called by the frontend.\n\n`;
+              comment += `This may be intentional (admin APIs, webhooks, etc.) or indicate missing features.\n\n`;
+            }
+
+            comment += `---\n`;
+            comment += `📊 [Download detailed JSON report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
+
+            // Post comment
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Check coverage threshold
+        run: |
+          EXIT_CODE="${{ steps.coverage.outputs.exit_code }}"
+          if [ "$EXIT_CODE" != "0" ]; then
+            echo "❌ Coverage check failed!"
+            echo "Coverage is below threshold or orphaned calls were detected."
+            echo "Review the report for details."
+            exit 1
+          fi
+          echo "✅ Coverage check passed!"
+
+  # Optional: Trend analysis job (requires storing historical data)
+  coverage-trend:
+    name: Coverage Trend Analysis
+    runs-on: ubuntu-latest
+    needs: coverage-check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Download report
+        uses: actions/download-artifact@v8
+        with:
+          name: api-coverage-report
+
+      - name: Store coverage data
+        run: |
+          # Create coverage history directory
+          mkdir -p .coverage-history
+
+          # Save coverage report with timestamp
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          cp coverage-report.json ".coverage-history/coverage_${TIMESTAMP}.json"
+
+          # Keep only last 30 reports
+          cd .coverage-history
+          ls -t coverage_*.json | tail -n +31 | xargs -r rm
+
+      - name: Commit coverage history
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "chore: update API coverage history"
+          file_pattern: .coverage-history/*.json
+          branch: coverage-data
+          create_branch: true

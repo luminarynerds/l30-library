@@ -1,0 +1,202 @@
+{
+  "$comment": "Auto-generated from app.schemas.fine.FineResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "FineType": {
+      "enum": [
+        "overdue",
+        "lost_item",
+        "damaged_item",
+        "other"
+      ],
+      "title": "FineType",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Amount"
+    },
+    "amount_paid": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Amount Paid"
+    },
+    "balance": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Balance"
+    },
+    "checkout_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Checkout Id"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Description"
+    },
+    "fine_type": {
+      "$ref": "#/$defs/FineType"
+    },
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Notes"
+    },
+    "paid_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Paid At"
+    },
+    "patron_email": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Patron Email"
+    },
+    "patron_library_card": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Patron Library Card"
+    },
+    "patron_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Patron Name"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "user_id": {
+      "title": "User Id",
+      "type": "integer"
+    },
+    "waived_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Waived At"
+    },
+    "waived_by_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Waived By Id"
+    }
+  },
+  "required": [
+    "id",
+    "user_id",
+    "checkout_id",
+    "fine_type",
+    "status",
+    "amount",
+    "amount_paid",
+    "balance",
+    "description",
+    "notes",
+    "paid_at",
+    "waived_at",
+    "waived_by_id"
+  ],
+  "title": "FineResponse",
+  "type": "object"
+}

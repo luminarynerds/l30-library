@@ -1,0 +1,2 @@
+item_barcode,catalog_id,condition,status
+COPY-ORPHAN-001,999999,good,available

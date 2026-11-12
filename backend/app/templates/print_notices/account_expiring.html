@@ -1,0 +1,241 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .notice-header {
+            border-bottom: 2px solid #2C1810;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .library-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #2C1810;
+        }
+        .library-address {
+            font-size: 9pt;
+            color: #666;
+        }
+        .notice-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #E89B44;
+            margin: 20px 0 10px 0;
+        }
+        .patron-info {
+            margin-bottom: 20px;
+        }
+        .notice-date {
+            font-size: 9pt;
+            color: #666;
+            text-align: right;
+        }
+        .expiry-box {
+            background-color: #FFF9E6;
+            border: 2px solid #E89B44;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .expiry-box .label {
+            font-size: 12pt;
+            color: #D97706;
+        }
+        .expiry-box .date {
+            font-size: 20pt;
+            font-weight: bold;
+            color: #D97706;
+            margin: 10px 0;
+        }
+        .account-details {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .account-details h4 {
+            margin: 0 0 10px 0;
+            color: #5C4F3D;
+        }
+        .account-details table {
+            width: 100%;
+        }
+        .account-details td {
+            padding: 5px 0;
+        }
+        .account-details td:first-child {
+            font-weight: bold;
+            width: 40%;
+        }
+        .renewal-options {
+            background-color: #E8F5E9;
+            border: 1px solid #4CAF50;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .renewal-options h4 {
+            color: #2E7D32;
+            margin: 0 0 10px 0;
+        }
+        .renewal-options ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .requirements {
+            background-color: #E3F2FD;
+            border: 1px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .requirements h4 {
+            color: #1565C0;
+            margin: 0 0 10px 0;
+        }
+        .benefits {
+            margin: 20px 0;
+        }
+        .benefits h4 {
+            color: #5C4F3D;
+            margin-bottom: 10px;
+        }
+        .benefits ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .benefits li {
+            margin-bottom: 5px;
+        }
+        .contact-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 9pt;
+            color: #666;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="notice-header">
+        <div class="library-name">{{ library_name }}</div>
+        <div class="library-address">
+            {{ library_address }}<br>
+            {{ library_phone }} | {{ library_email }}
+        </div>
+    </div>
+
+    <div class="notice-date">Notice Date: {{ notice_date }}</div>
+
+    <div class="notice-title">LIBRARY CARD RENEWAL NOTICE</div>
+
+    <div class="patron-info">
+        <strong>{{ patron_name }}</strong><br>
+        Library Card: {{ library_card }}
+    </div>
+
+    <p>Dear {{ patron_first_name }},</p>
+
+    <p>Your library card is coming up for renewal! This is just a quick heads-up so you can keep using all your library services without interruption. Renewing is free and easy.</p>
+
+    <div class="expiry-box">
+        <div class="label">Your library card expires on</div>
+        <div class="date">{{ expiration_date }}</div>
+        <p>{{ days_until_expiry }} days remaining</p>
+    </div>
+
+    <div class="account-details">
+        <h4>Your Account Information</h4>
+        <table>
+            <tr>
+                <td>Card Number:</td>
+                <td>{{ library_card }}</td>
+            </tr>
+            <tr>
+                <td>Member Since:</td>
+                <td>{{ member_since }}</td>
+            </tr>
+            <tr>
+                <td>Card Type:</td>
+                <td>{{ card_type }}</td>
+            </tr>
+            {% if items_checked_out > 0 %}
+            <tr>
+                <td>Items Currently Checked Out:</td>
+                <td>{{ items_checked_out }}</td>
+            </tr>
+            {% endif %}
+            {% if holds_count > 0 %}
+            <tr>
+                <td>Active Holds:</td>
+                <td>{{ holds_count }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+
+    <div class="renewal-options">
+        <h4>How to Renew</h4>
+        <ul>
+            <li><strong>In Person:</strong> Visit any library branch with valid ID and proof of address</li>
+            <li><strong>Online:</strong> Renew at {{ library_website }} (if address unchanged)</li>
+            <li><strong>By Phone:</strong> Call {{ library_phone }}</li>
+        </ul>
+        <p>Renewal is <strong>FREE</strong> for residents of {{ service_area }}.</p>
+    </div>
+
+    <div class="requirements">
+        <h4>What You'll Need</h4>
+        <ul>
+            <li>Valid photo ID (driver's license, state ID, passport)</li>
+            <li>Proof of current address (utility bill, lease agreement, bank statement)</li>
+            <li>For children: Parent/guardian must be present with their ID</li>
+        </ul>
+    </div>
+
+    <div class="benefits">
+        <h4>Keep Enjoying Your Library Benefits!</h4>
+        <ul>
+            <li>Borrow books, DVDs, audiobooks, and more</li>
+            <li>Access thousands of e-books and digital resources</li>
+            <li>Free access to computers and WiFi</li>
+            <li>Attend programs and events</li>
+            <li>Use meeting rooms and study spaces</li>
+            <li>Access online databases and learning platforms</li>
+        </ul>
+    </div>
+
+    {% if has_outstanding_items %}
+    <p><em>Note: You have items checked out or active holds. Don't worry - even if your card expires before you renew, your holds and account data are preserved. Just renew when you can and everything will be right where you left it.</em></p>
+    {% endif %}
+
+    <div class="contact-info">
+        <strong>Questions?</strong><br>
+        Visit us at {{ library_address }}<br>
+        Call us at {{ library_phone }}<br>
+        Email us at {{ library_email }}<br>
+        Library Hours: {{ library_hours }}
+    </div>
+
+    <div class="footer">
+        This notice was generated on {{ generated_date }}.<br>
+        {{ library_name }} - Serving our community since {{ library_since }}.
+    </div>
+</body>
+</html>

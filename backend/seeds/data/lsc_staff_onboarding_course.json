@@ -1,0 +1,319 @@
+{
+  "courses": [
+    {
+      "title": "LSC Staff Onboarding",
+      "description": "Welcome to the L30 Library! This comprehensive course introduces new staff to our mission, culture, and practical systems. Includes role-specific learning paths for curators, event coordinators, and general staff members.",
+      "estimated_minutes": 240,
+      "difficulty": "beginner",
+      "access_level": "staff",
+      "xp_reward": 500,
+      "modules": [
+        {
+          "title": "Module 1: Welcome & Mission",
+          "description": "Understanding LSC's mission, values, and community impact",
+          "lessons": [
+            {
+              "title": "What is LSC?",
+              "lesson_type": "article",
+              "content": {
+                "text": "# What is LSC?\n\nThe L30 Library (LSC) is a community-centered library serving the fictional town of Somewhere Up North. We believe in making knowledge, resources, and community connection accessible to everyone.\n\n## Our Core Values\n\n- **Inclusivity** - Everyone belongs here\n- **Access** - Free and open resources for the community\n- **Community** - We build connections and support local culture\n- **Growth** - We evolve with our community's needs\n- **Integrity** - We're honest, transparent, and trustworthy\n\n## What We Do\n\n- Curate and maintain a diverse collection of books, media, and digital resources\n- Host community events, workshops, and cultural programming\n- Provide reference services and research support\n- Create safe, welcoming spaces for learning and gathering\n- Support local authors, artists, and creators"
+              },
+              "estimated_minutes": 10,
+              "xp_reward": 10
+            },
+            {
+              "title": "LSC Community Impact",
+              "lesson_type": "article",
+              "content": {
+                "text": "# LSC Community Impact\n\nLSC isn't just about books—we're a pillar of community life in Somewhere Up North. Our impact includes:\n\n- **150+ active patrons** using the catalog monthly\n- **40+ events** hosted annually (book clubs, workshops, author talks)\n- **Local partnerships** with schools, nonprofits, and businesses\n- **Support for creators** - 30% of our collection features local authors\n- **Accessibility** - 24/7 digital access, multiple learning formats, multilingual support\n\n## Our Community Moments\n\n- The annual Book Festival draws 200+ attendees\n- Our \"Reads & Coffee\" series brings together 25-30 regulars weekly\n- Teen programming serves 45+ young adults monthly\n- Digital archive preserves local history and culture"
+              },
+              "estimated_minutes": 10,
+              "xp_reward": 10
+            },
+            {
+              "title": "Your Role in LSC",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Your Role in LSC\n\nEvery staff member contributes to LSC's mission. Your role matters, whether you're curating collections, coordinating events, or supporting operations.\n\n## General Staff Responsibilities\n\n- Maintain welcoming, safe spaces\n- Help patrons navigate resources\n- Process materials and maintain collections\n- Support event logistics\n\n## Curator Responsibilities\n\n- Evaluate and acquire new materials\n- Organize and tag collections\n- Manage digital metadata\n- Recommend titles to patrons\n\n## Event Coordinator Responsibilities\n\n- Plan and promote events\n- Coordinate logistics and vendors\n- Manage registrations and communications\n- Gather feedback and measure impact"
+              },
+              "estimated_minutes": 10,
+              "xp_reward": 10,
+              "quiz_questions": [
+                {
+                  "question_text": "What is LSC's primary mission?",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "To rent books at competitive prices", "is_correct": false},
+                    {"text": "To make knowledge and community accessible to everyone", "is_correct": true},
+                    {"text": "To archive historical documents", "is_correct": false},
+                    {"text": "To provide quiet study spaces only", "is_correct": false}
+                  ],
+                  "explanation": "LSC's core mission is to make knowledge, resources, and community connection accessible to everyone."
+                },
+                {
+                  "question_text": "True or False: LSC only serves patrons who visit in person.",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "True", "is_correct": false},
+                    {"text": "False", "is_correct": true}
+                  ],
+                  "explanation": "We provide 24/7 digital access to our collections and resources."
+                },
+                {
+                  "question_text": "Which of these is NOT one of LSC's core values?",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "Inclusivity", "is_correct": false},
+                    {"text": "Profitability", "is_correct": true},
+                    {"text": "Integrity", "is_correct": false},
+                    {"text": "Community", "is_correct": false}
+                  ],
+                  "explanation": "Our core values are Inclusivity, Access, Community, Growth, and Integrity."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Module 2: Core Systems Basics",
+          "description": "Learning to navigate the LSC platform and complete daily workflows",
+          "lessons": [
+            {
+              "title": "Getting Around the Platform",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Getting Around the Platform\n\nLSC uses an integrated system to manage our catalog, events, and patron relationships. Here's what you need to know.\n\n## Main Navigation\n\n- **Home** - Overview of latest additions and featured content\n- **Catalog** - Browse, search, and filter all materials\n- **Events** - View, register for, and manage programming\n- **Account** - Your profile, borrowing history, preferences\n- **More** - Additional tools and resources\n\n## Key Features\n\n- **Search** - Find materials by title, author, subject, or keyword\n- **Filters** - Narrow by type (book, ebook, video, etc.), format, language\n- **Wishlist** - Save items for later borrowing\n- **Notifications** - Get alerted when items are available or events start"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 15
+            },
+            {
+              "title": "Basic Workflows",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Basic Workflows\n\nMost daily tasks follow simple workflows. Here are the ones you'll use most:\n\n## Patron Inquiry Workflow\n\n1. User searches the catalog\n2. Staff member helps refine search\n3. Material located and checked out or placed on hold\n4. User notified when ready (if on hold)\n\n## Event Registration Workflow\n\n1. Patron browses events\n2. Patron registers (online or in-person)\n3. Confirmation sent\n4. Reminders sent before event\n5. Post-event feedback requested\n\n## Administrative Workflow\n\n1. Task created or assigned to you\n2. You complete the task and mark as done\n3. Task marked complete in system\n4. Progress visible to the team"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 15
+            },
+            {
+              "title": "Help & Resources",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Help & Resources\n\nYou're not alone! LSC has resources to help you succeed.\n\n## Getting Help\n\n- **Your Onboarding Buddy** - Assigned person for questions (first 2 weeks)\n- **Staff Handbook** - PDF guide with policies and procedures\n- **FAQ Section** - Common questions answered in the app\n- **Team Slack** - Daily communication and quick questions\n- **Weekly Team Meeting** - Thursdays 10am, discussion and planning\n\n## Key Resources\n\n- LSC Catalog Curation Guide (for curators)\n- Event Planning Checklist (for coordinators)\n- Accessibility Guidelines (everyone)\n- Community Partnership List (reference)"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 15,
+              "quiz_questions": [
+                {
+                  "question_text": "Where do you go to search for library materials?",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "Home", "is_correct": false},
+                    {"text": "Catalog", "is_correct": true},
+                    {"text": "Account", "is_correct": false},
+                    {"text": "Events", "is_correct": false}
+                  ],
+                  "explanation": "The Catalog is where you can search, browse, and filter all library materials."
+                },
+                {
+                  "question_text": "True or False: You can only register for events in person.",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "True", "is_correct": false},
+                    {"text": "False", "is_correct": true}
+                  ],
+                  "explanation": "Event registration is available both online and in-person."
+                },
+                {
+                  "question_text": "If you have a quick question, where should you ask it?",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "Email the manager", "is_correct": false},
+                    {"text": "Wait for Thursday meeting", "is_correct": false},
+                    {"text": "Message your onboarding buddy or use Slack", "is_correct": true},
+                    {"text": "Look it up yourself only", "is_correct": false}
+                  ],
+                  "explanation": "Your onboarding buddy and the team Slack channel are the best places for quick questions."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Module 3: Curator Deep Dive",
+          "description": "For team members curating our collection",
+          "lessons": [
+            {
+              "title": "Collection Curation Principles",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Collection Curation Principles\n\nAs a curator, you're the gatekeeper of our collection quality and diversity.\n\n## Selection Criteria\n\n- Relevance to community interests and needs\n- Author/creator diversity and representation\n- Format appropriateness (print, digital, media)\n- Condition and longevity\n- Budget efficiency\n\n## Our Collection Mix\n\n- 60% Fiction (various genres)\n- 20% Non-fiction (local history, practical skills, reference)\n- 10% Young Adult & Children's\n- 10% Media (documentaries, music, art collections)\n\n## Diversity Goals\n\n- 40% of new acquisitions from underrepresented authors/creators\n- Materials in 8+ languages\n- Accessibility formats (audiobooks, large print, braille)\n- Local and indie publishers represented"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 20
+            },
+            {
+              "title": "Metadata & Tagging",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Metadata & Tagging\n\nGood metadata makes materials discoverable. Here's how to tag effectively.\n\n## Key Fields\n\n- **Title & Author** - Exact as published\n- **Genre/Category** - Use our standard taxonomy\n- **Themes** - Multi-select tags (community, nature, history, etc.)\n- **Language** - Mark all languages included\n- **Accessibility** - Note audio, large print, digital formats\n- **Local Connection** - Flag local authors, content about Somewhere Up North\n- **Difficulty** - For educational materials (beginner, intermediate, advanced)\n\n## Tagging Best Practices\n\n- Be consistent with existing tags\n- Use 3-5 descriptive tags per item\n- Include themes that help discovery (not obvious ones)\n- Mark accessibility formats prominently"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 20
+            },
+            {
+              "title": "Acquisition Workflow",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Acquisition Workflow\n\nHere's how new materials get into LSC.\n\n## The Process\n\n1. **Identify** - Find potential acquisitions through vendors, recommendations, or community requests\n2. **Evaluate** - Check criteria, budget, format, condition\n3. **Propose** - Add to \"Recommended\" list with justification\n4. **Approve** - Manager reviews and approves\n5. **Purchase** - Order from vendor\n6. **Receive** - Check quality and condition\n7. **Process** - Add to catalog with metadata\n8. **Shelve** - Place in collection\n\n## Budget & Spending\n\n- Track all spending in spreadsheet\n- Report quarterly to manager\n- Special requests require manager approval"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 20,
+              "quiz_questions": [
+                {
+                  "question_text": "True or False - All acquisitions must be approved before purchase.",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "True", "is_correct": true},
+                    {"text": "False", "is_correct": false}
+                  ],
+                  "explanation": "All acquisitions require manager approval before purchasing."
+                },
+                {
+                  "question_text": "What percentage of new acquisitions should come from underrepresented authors?",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "20%", "is_correct": false},
+                    {"text": "40%", "is_correct": true},
+                    {"text": "60%", "is_correct": false},
+                    {"text": "100%", "is_correct": false}
+                  ],
+                  "explanation": "Our diversity goal is 40% of new acquisitions from underrepresented authors/creators."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Module 4: Event Coordinator Deep Dive",
+          "description": "For team members coordinating LSC events",
+          "lessons": [
+            {
+              "title": "Event Types & Programming",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Event Types & Programming\n\nLSC hosts diverse events that build community and celebrate learning.\n\n## Recurring Events\n\n- **Reads & Coffee** (Weekly, 20-30 attendees) - Book discussion, casual atmosphere\n- **Teen Programming** (Monthly, 20+ teens) - Workshops, socials, book clubs\n- **Author Talks** (Quarterly, 50-100 attendees) - Author readings and Q&A\n- **Skill Workshops** (Monthly, 10-25 attendees) - Writing, tech, crafts, wellness\n\n## Seasonal Events\n\n- **Book Festival** (Annual, 200+ attendees) - Vendor fair, author signings, kids' activities\n- **Local Creator Showcase** (Semi-annual) - Platform for local artists and writers\n- **Summer Reading Program** (June-August) - Youth engagement with prizes\n\n## Event Planning Basics\n\n- Determine format (in-person, hybrid, virtual)\n- Set date, time, capacity\n- Plan logistics (space, materials, refreshments)\n- Promote and register attendees\n- Facilitate and gather feedback\n- Follow up and document"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 20
+            },
+            {
+              "title": "Event Logistics",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Event Logistics\n\nGood logistics = great events. Here's the checklist.\n\n## Before the Event (2-4 weeks out)\n\n- Date/time confirmed\n- Space reserved (in-person)\n- Speakers/facilitators confirmed\n- Marketing plan created\n- Registrations open\n\n## Week Before\n\n- Confirm speaker/facilitator attendance\n- Check tech setup (projectors, mics, internet)\n- Prepare materials (handouts, name tags)\n- Send reminder emails\n- Brief team on roles\n\n## Day Of\n\n- Arrive early to set up\n- Test all technology\n- Welcome attendees warmly\n- Facilitate program\n- Take photos/document\n- Collect feedback forms\n\n## After the Event\n\n- Thank speakers/volunteers\n- Clean up and reset space\n- Analyze feedback\n- Document attendance/outcomes\n- Share results with team\n- Plan follow-ups"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 20
+            },
+            {
+              "title": "Community Partnerships",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Community Partnerships\n\nLSC strengthens events through partnerships with local organizations.\n\n## Current Partners\n\n- Somewhere Up North Schools (student programs, book donations)\n- Local nonprofits (co-hosted workshops, cross-promotion)\n- Bookstores & publishers (author event coordination)\n- Community centers (venue partnerships, audience reach)\n- Media (coverage and promotion)\n\n## Building Partnerships\n\n- Identify shared mission/values\n- Start with a conversation (coffee meeting)\n- Propose win-win collaboration (both benefit)\n- Document agreement (basic MOU or email)\n- Execute event together\n- Evaluate and debrief\n- Plan next steps"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 20,
+              "quiz_questions": [
+                {
+                  "question_text": "True or False - 'Reads & Coffee' occurs monthly.",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "True", "is_correct": false},
+                    {"text": "False", "is_correct": true}
+                  ],
+                  "explanation": "'Reads & Coffee' is a weekly event that brings together 25-30 regulars."
+                },
+                {
+                  "question_text": "How long before an event should you confirm the speaker?",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "1 week before", "is_correct": false},
+                    {"text": "2-4 weeks before", "is_correct": true},
+                    {"text": "The day before", "is_correct": false},
+                    {"text": "Day-of is fine", "is_correct": false}
+                  ],
+                  "explanation": "It's best practice to confirm speakers 2-4 weeks before the event."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Module 5: General Staff Deep Dive",
+          "description": "For all staff members supporting LSC operations",
+          "lessons": [
+            {
+              "title": "Patron Service Excellence",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Patron Service Excellence\n\nYou're the face of LSC. How you interact with patrons shapes their experience.\n\n## Service Principles\n\n- **Greet everyone warmly** - Even when busy, acknowledge people\n- **Listen actively** - Understand what they really need\n- **Help proactively** - Don't wait for them to ask\n- **Be patient** - People have different needs and paces\n- **Follow up** - Remember people and their preferences\n\n## Common Scenarios\n\n### Patron can't find a book\n\n1. Search the system together\n2. Check shelves in-person\n3. Explain why it might not be available\n4. Offer alternatives: place hold, similar titles, search again later\n\n### Patron wants a recommendation\n\n1. Ask what they enjoy (genre, recent reads, themes)\n2. Suggest 2-3 titles with brief descriptions\n3. If unsure, offer to research and get back to them\n4. Write down their email/contact\n\n### Patron has a complaint\n\n1. Listen without interrupting\n2. Empathize (\"I understand that's frustrating\")\n3. Explain what happened (if you know)\n4. Offer solutions\n5. Escalate to manager if needed"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 20
+            },
+            {
+              "title": "Collection Maintenance",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Collection Maintenance\n\nKeeping our collection in great shape is everyone's job.\n\n## Daily Tasks\n\n- Straighten shelves and face books outward\n- Remove damaged books (send to processing)\n- Organize holds shelf\n- Process returned items\n- Check for items out of place\n\n## Item Condition Assessment\n\n- **Good** - No damage, readable, clean\n- **Worn** - Normal wear, still usable\n- **Damaged** - Missing pages, water damage, broken binding\n- **Unsalvageable** - Beyond repair\n\n## When to Remove Items\n\n- Not used in 2+ years (check circulation data)\n- Damaged beyond repair\n- Outdated information (especially reference materials)\n- Duplicate excess copies\n- Community request for removal"
+              },
+              "estimated_minutes": 15,
+              "xp_reward": 20,
+              "quiz_questions": [
+                {
+                  "question_text": "If a patron is upset about a missing book, what should you do?",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "Explain why it's not your fault", "is_correct": false},
+                    {"text": "Offer to search it immediately", "is_correct": false},
+                    {"text": "Empathize, search the system, explain options, offer alternatives", "is_correct": true},
+                    {"text": "Tell them to check again later", "is_correct": false}
+                  ],
+                  "explanation": "The best approach is to empathize with their frustration, then help actively solve their problem."
+                },
+                {
+                  "question_text": "How often should you straighten shelves and maintain collections?",
+                  "question_type": "multiple_choice",
+                  "options": [
+                    {"text": "Daily", "is_correct": true},
+                    {"text": "Weekly", "is_correct": false},
+                    {"text": "Monthly", "is_correct": false},
+                    {"text": "As needed", "is_correct": false}
+                  ],
+                  "explanation": "Collection maintenance is a daily task that helps keep patrons happy and our collection organized."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Module 6: Your First Week",
+          "description": "Getting started and integrating into the LSC team",
+          "lessons": [
+            {
+              "title": "First Week Checklist",
+              "lesson_type": "article",
+              "content": {
+                "text": "# Your First Week Checklist\n\nYour first week sets the tone. Here's what you need to do:\n\n## Day 1: Orientation\n\n- Meet your onboarding buddy\n- Tour the physical space (library, offices, breaks areas, restrooms)\n- Get your account credentials and access\n- Review emergency procedures\n- Introduction to staff team\n- **Time: 2-3 hours**\n\n## Day 2-3: System Training\n\n- Complete online orientation\n- Practice logging in and basic navigation\n- Learn your department's key tools\n- Shadow a team member for 2+ hours\n- **Time: 4-6 hours total**\n\n## Day 4: Role-Specific Training\n\n- Deep dive into your specific role\n- Review procedures and workflows\n- Ask questions and take notes\n- Get overview of current projects\n- **Time: 3-4 hours**\n\n## Day 5: Integration\n\n- Attend team meeting\n- Meet with your manager (30-min check-in)\n- Identify your first task or project\n- Build relationships with teammates\n- Reflect on your week\n- **Time: 3-4 hours**\n\n## First Week Goals\n\n- Feel welcomed and oriented\n- Understand your role and responsibilities\n- Know where to find resources and ask for help\n- Connect with at least 3 team members\n- Complete your first task or project successfully\n- Schedule 1:1 with manager for next week"
+              },
+              "estimated_minutes": 20,
+              "xp_reward": 50
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

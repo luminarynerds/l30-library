@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Fresh-machine install smoke test: proves a bare clone stands up via the
+# documented dist path (setup.sh -> compose build -> up) and passes the
+# end-to-end assertions in scripts/dist-smoke.sh (health, admin login, demo
+# load, catalog, one real checkout, clean boot log).
+#
+# Manual trigger only: the full run builds both images (~20 min) and Actions
+# minutes are metered. Run before cutting a release or onboarding a library.
+name: Dist Install Smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dist-smoke:
+    name: Fresh install smoke (dist path)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run dist smoke test
+        run: ./scripts/dist-smoke.sh
+      - name: Teardown (always)
+        if: always()
+        run: docker compose -f docker-compose.dist.yml -p l30distsmoke down -v --remove-orphans || true

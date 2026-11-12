@@ -1,0 +1,4 @@
+patron_barcode,amount,reason,date_assessed,item_barcode,description
+L30-FINE-0001,2.50,overdue,2024-01-15,,late
+L30-FINE-0001,$3.00,overdue,2024-01-15,,currency symbol
+L30-FINE-0001,,overdue,2024-01-15,,no amount

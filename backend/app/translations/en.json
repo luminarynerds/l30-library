@@ -1,0 +1,131 @@
+{
+  "email": {
+    "automated_notice": "This is an automated notification. Please do not reply to this email.",
+    "checkout_receipt": {
+      "subject": "Checkout Receipt: {item_title}",
+      "heading": "Item Checked Out",
+      "greeting": "Hi {user_name},",
+      "body": "You have successfully checked out the following item:",
+      "due_date_label": "Due Date:",
+      "checked_out_label": "Checked Out:",
+      "return_reminder": "Please return this item by the due date so others can enjoy it too!",
+      "return_reminder_extended": "Please return this item by the due date so others can enjoy it too! You can return items at any library branch or book drop.",
+      "view_checkouts": "View My Checkouts"
+    },
+    "due_date_reminder": {
+      "subject": "Due Date Reminder: {item_title}",
+      "heading": "Due Date Reminder",
+      "greeting": "Hi {user_name},",
+      "body": "This is a friendly reminder that the following item is due in {days_until_due} day(s):",
+      "due_date_label": "Due Date:",
+      "return_or_renew": "Please return or renew this item before the due date.",
+      "return_or_renew_extended": "Please return or renew this item before the due date. Need more time? You can easily renew online or at the library!",
+      "view_checkouts": "Renew or View Checkouts"
+    },
+    "overdue_notice": {
+      "subject": "Overdue Notice: {item_title}",
+      "heading": "Overdue Notice",
+      "greeting": "Hi {user_name},",
+      "body": "The following item is now <strong>{days_overdue} day(s) overdue</strong>.",
+      "body_extended": "The following item is now <strong>{days_overdue} day(s) overdue</strong>. Please return it as soon as possible.",
+      "was_due_label": "Was Due:",
+      "days_overdue_label": "Days Overdue:",
+      "return_message": "Please return this item when you can so others can enjoy it.",
+      "return_message_extended": "We know life gets busy! Please return this item when you can so others can enjoy it. You can return items at any library branch or book drop. Need help? Just ask!",
+      "view_checkouts": "View My Checkouts"
+    },
+    "hold_ready": {
+      "subject": "Your Hold is Ready: {item_title}",
+      "heading": "Your Hold is Ready!",
+      "greeting": "Hi {user_name},",
+      "body": "Great news! The item you placed on hold is now available for pickup.",
+      "pickup_by_label": "Pickup By:",
+      "pickup_location_label": "Pickup Location:",
+      "pickup_reminder": "Please pick up your item by the date shown above.",
+      "pickup_reminder_extended": "Please pick up your item by the date shown above. After this date, the hold will expire and the item will be made available to the next patron in line.",
+      "view_holds": "View My Holds"
+    },
+    "hold_expiring": {
+      "subject": "Hold Expiring Soon: {item_title}",
+      "heading": "Hold Expiring Soon",
+      "greeting": "Hi {user_name},",
+      "body": "Your hold will expire in {days_until_expiry} day(s). Please pick up your item soon!",
+      "expires_label": "Expires:",
+      "expiry_warning": "If you don't pick up this item before it expires, it will be made available to the next patron in line.",
+      "view_holds": "View My Holds"
+    },
+    "hold_cancelled": {
+      "subject": "Hold Cancelled: {item_title}",
+      "heading": "Hold Cancelled",
+      "greeting": "Hi {user_name},",
+      "body": "Your hold on the following item has been cancelled.",
+      "reason_label": "Reason:"
+    },
+    "fine_notice": {
+      "subject": "Fine Notice - {amount}",
+      "heading": "Fine Notice",
+      "greeting": "Hi {user_name},",
+      "body": "A fine of {amount} has been added to your account.",
+      "item_label": "Item:",
+      "amount_label": "Amount:",
+      "view_account": "View My Account"
+    },
+    "welcome": {
+      "subject": "Welcome to {library_name}!",
+      "heading": "Welcome to the Library!",
+      "greeting": "Hi {user_name},",
+      "body": "Your library account has been created successfully. Your library card number is:",
+      "card_number_label": "Library Card:",
+      "get_started": "Get started by browsing our catalog, checking out events, or exploring our digital resources.",
+      "explore_catalog": "Explore the Catalog"
+    },
+    "password_reset": {
+      "subject": "Password Reset Request",
+      "heading": "Password Reset",
+      "greeting": "Hi {user_name},",
+      "body": "We received a request to reset your password. Click the button below to create a new password.",
+      "reset_button": "Reset Password",
+      "expiry_notice": "This link will expire in {hours} hours.",
+      "ignore_notice": "If you didn't request this, you can safely ignore this email."
+    },
+    "account_deletion": {
+      "subject": "Account Deletion Scheduled",
+      "heading": "Account Deletion Scheduled",
+      "greeting": "Hi {user_name},",
+      "body": "Your account has been scheduled for deletion on {date}.",
+      "cancel_notice": "If you change your mind, you can cancel this request before that date by logging into your account.",
+      "view_account": "View My Account"
+    },
+    "due_group": {
+      "greeting": "Hi {user_name},",
+      "subject_predue": "Friendly reminder: items due in 3 days",
+      "intro_predue": "Just a heads-up: these items are due in 3 days.",
+      "subject_due_today": "Reminder: your library items are due today",
+      "intro_due_today": "These items are due today. Return or renew now to avoid overdue notices.",
+      "subject_overdue": "Overdue notice (Day {day}) - please return your library items",
+      "intro_overdue": "This is your day {day} overdue notice. Please return these items as soon as possible.",
+      "item_due_label": "(due {due_date})",
+      "manage_items_button": "Manage My Items",
+      "sent_footer": "Sent {date} by {app_name}."
+    }
+  },
+  "notifications": {
+    "checkout_receipt": "Item {item_title} checked out. Due: {due_date}",
+    "due_date_reminder": "Item {item_title} is due in {days_until_due} day(s)",
+    "overdue_notice": "Item {item_title} is {days_overdue} day(s) overdue",
+    "hold_ready": "Item {item_title} is ready for pickup until {expires_at}",
+    "hold_expiring": "Your hold expires in {days_until_expiry} day(s)",
+    "hold_cancelled": "Your hold on {item_title} has been cancelled",
+    "fine_added": "A fine of {amount} was added to your account"
+  },
+  "sms": {
+    "delivery_reminder": "Library delivery reminder: Tomorrow {time_window}. {item_count} items.",
+    "delivery_scheduled": "Library delivery scheduled for {delivery_date} between {time_window}.",
+    "panic_alert": "URGENT: Panic alert at {location}. Staff: {staff_name}. Check app NOW. Alert #{alert_number}"
+  },
+  "common": {
+    "by": "by {author}",
+    "soon": "Soon",
+    "library_name": "Library 2030 Creek Regional Library"
+  }
+}

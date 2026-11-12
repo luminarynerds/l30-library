@@ -1,0 +1,122 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: OFF-Button Contract
+
+# Fast, dedicated gate for the OFF-button property (backend/tests/contract/test_off_button_matrix.py):
+# disabling any single org feature flag must not cascade-break unrelated
+# functionality, and the patron data export must always succeed. Split out
+# from the full backend suite (backend-tests.yml, ~40 min) so this
+# differentiator-defining contract is cheap enough to run on every push and
+# iterate on directly.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/app/models/organization_features.py'
+      - 'backend/app/services/organization_features_service.py'
+      - 'backend/app/api/v1/feature_guards.py'
+      - 'backend/app/api/v1/registry.py'
+      - 'backend/app/api/v1/privacy/**'
+      - 'backend/tests/contract/test_off_button_matrix.py'
+      - 'backend/app/api/v1/board/meetings.py'
+      - 'backend/app/api/v1/board/public.py'
+      - 'backend/app/api/v1/board/main.py'
+      - 'backend/tests/test_board_endpoint_authz_regression.py'
+  # No paths filter here (unlike the push trigger above): a path-filtered
+  # pull_request workflow never posts a status on PRs that don't touch those
+  # paths, so GitHub shows "expected — waiting for status" forever and it can
+  # never be marked a required check. Run on every PR; it's cheap (~6 min).
+  pull_request:
+
+jobs:
+  off-button-contract:
+    runs-on: ubuntu-latest
+    services:
+      # Ephemeral CI-only database, created fresh each run and destroyed after workflow completes
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: lsc
+          POSTGRES_PASSWORD: test_password  # Ephemeral CI-only database, destroyed after workflow run
+          POSTGRES_DB: lsc_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        # Matches Dockerfile.prod (python:3.12-slim) and backend-tests.yml.
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Size PostgreSQL lock table for the full model schema
+      # Fresh create_all holds locks on thousands of tables, indexes and sequences.
+      # PostgreSQL's default of 64 exhausts the shared lock table before commit.
+      env:
+        PG_CONTAINER: ${{ job.services.postgres.id }}
+      run: |
+        docker exec "$PG_CONTAINER" psql -U lsc -d lsc_test -v ON_ERROR_STOP=1 \
+          -c 'ALTER SYSTEM SET max_locks_per_transaction = 1024;'
+        docker restart "$PG_CONTAINER"
+        for attempt in {1..30}; do
+          if docker exec "$PG_CONTAINER" pg_isready -U lsc -d lsc_test; then
+            docker exec "$PG_CONTAINER" psql -U lsc -d lsc_test -Atqc \
+              'SHOW max_locks_per_transaction' | grep -qx 1024
+            exit 0
+          fi
+          sleep 1
+        done
+        exit 1
+    - name: Install dependencies
+      run: |
+        cd backend
+        pip install -e .
+        pip install pytest pytest-asyncio pytest-cov aiosqlite jsonschema faker hypothesis
+
+    - name: Create pytest database (l30_test)
+      # tests/conftest.py derives its own test database name by swapping the
+      # last path segment of DATABASE_URL for "l30_test" -- it never honors
+      # the "lsc_test" name the postgres service starts with. Without this
+      # database existing, pytest's own availability check fails and the
+      # harness silently falls back to file-based SQLite, masking every
+      # Postgres-specific behavior (ICU collation, pgvector, JSONB/array
+      # columns) the contract is meant to exercise. Mirrors backend-tests.yml.
+      env:
+        PGPASSWORD: test_password
+      run: |
+        psql -h localhost -U lsc -d lsc_test -tc \
+          "SELECT 1 FROM pg_database WHERE datname = 'l30_test'" | grep -q 1 || \
+          psql -h localhost -U lsc -d lsc_test -c "CREATE DATABASE l30_test;"
+        psql -h localhost -U lsc -d l30_test \
+          -c "CREATE EXTENSION IF NOT EXISTS vector;" \
+          -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;" \
+          -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
+
+    - name: Run OFF-button contract
+      env:
+        DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        REDIS_URL: redis://localhost:6379/0
+        SECRET_KEY: test-secret-key-do-not-use
+        PII_ENCRYPTION_ENABLED: "false"
+        TEST_REQUIRE_POSTGRES: "1"
+      run: |
+        cd backend
+        python -m pytest tests/contract/test_off_button_matrix.py tests/test_board_endpoint_authz_regression.py -v

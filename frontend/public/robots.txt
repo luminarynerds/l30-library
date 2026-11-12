@@ -1,0 +1,58 @@
+# robots.txt for L30 Library
+# https://www.robotstxt.org/
+
+# Allow all major search engine crawlers
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Slurp
+User-agent: DuckDuckBot
+User-agent: Baiduspider
+User-agent: YandexBot
+User-agent: facebot
+User-agent: ia_archiver
+
+# Default rules for all crawlers
+User-agent: *
+
+# Set crawl delay to be respectful of server resources
+Crawl-delay: 1
+
+# Allow public pages
+Allow: /
+
+# Disallow authentication pages
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /admin/*
+
+# Disallow staff areas
+Disallow: /staff/
+Disallow: /staff/*
+
+# Disallow API endpoints
+Disallow: /api/
+Disallow: /api/*
+
+# Disallow user account pages
+Disallow: /account
+Disallow: /account/
+
+# Disallow authenticated indie author management pages
+Disallow: /indie/dashboard
+Disallow: /indie/book/new
+Disallow: /indie/book/edit/
+Disallow: /indie-authors/books/new
+
+# Disallow search result pages with query parameters (prevents duplicate content)
+Disallow: /catalog?*
+Disallow: /events?*
+Disallow: /learn/catalog?*
+
+# Sitemap location
+Sitemap: https://l30.org/sitemap.xml

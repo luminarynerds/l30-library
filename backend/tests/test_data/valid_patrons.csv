@@ -1,0 +1,4 @@
+name,email,barcode,phone,address,patron_type,home_branch
+Alice Johnson,alice@example.com,LSC-AAAA-0001,555-0001,"100 Main St, Testville, TS 00001",PATRON,MAIN
+Bob Smith,bob@example.com,LSC-BBBB-0002,555-0002,"200 Oak Ave, Testville, TS 00002",PATRON,MAIN
+Carol White,carol@example.com,LSC-CCCC-0003,555-0003,"300 Elm St, Testville, TS 00003",STAFF,NORTH

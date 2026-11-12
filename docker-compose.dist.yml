@@ -1,0 +1,223 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# =============================================================================
+# L30 Library System - Distribution Docker Compose
+# =============================================================================
+# For libraries running L30 built from source (no registry access required).
+# Copy .env.dist to .env and run ./setup.sh, then:
+#   docker compose -f docker-compose.dist.yml up -d
+# =============================================================================
+
+services:
+  database:
+    image: pgvector/pgvector:pg16
+    container_name: l30-database
+    environment:
+      POSTGRES_USER: ${DB_USER:-l30}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-l30_library}
+    volumes:
+      - l30_postgres_data:/var/lib/postgresql/data
+      # First-boot init: create required extensions (pgvector, pg_trgm,
+      # pg_stat_statements) and the bootstrap marker. Only runs when the
+      # data volume is empty.
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/10-init-extensions.sql:ro
+      - ./scripts/init-bootstrap.sql:/docker-entrypoint-initdb.d/20-init-bootstrap.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-l30} -d ${DB_NAME:-l30_library}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+    networks:
+      - l30_network
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  redis:
+    image: redis:7-alpine
+    container_name: l30-redis
+    command: ["sh", "-c", "redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru --requirepass $$REDIS_PASSWORD --protected-mode yes"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - l30_redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $$REDIS_PASSWORD --no-auth-warning ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+    networks:
+      - l30_network
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  l30-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: l30-backend
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${DB_USER:-l30}:${DB_PASSWORD}@database:5432/${DB_NAME:-l30_library}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DEBUG=false
+      - ENVIRONMENT=production
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - FROM_EMAIL=${FROM_EMAIL}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - WORKERS=${WORKERS:-2}
+      - RATE_LIMIT_ENABLED=true
+      - TRUSTED_HOSTS=${DOMAIN},www.${DOMAIN},localhost,l30-nginx
+      # Self-host default: disable backend Turnstile verification so login works
+      # out of the box (symmetric with the frontend's VITE_TURNSTILE_SITE_KEY=disabled).
+      # Without this the backend runs ENVIRONMENT=production with no CF secret and
+      # verify_turnstile() fails closed, rejecting every login. An operator who
+      # wants Turnstile sets TURNSTILE_DISABLED=false + a real CF_TURNSTILE_SECRET.
+      - TURNSTILE_DISABLED=${TURNSTILE_DISABLED:-true}
+      # Self-host default: don't force admin TOTP 2FA on first login, so an
+      # operator can log in and evaluate the fork without an authenticator app.
+      # 2FA is still available to opt into. Set REQUIRE_ADMIN_2FA=true to harden.
+      - REQUIRE_ADMIN_2FA=${REQUIRE_ADMIN_2FA:-false}
+      - API_DOCS_ENABLED=false
+      - SEARCH_ENGINE=postgresql
+      - STORAGE_BACKEND=${STORAGE_BACKEND:-local}
+      - STORAGE_LOCAL_PATH=/app/uploads
+      - PII_ENCRYPTION_ENABLED=${PII_ENCRYPTION_ENABLED:-true}
+      - PII_ENCRYPTION_KEY=${PII_ENCRYPTION_KEY}
+      - PII_HASH_KEY=${PII_HASH_KEY}
+      - WATERMARK_SECRET_SALT=${WATERMARK_SECRET_SALT}
+      - DOWNLOAD_IP_HASH_SALT=${DOWNLOAD_IP_HASH_SALT}
+      - METISLIB_ENABLED=${METISLIB_ENABLED:-false}
+      - METISLIB_BASE_URL=${METISLIB_BASE_URL:-}
+      - METISLIB_API_KEY=${METISLIB_API_KEY:-}
+      - METISLIB_LIBRARY_ID=${METISLIB_LIBRARY_ID:-}
+      - METISLIB_PATRON_HASH_SECRET=${METISLIB_PATRON_HASH_SECRET:-}
+      - AUDIT_LOG_ENABLED=${AUDIT_LOG_ENABLED:-true}
+      - AUDIT_LOG_PATH=/var/log/l30/audit.log
+      - AUDIT_LOG_SIGNING_KEY=${AUDIT_LOG_SIGNING_KEY}
+      - SKIP_SEEDS=${SKIP_SEEDS:-true}
+      - SENTRY_DSN=${SENTRY_DSN:-}
+    volumes:
+      - l30_uploads:/app/uploads
+      - l30_audit_logs:/var/log/l30
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-H", "X-Forwarded-Proto: https", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    restart: always
+    networks:
+      - l30_network
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - VITE_SENTRY_DSN=${VITE_SENTRY_DSN:-}
+        # Self-host default: "disabled" -> TurnstileWidget hits its dev-bypass
+        # path so the Sign In button is not gated on a captcha token that a
+        # fork's domain can never obtain from L30's key. We cannot pass an
+        # empty value here: Docker's empty --build-arg falls back to the
+        # Dockerfile ARG default (L30's real site key), so a non-empty
+        # sentinel the widget recognizes is required.
+        # An operator who wants Turnstile sets VITE_TURNSTILE_SITE_KEY to a
+        # real key (and a matching CF_TURNSTILE_SECRET, TURNSTILE_DISABLED=false).
+        - VITE_TURNSTILE_SITE_KEY=${VITE_TURNSTILE_SITE_KEY:-disabled}
+    container_name: l30-frontend
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - l30-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: always
+    networks:
+      - l30_network
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile.prod
+    container_name: l30-nginx
+    # Bound to loopback: TLS terminates at a host nginx (or other reverse
+    # proxy) that forwards to 127.0.0.1:8081 -- see INSTALL.md "Set up SSL".
+    # The container itself only speaks plain HTTP on port 80.
+    ports:
+      - "127.0.0.1:8081:80"
+    volumes:
+      - l30_nginx_cache:/var/cache/nginx
+      - l30_media:/usr/share/nginx/media:ro
+    environment:
+      - DOMAIN=${DOMAIN}
+      - API_BACKEND=http://l30-backend:8000
+      - FRONTEND_BACKEND=http://l30-frontend:80
+    depends_on:
+      frontend:
+        condition: service_healthy
+      l30-backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    restart: always
+    networks:
+      - l30_network
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+volumes:
+  l30_postgres_data:
+    driver: local
+  l30_redis_data:
+    driver: local
+  l30_nginx_cache:
+    driver: local
+  l30_uploads:
+    driver: local
+  l30_audit_logs:
+    driver: local
+  l30_media:
+    driver: local
+
+networks:
+  l30_network:
+    driver: bridge

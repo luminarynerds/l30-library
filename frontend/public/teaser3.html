@@ -1,0 +1,338 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L30 - Teaser III</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e8e0d4;font-family:'DM Sans',sans-serif;overflow:hidden;height:100vh;width:100vw}
+.slide{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 0.8s ease;pointer-events:none;z-index:1}
+.slide.active{opacity:1;pointer-events:auto;z-index:10}
+.slide h1{font-family:'DM Serif Display',serif;font-size:3.2rem;text-align:center;line-height:1.3;color:#e8e0d4}
+.slide h1 em{font-style:italic;color:#C15A31}
+.slide p{font-size:1.3rem;color:#999;margin-top:1rem;text-align:center;max-width:700px;line-height:1.6}
+/* Subscription cascade */
+.sub-list{display:flex;flex-direction:column;gap:6px;width:700px;max-width:90vw;margin-top:1.5rem}
+.sub-row{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:6px;opacity:0;transform:translateX(-20px);transition:all 0.4s ease}
+.sub-row.show{opacity:1;transform:translateX(0)}
+.sub-category{font-size:0.75rem;color:#e8e0d4;font-weight:500}
+.sub-vendors{font-size:0.6rem;color:#777;margin-left:8px}
+.sub-price{font-size:0.8rem;color:#C15A31;font-weight:600;white-space:nowrap;margin-left:auto;padding-left:16px}
+/* Running total */
+.total-counter{font-family:'DM Serif Display',serif;font-size:4rem;color:#C15A31;text-align:center;margin-top:0.5rem}
+.total-label{font-size:1.1rem;color:#777;text-align:center;margin-top:0.3rem}
+/* Feature pills */
+.feature-cascade{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:750px;margin-top:1.5rem}
+.feature-pill{background:rgba(193,90,49,0.08);border:1px solid rgba(193,90,49,0.25);color:#d4a574;padding:7px 18px;border-radius:30px;font-size:0.85rem;font-weight:400;opacity:0;transform:translateY(15px);transition:all 0.4s ease}
+.feature-pill.show{opacity:1;transform:translateY(0)}
+/* Mockups */
+.mockup{width:620px;max-width:85vw;margin-top:2rem;opacity:0;transform:translateY(30px) scale(0.95);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}
+.mockup.show{opacity:1;transform:translateY(0) scale(1)}
+.mockup-bar{background:#2C241B;border-radius:8px 8px 0 0;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.mockup-dot{width:8px;height:8px;border-radius:50%;background:rgba(193,90,49,0.5)}
+.mockup-dot:nth-child(2){background:rgba(196,162,101,0.5)}
+.mockup-dot:nth-child(3){background:rgba(232,224,212,0.3)}
+.mockup-url{margin-left:12px;font-size:0.65rem;color:#888;background:rgba(0,0,0,0.3);padding:3px 10px;border-radius:3px;flex:1}
+.mockup-body{background:#faf8f5;border-radius:0 0 8px 8px;padding:16px;overflow:hidden;border:1px solid rgba(193,90,49,0.15);border-top:none}
+.mockup-glow{box-shadow:0 20px 60px rgba(193,90,49,0.15),0 0 40px rgba(193,90,49,0.05)}
+div.mockup-glow{opacity:0 !important;transform:translateY(30px) scale(0.95) !important;transition:all 0.8s cubic-bezier(0.16,1,0.3,1) !important}
+div.mockup-glow.show{opacity:1 !important;transform:translateY(0) scale(1) !important}
+/* Toggle rows */
+.mock-toggle-title{font-size:0.7rem;font-weight:700;color:#2C241B;margin-bottom:10px}
+.mock-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0}
+.mock-toggle-row:last-child{border-bottom:none}
+.mock-toggle-label{font-size:0.55rem;color:#333;font-weight:600}
+.mock-toggle-sub{font-size:0.4rem;color:#999;margin-top:1px}
+.mock-toggle{width:30px;height:15px;border-radius:8px;position:relative;flex-shrink:0}
+.mock-toggle.on{background:#C15A31}
+.mock-toggle.off{background:#ddd}
+.mock-toggle::after{content:'';position:absolute;width:11px;height:11px;border-radius:50%;background:#fff;top:2px}
+.mock-toggle.on::after{left:17px}
+.mock-toggle.off::after{left:2px}
+/* AI mockup */
+.mock-ai-panel{display:flex;gap:14px;align-items:flex-start}
+.mock-ai-chat{flex:1;background:#fff;border:1px solid #eee;border-radius:8px;padding:10px}
+.mock-ai-chat-header{background:linear-gradient(135deg,#8B7355,#a08c6e);padding:6px 10px;border-radius:4px;margin-bottom:8px}
+.mock-ai-chat-title{color:#fff;font-size:0.55rem;font-weight:700}
+.mock-ai-bubble{background:#f5f3f0;border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:0.45rem;color:#555;max-width:85%}
+.mock-ai-bubble.user{background:rgba(193,90,49,0.1);margin-left:auto;color:#8B5A3A}
+.mock-ai-controls{width:170px;background:#fff;border:1px solid #eee;border-radius:8px;padding:10px}
+.mock-ai-ctrl-title{font-size:0.55rem;font-weight:700;color:#333;margin-bottom:6px}
+.mock-ai-ctrl-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f5}
+.mock-ai-ctrl-row:last-child{border-bottom:none}
+.mock-ai-ctrl-label{font-size:0.4rem;color:#666}
+.mock-ai-ctrl-toggle{width:24px;height:12px;border-radius:6px;background:#C15A31;position:relative;flex-shrink:0}
+.mock-ai-ctrl-toggle::after{content:'';position:absolute;width:8px;height:8px;border-radius:50%;background:#fff;top:2px;left:14px}
+/* Manifesto */
+.manifesto{max-width:800px;text-align:center}
+.manifesto .line1{font-family:'DM Serif Display',serif;font-size:2.6rem;color:#e8e0d4;line-height:1.3}
+.manifesto .line1 em{color:#C15A31;font-style:italic}
+.manifesto .line2{font-family:'DM Sans',sans-serif;font-size:1.4rem;color:#999;margin-top:0.8rem;font-weight:300}
+.manifesto .line2 em{color:#C15A31;font-style:italic;font-weight:400}
+/* Logo */
+.logo-container{opacity:0;transform:scale(0.8);display:flex;flex-direction:column;align-items:center;text-align:center}
+.logo-container.show{opacity:1;transform:scale(1);transition:all 1.2s cubic-bezier(0.16,1,0.3,1)}
+.logo-container svg{width:200px;height:auto;filter:drop-shadow(0 0 30px rgba(193,90,49,0.3))}
+.logo-container .logo-text{font-family:'DM Serif Display',serif;font-size:2.8rem;color:#C15A31;margin-top:1rem;letter-spacing:2px}
+.logo-container .tagline{font-size:1rem;color:#666;margin-top:0.5rem;letter-spacing:4px;text-transform:uppercase}
+.logo-container .beta-note{font-size:0.9rem;color:#C15A31;margin-top:1.5rem;font-style:italic;font-weight:300;letter-spacing:1px;line-height:1.6}
+.logo-container .contact-email{font-size:0.8rem;color:#999;margin-top:1.5rem;letter-spacing:0.5px}
+/* Progress & Controls */
+.progress{position:fixed;bottom:0;left:0;height:3px;background:linear-gradient(90deg,#C15A31,#C15A31);z-index:100;transition:width 0.3s linear}
+.controls{position:fixed;bottom:20px;right:20px;display:flex;gap:8px;z-index:100}
+.controls button{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#999;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:0.8rem;font-family:'DM Sans',sans-serif}
+.controls button:hover{background:rgba(193,90,49,0.2);border-color:rgba(193,90,49,0.4);color:#e8e0d4}
+</style>
+</head>
+<body>
+<!-- S0: What if -->
+<div class="slide" id="s0">
+  <h1>What if<span style="color:#C15A31">...</span></h1>
+</div>
+<!-- S1: Subscription cascade 1 -->
+<div class="slide" id="s1">
+  <h1 style="font-size:2rem;margin-bottom:0.5rem">You could cancel <em>all of this</em></h1>
+  <div class="sub-list" id="subList">
+    <div class="sub-row"><div><span class="sub-category">Proprietary ILS</span><span class="sub-vendors">Sierra, Polaris, Symphony</span></div><span class="sub-price">$10k–$80k</span></div>
+    <div class="sub-row"><div><span class="sub-category">OPAC / Discovery</span><span class="sub-vendors">BiblioCommons, Encore</span></div><span class="sub-price">$5k–$25k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Meeting Rooms & Equipment</span><span class="sub-vendors">LibCal / SpringShare</span></div><span class="sub-price">$2k–$6k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Events & Programs</span><span class="sub-vendors">Communico, LibCal</span></div><span class="sub-price">$2k–$8k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Computer Reservation</span><span class="sub-vendors">EnvisionWare, Comprise</span></div><span class="sub-price">$3k–$15k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Print Management</span><span class="sub-vendors">Pharos, PaperCut</span></div><span class="sub-price">$2k–$10k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Reading & Learning Programs</span><span class="sub-vendors">Beanstack, READsquared</span></div><span class="sub-price">$1.5k–$8k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Board & Governance</span><span class="sub-vendors">BoardDocs, Diligent</span></div><span class="sub-price">$3k–$12k</span></div>
+  </div>
+</div>
+<!-- S2: Subscription cascade 2 -->
+<div class="slide" id="s2">
+  <h1 style="font-size:2rem;margin-bottom:0.5rem">And <em>all of this</em></h1>
+  <div class="sub-list" id="subList2">
+    <div class="sub-row"><div><span class="sub-category">Digital Signage</span><span class="sub-vendors">Four Winds, Screenly</span></div><span class="sub-price">$1k–$5k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Staff Scheduling</span><span class="sub-vendors">When I Work, Deputy</span></div><span class="sub-price">$1k–$5k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Notifications</span><span class="sub-vendors">Vendor add-ons</span></div><span class="sub-price">$500–$3k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Volunteer Management</span><span class="sub-vendors">Galaxy Digital</span></div><span class="sub-price">$1k–$4k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Makerspace</span><span class="sub-vendors">3DPrinterOS, custom</span></div><span class="sub-price">$1k–$5k</span></div>
+    <div class="sub-row"><div><span class="sub-category">Strategic Planning</span><span class="sub-vendors">Various tools</span></div><span class="sub-price">$1k–$5k</span></div>
+  </div>
+</div>
+<!-- S3: Total counter -->
+<div class="slide" id="s3">
+  <div class="total-counter" id="totalCounter">$0</div>
+  <div class="total-label">per year in vendor subscriptions</div>
+  <p style="margin-top:2rem;font-size:1.1rem;color:#666">15+ vendors. 15+ contracts. 15+ logins.</p>
+</div>
+<!-- S4: What if cancel -->
+<div class="slide" id="s4">
+  <h1>What if you could<br>cancel <em>all of it</em>?</h1>
+</div>
+<!-- S5: Features built in -->
+<div class="slide" id="s5">
+  <h1 style="font-size:2.2rem;margin-bottom:0.5rem">Because every feature is <em>built in</em></h1>
+  <div class="feature-cascade" id="featureCascade">
+    <div class="feature-pill">Catalog & Discovery</div>
+    <div class="feature-pill">Circulation & Holds</div>
+    <div class="feature-pill">Room Reservations</div>
+    <div class="feature-pill">Equipment Tracking</div>
+    <div class="feature-pill">Events & Programs</div>
+    <div class="feature-pill">LMS & Courses</div>
+    <div class="feature-pill">Reading Challenges</div>
+    <div class="feature-pill">Computer Lab Mgmt</div>
+    <div class="feature-pill">Makerspace Control</div>
+    <div class="feature-pill">AI Ask-Librarian</div>
+    <div class="feature-pill">Offline Emergency Mode</div>
+    <div class="feature-pill">Emergency Contacts</div>
+    <div class="feature-pill">SOS Panic Button</div>
+    <div class="feature-pill">Focus Mode</div>
+    <div class="feature-pill">Neurodivergent UX</div>
+    <div class="feature-pill">Dyslexia-Friendly</div>
+    <div class="feature-pill">Privacy by Design</div>
+    <div class="feature-pill">Board Portal & Voting</div>
+  </div>
+</div>
+<!-- S6: Toggle on -->
+<div class="slide" id="s6">
+  <h1 style="font-size:2.4rem">You toggle them on<br>when <em>you're</em> ready.</h1>
+</div>
+<!-- S7: Room Reservations -->
+<div class="slide" id="s7">
+  <h1 style="font-size:2.4rem">Manage your spaces<br>and <em>equipment</em> too.</h1>
+</div>
+
+<!-- S7c: Emergency & Safety -->
+<div class="slide" id="s7c">
+  <h1 style="font-size:2.4rem">Safety & wellbeing<br>are <em>built in.</em></h1>
+</div>
+
+<!-- S9: Banned Books Tracker -->
+<div class="slide" id="s9">
+  <h1 style="font-size:2.4rem">Defend intellectual<br><em>freedom</em> proactively.</h1>
+</div>
+
+<!-- S10: Board Portal -->
+<div class="slide" id="s10">
+  <h1 style="font-size:2.4rem">Transparent governance<br>and <em>community voting.</em></h1>
+</div>
+
+<!-- S7b: No add-ons -->
+<div class="slide" id="s7b">
+  <h1>No add-ons.<br>No <em>upcharges.</em></h1>
+</div>
+<!-- S8: Privacy manifesto -->
+<div class="slide" id="s8b">
+  <div class="manifesto">
+    <div class="line1">Privacy isn't a setting you have to find.</div>
+    <div class="line2">It's where you <em>start.</em></div>
+  </div>
+</div>
+<!-- S9: Accessibility manifesto -->
+<div class="slide" id="s9b">
+  <div class="manifesto">
+    <div class="line1">Accessibility isn't an afterthought.</div>
+    <div class="line2">It's the <em>foundation.</em></div>
+  </div>
+</div>
+<!-- S10: AI manifesto -->
+<div class="slide" id="s10b">
+  <div class="manifesto">
+    <div class="line1">AI isn't a black box.</div>
+    <div class="line2">It's a tool <em>you</em> control.</div>
+  </div>
+</div>
+<!-- S11: Practitioner -->
+<div class="slide" id="s11b">
+  <h1>Designed from a<br><em>practitioner's</em> point of view.</h1>
+</div>
+<!-- S12: Your software -->
+<div class="slide" id="s12b">
+  <h1><em>Your</em> software.<br><em>Your</em> way.</h1>
+</div>
+<!-- S13: Gets it -->
+<div class="slide" id="s13b">
+  <h1>Software that finally<br><em>gets it.</em></h1>
+</div>
+<!-- S14: Logo -->
+<div class="slide" id="s14b">
+  <div class="logo-container" id="logoReveal">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" width="200" height="200">
+      <rect width="100" height="100" rx="12" fill="#2C241B"/>
+      <g stroke="#C15A31" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M20 30 L20 75 Q35 70 50 75 Q65 70 80 75 L80 30"/>
+        <path d="M50 75 L50 35"/>
+        <path d="M20 30 Q35 25 50 35 Q65 25 80 30"/>
+        <path d="M30 50 C30 40, 40 40, 50 50 C60 60, 70 60, 70 50 C70 40, 60 40, 50 50 C40 60, 30 60, 30 50"/>
+      </g>
+    </svg>
+    <div class="logo-text">L30 Core</div>
+    <div class="tagline">Library Software</div>
+    <div class="beta-note">Now in Private Beta<br>Request Early Access</div>
+    <div class="contact-email">— sam@l30.org —</div>
+  </div>
+</div>
+<div class="progress" id="progress"></div>
+<div class="controls">
+  <button onclick="window.togglePause()" id="pauseBtn">Pause</button>
+  <button onclick="window.restart()">Restart</button>
+  <button onclick="window.prev()">Prev</button>
+  <button onclick="window.next()">Next</button>
+  <a href="/teaser3.mp4" download="L30-Core-Teaser.mp4" style="display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#999;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:0.8rem;font-family:'DM Sans',sans-serif;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='rgba(193,90,49,0.2)';this.style.borderColor='rgba(193,90,49,0.4)';this.style.color='#e8e0d4'" onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(255,255,255,0.15)';this.style.color='#999'">⬇️ Download Video</a>
+</div>
+<script>
+(function(){
+  var totalSlides = document.querySelectorAll('.slide').length;
+  window.currentSlide = 0;
+  window.isPaused = false;
+  window.slideTimer = null;
+  var timings = [3000, 6000, 5500, 4500, 4000, 4500, 4500, 4500, 3200, 4200, 4200, 3500, 3200, 3200, 3500, 2800, 2800, 2800, 4000];
+  function animateCounter() {
+    var el = document.getElementById('totalCounter');
+    if (!el) return;
+    var target = 191000;
+    var start = 0;
+    var duration = 2500;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var current = Math.round(start + (target - start) * eased);
+      el.textContent = '$' + current.toLocaleString() + '+';
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  window.showSlide = function(n) {
+    var allSlides = document.querySelectorAll('.slide');
+    var total = allSlides.length;
+    for (var i = 0; i < total; i++) { allSlides[i].classList.remove('active'); }
+    window.currentSlide = n;
+    if (window.currentSlide >= total) { window.currentSlide = total - 1; return; }
+    if (window.currentSlide < 0) window.currentSlide = 0;
+    allSlides[window.currentSlide].classList.add('active');
+    document.getElementById('progress').style.width = ((window.currentSlide + 1) / total * 100) + '%';
+    if (window.currentSlide === 1) {
+      var rows = document.querySelectorAll('#subList .sub-row');
+      for (var i = 0; i < rows.length; i++) {
+        (function(el, d) { el.classList.remove('show'); setTimeout(function(){ el.classList.add('show'); }, d); })(rows[i], i * 400);
+      }
+    }
+    if (window.currentSlide === 2) {
+      var rows2 = document.querySelectorAll('#subList2 .sub-row');
+      for (var i = 0; i < rows2.length; i++) {
+        (function(el, d) { el.classList.remove('show'); setTimeout(function(){ el.classList.add('show'); }, d); })(rows2[i], i * 400);
+      }
+    }
+    if (window.currentSlide === 3) {
+      var el = document.getElementById('totalCounter');
+      if (el) el.textContent = '$0';
+      setTimeout(animateCounter, 300);
+    }
+    if (window.currentSlide === 5) {
+      var pills = document.querySelectorAll('#featureCascade .feature-pill');
+      for (var i = 0; i < pills.length; i++) {
+        (function(el, d) { el.classList.remove('show'); setTimeout(function(){ el.classList.add('show'); }, d); })(pills[i], i * 200);
+      }
+    }
+    if (window.currentSlide === 18) {
+      var logo = document.getElementById('logoReveal');
+      logo.classList.remove('show');
+      setTimeout(function() { logo.classList.add('show'); }, 300);
+    }
+    clearTimeout(window.slideTimer);
+    if (!window.isPaused && window.currentSlide < total - 1) {
+      window.slideTimer = setTimeout(function() { window.showSlide(window.currentSlide + 1); }, timings[window.currentSlide]);
+    }
+  };
+  window.togglePause = function() {
+    window.isPaused = !window.isPaused;
+    document.getElementById('pauseBtn').textContent = window.isPaused ? 'Play' : 'Pause';
+    if (!window.isPaused) window.showSlide(window.currentSlide);
+  };
+  window.restart = function() {
+    window.isPaused = false;
+    document.getElementById('pauseBtn').textContent = 'Pause';
+    window.showSlide(0);
+  };
+  window.prev = function() {
+    if (window.currentSlide > 0) window.showSlide(window.currentSlide - 1);
+  };
+  window.next = function() {
+    var t = document.querySelectorAll('.slide').length;
+    if (window.currentSlide < t - 1) window.showSlide(window.currentSlide + 1);
+  };
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); window.next(); }
+    if (e.key === 'ArrowLeft') window.prev();
+    if (e.key === 'r' || e.key === 'R') window.restart();
+    if (e.key === 'p' || e.key === 'P') window.togglePause();
+  });
+  window.showSlide(0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+item_barcode,catalog_id,branch,call_number,condition,status,copy_number,location
+COPY-TEST-001,1,MAIN,FIC FIT,new,available,1,Fiction A-G
+COPY-TEST-002,1,NORTH,FIC FIT,good,available,2,Fiction A-G
+COPY-TEST-003,2,MAIN,FIC LEE,fair,available,1,Fiction H-N

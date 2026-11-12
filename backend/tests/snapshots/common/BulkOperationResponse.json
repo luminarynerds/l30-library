@@ -1,0 +1,83 @@
+{
+  "$comment": "Auto-generated from app.schemas.common.BulkOperationResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "example": {
+    "errors": [
+      {
+        "error": "Item not found",
+        "item_id": 10
+      },
+      {
+        "error": "Permission denied",
+        "item_id": 20
+      }
+    ],
+    "failed": 5,
+    "message": "Bulk delete completed",
+    "status_code": 200,
+    "succeeded": 95,
+    "timestamp": "2026-01-28T10:30:45.123000+00:00",
+    "total": 100
+  },
+  "properties": {
+    "errors": {
+      "anyOf": [
+        {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Details of failed items",
+      "title": "Errors"
+    },
+    "failed": {
+      "description": "Number of failed operations",
+      "minimum": 0,
+      "title": "Failed",
+      "type": "integer"
+    },
+    "message": {
+      "description": "Operation summary",
+      "title": "Message",
+      "type": "string"
+    },
+    "status_code": {
+      "default": 200,
+      "description": "HTTP status code",
+      "title": "Status Code",
+      "type": "integer"
+    },
+    "succeeded": {
+      "description": "Number of successful operations",
+      "minimum": 0,
+      "title": "Succeeded",
+      "type": "integer"
+    },
+    "timestamp": {
+      "description": "When the operation completed",
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    },
+    "total": {
+      "description": "Total items processed",
+      "minimum": 0,
+      "title": "Total",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "message",
+    "total",
+    "succeeded",
+    "failed"
+  ],
+  "title": "BulkOperationResponse",
+  "type": "object"
+}

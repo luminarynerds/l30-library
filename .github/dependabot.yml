@@ -1,0 +1,68 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Dependabot configuration for L30.
+# Surfaces security and version updates for:
+#   - Backend Python deps (pyproject.toml + uv.lock at /backend)
+#   - Frontend npm deps (package.json + package-lock.json at /frontend)
+#   - GitHub Actions workflows at /.github/workflows
+#
+# Without this file, Dependabot auto-discovers only the npm lockfile and
+# leaves all backend Python findings invisible to GitHub security alerts.
+
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "frontend"
+    # React and React Router majors are deliberate migrations, not routine
+    # bumps, and major bumps here have broken prod before: PR #1297 bumped
+    # react-dom alone to 19; React Router 7 (PR #1705) and React 19 (PR #1704)
+    # are breaking rewrites. react-leaflet 5 *requires* React 19, so it is
+    # permanently blocked until we migrate. Ignore majors for the whole React
+    # family + router + react-leaflet; upgrade them by hand, react/react-dom/
+    # types in lockstep.
+    ignore:
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-router-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-leaflet"
+        update-types: ["version-update:semver-major"]
+      # Storybook majors must move in lockstep across every @storybook/*
+      # package (v9 absorbed addon-essentials into core). Dependabot bumps
+      # them one at a time, which breaks 'npm run storybook' while CI stays
+      # green (CI never builds storybook). Upgrade by hand, all together.
+      - dependency-name: "storybook"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@storybook/*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "ci"

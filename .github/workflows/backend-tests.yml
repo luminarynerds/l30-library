@@ -1,0 +1,155 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Backend Tests
+
+on:
+  workflow_dispatch:
+  # Full suite (16,003 tests, >40 min) is not green (known test rot, out of
+  # scope for the CI-gate campaign). Too slow and too red to be a PR gate —
+  # nightly keeps a signal without blocking merges or training everyone to
+  # ignore a permanently-failing required check. Promote to push:main once
+  # the backend test-rot triage lands and the suite is green.
+  schedule:
+    - cron: '0 9 * * *'  # 09:00 UTC daily; adjust once someone's reading the results
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      # Ephemeral CI-only database, created fresh each run and destroyed after workflow completes
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: lsc
+          POSTGRES_PASSWORD: test_password  # Ephemeral CI-only database, destroyed after workflow run
+          POSTGRES_DB: lsc_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        # Matches Dockerfile.prod (python:3.12-slim) and ci.yml/drift-check.yml.
+        # 3.11 broke collection of app/api/v1/stanza_import.py and
+        # tests/test_data/messy/manifest.py, which use PEP 701 nested-quote
+        # f-strings that are only valid on 3.12+ (both files parse and run
+        # fine on prod's 3.12 runtime).
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        pip install -e .
+        pip install pytest pytest-asyncio pytest-cov aiosqlite jsonschema faker hypothesis
+
+    - name: Initialize database schema
+      env:
+        DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        SECRET_KEY: test-secret-key-ci-only
+        PII_ENCRYPTION_ENABLED: "false"
+      run: |
+        cd backend
+        python scripts/init_db.py
+
+    - name: Load seed data
+      continue-on-error: true
+      env:
+        DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        SECRET_KEY: test-secret-key-ci-only
+        PII_ENCRYPTION_ENABLED: "false"
+      run: |
+        cd backend
+        python scripts/seed_comprehensive.py
+        python scripts/seed_test_accounts.py
+        echo "✅ Seed data loaded successfully"
+
+    - name: Verify seeded data
+      continue-on-error: true
+      env:
+        DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        SECRET_KEY: test-secret-key-ci-only
+        PII_ENCRYPTION_ENABLED: "false"
+      run: |
+        cd backend
+        python scripts/verify_seed_data.py
+
+    - name: Verify API schema snapshots are up-to-date
+      continue-on-error: true
+      env:
+        DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        SECRET_KEY: test-secret-key-do-not-use
+        PII_ENCRYPTION_ENABLED: "false"
+        ENVIRONMENT: test
+      run: |
+        cd backend
+        python scripts/generate_snapshots.py --check
+
+    - name: Create pytest database (l30_test)
+      # backend/tests/conftest.py derives its own test database name by
+      # swapping the last path segment of DATABASE_URL for "l30_test" --
+      # it never honors the "lsc_test" name used by the rest of this
+      # workflow (and can't be told not to: many tests hardcode "l30_test"
+      # in assertions/docstrings, e.g. test_alembic_migrations.py,
+      # test_book_club_import_endpoint.py, test_events.py). Without this
+      # database existing, pytest's own availability check fails and the
+      # harness silently falls back to file-based SQLite for the whole
+      # run -- masking every Postgres-specific behavior (ICU collation,
+      # pgvector, JSONB/array columns) the suite is meant to exercise.
+      # Mirrors the already-working pattern in ci.yml's backend-smoke job.
+      env:
+        PGPASSWORD: test_password
+      run: |
+        psql -h localhost -U lsc -d lsc_test -tc \
+          "SELECT 1 FROM pg_database WHERE datname = 'l30_test'" | grep -q 1 || \
+          psql -h localhost -U lsc -d lsc_test -c "CREATE DATABASE l30_test;"
+        psql -h localhost -U lsc -d l30_test \
+          -c "CREATE EXTENSION IF NOT EXISTS vector;" \
+          -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;" \
+          -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
+
+    - name: Run pytest
+      env:
+        DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        REDIS_URL: redis://localhost:6379/0
+        SECRET_KEY: test-secret-key-do-not-use
+        PII_ENCRYPTION_ENABLED: "false"
+        TEST_REQUIRE_POSTGRES: "1"
+      run: |
+        cd backend
+        python -m pytest tests/ -v --cov=app --cov-report=xml --cov-report=term-missing
+
+    - name: Verify seeded data endpoints (integration test)
+      continue-on-error: true
+      env:
+        DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        SECRET_KEY: test-secret-key-ci-only
+        PII_ENCRYPTION_ENABLED: "false"
+      run: |
+        cd backend
+        python scripts/verify_seeded_data_endpoints.py --test-db
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v7
+      with:
+        file: ./backend/coverage.xml
+        flags: backend
+        name: backend-coverage
+      if: always()

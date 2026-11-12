@@ -1,0 +1,159 @@
+{
+  "$comment": "Auto-generated from app.schemas.circulation.PullListItem. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "properties": {
+    "barcode": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Barcode"
+    },
+    "call_number": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Call Number"
+    },
+    "days_until_expiry": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Days Until Expiry"
+    },
+    "hold_created_at": {
+      "format": "date-time",
+      "title": "Hold Created At",
+      "type": "string"
+    },
+    "hold_expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Hold Expires At"
+    },
+    "hold_id": {
+      "title": "Hold Id",
+      "type": "integer"
+    },
+    "item_author": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Author"
+    },
+    "item_id": {
+      "title": "Item Id",
+      "type": "integer"
+    },
+    "item_title": {
+      "title": "Item Title",
+      "type": "string"
+    },
+    "no_show_count": {
+      "default": 0,
+      "title": "No Show Count",
+      "type": "integer"
+    },
+    "patron_initials": {
+      "title": "Patron Initials",
+      "type": "string"
+    },
+    "patron_library_card": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Patron Library Card"
+    },
+    "patron_name": {
+      "title": "Patron Name",
+      "type": "string"
+    },
+    "patron_on_way": {
+      "default": false,
+      "title": "Patron On Way",
+      "type": "boolean"
+    },
+    "qr_pickup_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Qr Pickup Code"
+    },
+    "shelf_location": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Shelf Location"
+    },
+    "shelf_slot": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Shelf Slot"
+    }
+  },
+  "required": [
+    "hold_id",
+    "item_id",
+    "item_title",
+    "patron_name",
+    "patron_initials",
+    "hold_created_at"
+  ],
+  "title": "PullListItem",
+  "type": "object"
+}

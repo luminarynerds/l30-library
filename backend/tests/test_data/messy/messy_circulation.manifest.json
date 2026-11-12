@@ -1,0 +1,41 @@
+{
+  "job_type": "circulation_history",
+  "rows": [
+    {
+      "row": 1,
+      "defect_class": "valid",
+      "expected_outcome": "valid",
+      "note": "ISO checkout date, completed loan"
+    },
+    {
+      "row": 2,
+      "defect_class": "us_date_format",
+      "expected_outcome": "valid",
+      "note": "MM/DD/YYYY accepted"
+    },
+    {
+      "row": 3,
+      "defect_class": "eu_date_format",
+      "expected_outcome": "valid",
+      "note": "DD/MM/YYYY accepted when m/d impossible"
+    },
+    {
+      "row": 4,
+      "defect_class": "ambiguous_date",
+      "expected_outcome": "valid",
+      "note": "02/03/2024 parses US-style (Feb 3) silently; see characterization test"
+    },
+    {
+      "row": 5,
+      "defect_class": "unparseable_date",
+      "expected_outcome": "error",
+      "note": "no format matches"
+    },
+    {
+      "row": 6,
+      "defect_class": "empty_required_date",
+      "expected_outcome": "error",
+      "note": "checkout_date required"
+    }
+  ]
+}

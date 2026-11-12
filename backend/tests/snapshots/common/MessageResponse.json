@@ -1,0 +1,46 @@
+{
+  "$comment": "Auto-generated from app.schemas.common.MessageResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "example": {
+    "message": "Item deleted successfully",
+    "request_id": "req_550e8400_e29b_41d4_a716",
+    "status_code": 200,
+    "timestamp": "2026-01-28T10:30:45.123000+00:00"
+  },
+  "properties": {
+    "message": {
+      "description": "Response message",
+      "title": "Message",
+      "type": "string"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Request ID for tracking",
+      "title": "Request Id"
+    },
+    "status_code": {
+      "default": 200,
+      "description": "HTTP status code",
+      "title": "Status Code",
+      "type": "integer"
+    },
+    "timestamp": {
+      "description": "When the response was generated",
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    }
+  },
+  "required": [
+    "message"
+  ],
+  "title": "MessageResponse",
+  "type": "object"
+}

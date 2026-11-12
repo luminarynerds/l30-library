@@ -1,0 +1,233 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .notice-header {
+            border-bottom: 2px solid #2C1810;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .library-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #2C1810;
+        }
+        .library-address {
+            font-size: 9pt;
+            color: #666;
+        }
+        .patron-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        .notice-date {
+            font-size: 9pt;
+            color: #666;
+            text-align: right;
+        }
+        .summary-box {
+            background-color: #E3F2FD;
+            border: 1px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .summary-box h3 {
+            color: #1565C0;
+            margin: 0 0 10px 0;
+        }
+        .summary-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        /* Individual notice sections */
+        .notice-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            page-break-inside: avoid;
+        }
+        .notice-section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid;
+        }
+        .notice-section.overdue .notice-section-title {
+            color: #C41E3A;
+            border-bottom-color: #C41E3A;
+        }
+        .notice-section.fine .notice-section-title {
+            color: #C41E3A;
+            border-bottom-color: #C41E3A;
+        }
+        .notice-section.hold_ready .notice-section-title {
+            color: #2E7D32;
+            border-bottom-color: #2E7D32;
+        }
+        .notice-section.account_expiring .notice-section-title {
+            color: #E89B44;
+            border-bottom-color: #E89B44;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .items-table th {
+            background-color: #5C4F3D;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-size: 10pt;
+        }
+        .items-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 10pt;
+        }
+        .items-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .amount-box {
+            padding: 10px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .amount-box.danger {
+            background-color: #FFF5F5;
+            border: 1px solid #C41E3A;
+            color: #C41E3A;
+        }
+        .amount-box.success {
+            background-color: #E8F5E9;
+            border: 1px solid #4CAF50;
+            color: #2E7D32;
+        }
+        .amount-box.warning {
+            background-color: #FFF9E6;
+            border: 1px solid #E89B44;
+            color: #D97706;
+        }
+
+        .action-box {
+            background-color: #FFF9E6;
+            border: 1px solid #E89B44;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .action-box h4 {
+            color: #D97706;
+            margin: 0 0 10px 0;
+        }
+
+        .contact-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 9pt;
+            color: #666;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="notice-header">
+        <div class="library-name">{{ library_name }}</div>
+        <div class="library-address">
+            {{ library_address }}<br>
+            {{ library_phone }} | {{ library_email }}
+        </div>
+    </div>
+
+    <div class="notice-date">Notice Date: {{ notice_date }}</div>
+
+    <div class="patron-info">
+        <strong>{{ patron_name }}</strong><br>
+        Library Card: {{ library_card }}<br>
+        {{ patron_address }}
+    </div>
+
+    <p>Dear {{ patron_first_name }},</p>
+
+    <p>This letter contains important notices regarding your library account. Please review each section carefully.</p>
+
+    <div class="summary-box">
+        <h3>This Letter Contains:</h3>
+        <ul>
+            {% for notice_type in notice_types %}
+            <li>{{ notice_type }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% for notice in notices %}
+    <div class="notice-section {{ notice.type }}">
+        <div class="notice-section-title">{{ notice.title }}</div>
+
+        {{ notice.content | safe }}
+
+    </div>
+    {% endfor %}
+
+    {% if total_amount_due > 0 %}
+    <div class="amount-box danger">
+        TOTAL AMOUNT DUE: ${{ total_amount_due }}
+    </div>
+    {% endif %}
+
+    <div class="action-box">
+        <h4>What to Do Next</h4>
+        <ul>
+            {% if has_overdue %}
+            <li>Return overdue items to any library branch or book drop</li>
+            {% endif %}
+            {% if has_fines %}
+            <li>Pay outstanding fines online, by phone, or in person</li>
+            {% endif %}
+            {% if has_holds_ready %}
+            <li>Pick up your holds before the expiration date</li>
+            {% endif %}
+            {% if has_expiring_card %}
+            <li>Renew your library card before it expires</li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="contact-info">
+        <strong>Questions or Need Assistance?</strong><br>
+        Visit us at {{ library_address }}<br>
+        Call us at {{ library_phone }}<br>
+        Email us at {{ library_email }}<br>
+        Visit our website: {{ library_website }}<br>
+        Library Hours: {{ library_hours }}
+    </div>
+
+    <div class="footer">
+        This notice was generated on {{ generated_date }}.<br>
+        {{ library_name }} - Serving our community since {{ library_since }}.
+    </div>
+</body>
+</html>

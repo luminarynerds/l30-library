@@ -1,0 +1,965 @@
+# Deferred tables — models exist but features are unused/deferred.
+# These tables will NOT be created during schema init.
+# Remove a table from this list to re-enable it.
+# Updated: 2026-07-05
+# Context: Board review determined these tables have zero rows
+# and no active code paths. Keeping models for potential future use
+# but preventing table creation to reduce schema bloat.
+#
+# Convention: a line commented out with a LEADING "## " plus a trailing
+# "# reason" is a table that was un-deferred (or was never a real table) --
+# kept as a breadcrumb instead of deleted outright, so it's visible in this
+# file's history why a given table is or isn't in the active skip list below.
+# 2026-07-05 (Task 4, docs/dist-install-characterization.md §3/§4/§5/§8):
+# un-deferred 13 tables that a live feature (semantic search, cover images)
+# or a background scheduler job needed unconditionally, and pruned 27 stale
+# entries that matched no current model (renamed/removed models left behind
+# in this list as dead weight — harmless no-ops, but noise).
+ada_compliance
+advocacy_letter_templates
+aed_locations
+## agenda_items  # un-deferred 2026-07-06: board module activation (public /board pages query BoardMeeting.agenda_items unconditionally)
+agent_analytics
+agent_conversations
+agent_knowledge_base
+agreement_amendments
+ai_configurations
+ai_guardrails
+ai_model_allowlist
+ai_tools
+ai_usage_limits
+ai_usage_logs
+alarm_system_integrations
+alert_thresholds
+allclear_announcements
+## ama_question_upvotes  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## ama_questions  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## ama_sessions  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+annual_report_history
+annual_report_validation_rules
+annual_reports
+anonymous_incident_patterns
+article_bookmarks
+attendance_check_ins
+## attendance_sessions  # un-deferred 2026-07-05: POST /events/{id}/registrations/{id}/check-in queries this table unconditionally, no try/except -- core event check-in flow (Task 4b static sweep)
+attendance_trends
+audit_readiness_checklists
+audit_scans
+## author_balances  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## author_embeddings  # un-deferred 2026-07-05: "similar authors" recommendations (semantic_search.py) (Task 4, dist-install-characterization.md §4/§5)
+author_identity_evidence
+## author_payout_history  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## author_payout_settings  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+auto_generated_questions
+auto_save_entries
+ban_alert_notifications
+ban_reports
+batch_processing_sessions
+bibframe_authority_links
+bibframe_contributors
+bibframe_instance_contributors
+bibframe_instances
+bibframe_items
+bibframe_subjects
+bibframe_work_contributors
+bibframe_work_subjects
+bibframe_works
+## board_audit_logs  # un-deferred 2026-07-05: board_public_comments_service writes this table unconditionally via BoardAuditService.log_action, no try/except (Task 4b static sweep)
+## board_committee_members  # un-deferred 2026-07-06: board module activation -- board_features_enabled defaults TRUE and the footer links /board/meetings, but /board/public/meetings 500s without these tables (same class as the volunteer cluster, #1816). FK closure is board_*/agenda_items/meeting_action_items/users only.
+## board_committees  # un-deferred 2026-07-06: board module activation
+board_decision_links
+## board_document_versions  # un-deferred 2026-07-06: board module activation
+## board_documents  # un-deferred 2026-07-06: board module activation
+## board_meeting_briefs  # un-deferred 2026-07-06: board module activation
+## board_meetings  # un-deferred 2026-07-06: board module activation
+## board_minutes  # un-deferred 2026-07-06: board module activation
+## board_motions  # un-deferred 2026-07-06: board module activation
+## board_public_comment_periods  # un-deferred 2026-07-06: board module activation
+## board_public_comments  # un-deferred 2026-07-06: board module activation
+## board_report_schedules  # un-deferred 2026-07-06: board module activation
+## board_report_templates  # un-deferred 2026-07-06: board module activation
+## board_reports  # un-deferred 2026-07-06: board module activation
+## board_resolutions  # un-deferred 2026-07-06: board module activation
+## board_votes  # un-deferred 2026-07-06: board module activation
+## board_votes_cast  # un-deferred 2026-07-06: board module activation
+book_challenge_notes
+book_challenges
+book_club_kits
+book_drops
+boundary_escalations
+boundary_policies
+boundary_templates
+## branch_closures  # un-deferred 2026-07-05: check_and_create_overdue_fine() (core overdue/fine assessment on return) queries this table unconditionally via count_closure_days(), no try/except (Task 4b static sweep)
+branch_item_copies
+branch_statistics
+bright_spots
+budget_allocations
+budget_items
+budget_transactions
+building_closures
+building_status_logs
+bulk_checkout_items
+bulk_checkouts
+bundle_distributions
+callout_coverage_requests
+camera_recordings
+camera_systems
+campaign_recipients
+care_coordinator_assignments
+care_coordinator_check_ins
+caregiver_communications
+caregiver_contacts
+cascade_contact_notifications
+cascade_execution_logs
+cash_drawer_sessions
+cash_drawers
+cash_transactions
+## catalog_images  # un-deferred 2026-07-05: catalog item cover images (catalog.py) (Task 4, dist-install-characterization.md §4/§5)
+certificate_templates
+certificates
+check_in_exceptions
+check_in_meetings
+check_in_results
+check_in_sessions
+check_in_statistics
+checklist_items
+checklist_templates
+childcare_registrations
+childcare_sessions
+cipa_compliance_reports
+cipa_compliance_tracking
+circulation_statistics
+citizenship_resources
+## claims_returned_disputes  # un-deferred 2026-07-05: ClaimsReturnedService reads/writes this table unconditionally from the staff checkin "claims returned" resolution and the patron claims-returned endpoint, no try/except (Task 4b static sweep)
+co_sponsored_programs
+coaching_sessions
+cohort_members
+cohort_trainings
+cohorts
+collectible_cards
+collection
+## collection_alerts  # un-deferred 2026-07-05: checkout_service.create_checkout() calls check_checkout_alerts() unconditionally on EVERY checkout, no try/except -- this is the dist-smoke.sh step-7 checkout 500 root cause (Task 4b, live-reproduced traceback: checkout_service.py:633 -> collection_alert_service.py:94)
+collection_recovery_projects
+collection_statistics
+college_application_support
+comic_content_advisories
+comic_issue_creators
+comic_issues
+comic_publisher_imprints
+comic_series
+committee_members
+committees
+community_archive_submissions
+community_liaison_contacts
+community_resource_hubs
+completion_certificates
+compliance_alerts
+compliance_checklist_items
+compliance_dashboard_configs
+compliance_dashboard_metrics
+compliance_deadline_alerts
+compliance_document_links
+compliance_incidents
+compliance_reports
+compliance_requirements
+compliance_violations
+computer_reservations
+computer_sessions
+computer_system_logs
+computer_usage_statistics
+computer_usage_stats
+computer_waitlist
+computers
+condition_changes
+consent_records
+consortium_billing
+consortium_members
+consortium_patron_links
+consortium_settings
+consortium_transactions
+consortium_white_labels
+consortiums
+consultation_attendees
+content_flags
+conversation_circle_participants
+conversation_circle_sessions
+conversation_circles
+## cookie_of_week  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## coppa_compliance  # un-deferred 2026-07-05: scheduler job queries this table unconditionally (Task 4, dist-install-characterization.md §4/§5)
+course_enrollments
+course_feedback
+course_views
+courses
+court_locations
+craft_supply_inventory
+cross_format_discovery
+cultural_program_registrations
+cultural_programs
+daily_reminders
+daily_wins
+damaged_item_records
+damaged_items
+dashboard_widgets
+data_correction_logs
+## data_retention_policies  # un-deferred 2026-07-05: _get_legal_holds() queries this table unconditionally, before run_all_retention_jobs()'s per-job try/except -- missing table aborts the entire daily retention job (refresh tokens, password history, consent tokens, minor-patron anonymization, litigation holds) (Task 4, dist-install-characterization.md §4/§5)
+data_sharing_logs
+data_sync_queue
+database_access_logs
+## database_renewal_notifications  # un-deferred 2026-07-05: send_database_renewal_notifications scheduler (daily cron) queries this table unconditionally, no try/except (Task 4b static sweep)
+## database_subscriptions  # un-deferred 2026-07-05: scheduler job queries this table unconditionally (Task 4, dist-install-characterization.md §4/§5)
+database_usage_stats
+database_vendors
+deadline_calculations
+deadline_rules
+decline_reason_templates
+default_patron_streaming_limits
+deleted_emails
+deliveries
+delivery_feedback
+delivery_items
+delivery_requests
+delivery_routes
+delivery_volunteers
+deposit_applications
+digital_access_cards
+digital_access_orders
+discussion_guides
+dmca_audit_logs
+dmca_counter_notices
+dmca_notices
+dmca_strikes
+do_not_disturb_hours
+document_audit_logs
+document_review_cycles
+document_reviews
+document_versions
+donation_records
+door_lock_events
+door_locks
+download_anomalies
+download_events
+ebook_access_cards
+ebook_card_tier_configs
+## ebook_checkout_log  # un-deferred 2026-07-05: GET /circulation/checkouts (the patron's own checkout-history/"my checkouts" page) queries this table unconditionally once physical checkouts don't fill the page, no try/except (Task 4b static sweep)
+ebook_collection_items
+ebook_collections
+ebook_featured
+## ebook_submission_reviews  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+edi_invoices
+edi_order_responses
+edi_shipment_notices
+edi_transactions
+email_unsubscribe_tokens
+## embedding_metadata  # un-deferred 2026-07-05: embedding pipeline bookkeeping (Task 4, dist-install-characterization.md §4/§5)
+emergency_contact_cascades
+emergency_contacts
+emergency_incidents
+emergency_lights
+emergency_notifications
+emergency_resources
+enrollments
+eod_security_checks
+## eod_sessions  # needed by scheduler EOD auto-logout job
+eod_statistics
+eod_tasks
+## eod_templates  # undeferred: required by eod_sessions FK
+equipment
+equipment_agreements
+equipment_alerts
+equipment_checkouts
+equipment_condition_logs
+equipment_maintenance
+equipment_reservations
+## ernie_sightings  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+esl_classes
+esl_enrollments
+evacuation_events
+evacuation_routes
+event_distributions
+event_feedback
+event_flyers
+event_graphics
+event_marketing_campaigns
+event_registration_sources
+event_review_responses
+executive_dashboards
+executive_reports
+expertise_recognitions
+expungement_eligibility
+external_resource_enrollments
+external_resources
+## failed_job_records  # needed by scheduler retry system
+fairness_policies
+family_challenge_registrations
+family_reading_challenges
+faq_analytics
+faq_chatbot_conversations
+faq_patterns
+## favorites  # un-deferred 2026-07-05: GET /catalog/{id}/my-activity and staff patron-merge endpoint query this table unconditionally, no try/except (Task 4b static sweep)
+fee_waiver_eligibility
+feedbooks_books
+feedbooks_downloads
+feedbooks_favorites
+feedbooks_sync_status
+filter_bypass_requests
+## fine_payment_history  # un-deferred 2026-07-05: GET /patron/fines/{id}/payments queries this table unconditionally, no try/except -- core patron account flow (Task 4b static sweep)
+## fine_policies  # un-deferred 2026-07-05: scheduler daily-fine-generation job (circulation_jobs.py) queries this table unconditionally via get_active_fine_policies(), no try/except -- core circulation/fines path (Task 4b static sweep)
+first_aid_kit_locations
+flag_analysis_results
+focus_time_approvals
+focus_time_blocks
+focus_time_overrides
+focus_time_settings
+focus_time_tracking
+form_completion_sessions
+form_finder_questions
+form_finder_rules
+form_finder_wizard_sessions
+format_suggestions
+found_item_claim_verifications
+found_item_matches
+found_item_photos
+found_item_storage_locations
+found_items
+funds
+genealogy_dna_matches
+genealogy_dna_profiles
+genealogy_documents
+genealogy_external_references
+genealogy_family_relationships
+genealogy_inquiries
+genealogy_person_document_links
+genealogy_persons
+genealogy_project_collaborators
+genealogy_record_links
+genealogy_research_guidance
+genealogy_research_notes
+genealogy_research_projects
+genealogy_timeline_events
+genealogy_training_courses
+generated_marketing_content
+group_holds
+guest_passes
+gutenberg_books
+gutenberg_downloads
+gutenberg_favorites
+gutenberg_sync_status
+## hidden_gem_scores  # un-deferred 2026-07-05: hidden-gems discovery (semantic_search.py) (Task 4, dist-install-characterization.md §4/§5)
+homebound_item_requests
+household_links
+hvac_controls
+ill_cost_records
+ill_partner_libraries
+ill_requests
+ill_tracking_updates
+immutable_audit_entries
+impact_metrics
+impact_stories
+import_jobs
+import_records
+incident_followups
+## indie_analytics_reports  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_audience_demographics  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_author_dashboards  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+indie_author_follows
+## indie_author_metrics  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_book_analytics  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_borrow_history  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_content_performance  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_ebook_borrows  # un-deferred 2026-07-05: scheduler job queries this table unconditionally (Task 4, dist-install-characterization.md §4/§5)
+## indie_ebook_copy_limits  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_ebook_review_responses  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_ebook_versions  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+indie_ebook_waitlist
+## indie_export_jobs  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## indie_genre_analysis  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+indie_reading_list_items
+indie_reading_lists
+## indie_recommendations  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+initiative_milestones
+## institutional_cards  # un-deferred 2026-07-05: process_expired_institutional_cards_job scheduler (daily cron) queries this table unconditionally, no try/except around the query itself (Task 4b static sweep)
+institutional_checkouts
+insurance_documentations
+insurance_policies
+intellectual_freedom_resources
+interest_categories
+internet_policy_acceptances
+introduction_announcements
+inventory_audits
+## item_copies  # un-deferred 2026-07-05: checkout_service.create_checkout() queries item_copies unconditionally on every checkout (copy-count availability check, checkout_service.py:566) -- not a deferred/unused feature, missing table 500s every checkout on a fresh install (Task 9, dist-smoke)
+item_lifecycle_events
+## job_alert_thresholds  # needed by scheduler alerting
+joint_grant_opportunities
+journey_alerts
+journey_dropoffs
+## journey_events  # un-deferred 2026-07-05: scheduler job queries this table unconditionally (Task 4, dist-install-characterization.md §4/§5)
+journey_metrics
+joy_jar_entries
+kit_checkouts
+kit_contents
+know_your_rights_guides
+knowledge_content_flags
+knowledge_entries
+knowledge_versions
+kpi_alerts
+kpi_dashboards
+kpi_values
+lab_completions
+law_enforcement_audit_logs
+law_enforcement_checklists
+law_enforcement_requests
+law_enforcement_response_templates
+leaderboard_entries
+leaderboard_history
+leaderboards
+learned_preferences
+learning_assessment_attempts
+learning_assessment_questions
+learning_assessments
+learning_badges
+learning_course_analytics
+learning_course_recommendations
+learning_engagement_events
+learning_labs
+learning_milestones
+learning_objectives
+learning_path_recommendations
+learning_platform_metrics
+learning_progress_checkpoints
+learning_streaks
+learning_study_sessions
+learning_user_badges
+learning_user_checkpoints
+learning_user_interests
+learning_user_milestones
+learning_user_reports
+legal_catalog_links
+legal_clinic_registrations
+legal_clinics
+legal_collections
+legal_compliance_requirements
+legal_content_audit_logs
+legal_content_feedback
+legal_documents
+legal_form_link_checks
+legal_form_packet_items
+legal_form_packets
+legal_forms
+legal_glossary_terms
+legal_guides
+legal_resource_statistics
+legal_search_logs
+legal_service_providers
+legal_staff_guidelines
+legal_topics
+lesson_bookmarks
+lesson_progress
+lesson_resources
+lesson_variants
+lessons
+liability_incidents
+librarian_consultation_slots
+library_agents
+library_card_applications
+library_document_chunks
+library_documents
+librivox_audiobooks
+librivox_favorites
+librivox_listens
+librivox_sync_status
+link_health_alerts
+link_health_checks
+link_health_config
+link_health_summaries
+## list_items  # un-deferred 2026-07-05: GET /catalog/{id}/my-activity queries this table (joined with reading_lists) unconditionally, no try/except (Task 4b static sweep)
+literacy_access_requests
+literacy_assessments
+literacy_audit_logs
+literacy_celebrations
+literacy_cohorts
+literacy_collection_items
+literacy_collections
+literacy_confidentiality_masks
+literacy_consent_records
+literacy_data_access_policies
+literacy_goals
+literacy_impact_metrics
+literacy_learner_cohorts
+literacy_learners
+literacy_milestones
+literacy_outcomes
+literacy_progress
+literacy_resource_recommendations
+literacy_resources
+literacy_session_logs
+literacy_session_notes
+literacy_session_schedules
+literacy_tutor_availability
+literacy_tutor_matches
+literacy_tutor_qualifications
+literacy_tutor_training_records
+literacy_tutors
+local_compliance_configs
+## lost_damaged_settings  # un-deferred 2026-07-05: ClaimsReturnedService (staff checkin "claims returned" resolution, a documented core checkin path) queries this table unconditionally, no try/except (Task 4b static sweep)
+## lost_item_records  # un-deferred 2026-07-05: ClaimsReturnedService writes this table unconditionally when a claims-returned dispute resolves to lost, no try/except (Task 4b static sweep)
+makerspace_certification_types
+makerspace_certifications
+makerspace_consumable_usage
+makerspace_consumables
+makerspace_jobs
+makerspace_maintenance
+makerspace_payments
+makerspace_reservations
+makerspace_resources
+makerspace_safety_incidents
+makerspace_waitlist
+makerspace_workshop_registrations
+makerspace_workshops
+manager_coaching_models
+manga_cataloging_templates
+manga_magazines
+manga_metadata
+manga_serializations
+manga_volume_records
+manybooks_books
+manybooks_downloads
+manybooks_favorites
+manybooks_sync_status
+marc_batch_jobs
+marketing_campaigns
+media_response_protocols
+medical_emergency_alerts
+## meeting_action_items  # un-deferred 2026-07-06: board module activation
+## meeting_attendance  # un-deferred 2026-07-06: board module activation
+mending_queue
+mentorship_pairings
+migration_jobs
+migration_project_phases
+migration_projects
+moderation_alerts
+modules
+multilingual_resources
+new_arrival_alerts
+newsletter_subscriptions
+note_audits
+note_templates
+## notification_history  # un-deferred 2026-07-05: scheduler notification job queries this table unconditionally, no try/except (Task 4b static sweep)
+notification_metrics
+## notification_preferences  # un-deferred 2026-07-05: staff GET/PUT /staff/patrons/{id}/settings queries this table unconditionally, no try/except -- core patron account flow (Task 4b static sweep)
+## notification_queue  # un-deferred 2026-07-05: scheduler: notification_queue_job crash-loops without it (Task 4, dist-install-characterization.md §4/§5)
+notifications
+offline_mode_sessions
+offline_modes
+onboarding_analytics_events
+onboarding_checklists
+onboarding_feedback
+oncall_schedules
+open_library_books
+open_library_downloads
+open_library_favorites
+open_library_sync_status
+operation_contact_cascades
+## operations_audit_log  # un-deferred 2026-07-05: operations_audit_service writes an audit row on every checkout (unified_circulation_service checkout path) unconditionally, no try/except -- fresh install 500s on first real checkout (Task 4b, dist-smoke.sh step 7)
+order_templates
+orientation_schedules
+out_of_scope_requests
+outreach_deposits
+outreach_notification_logs
+outreach_notification_templates
+outreach_partner_contacts
+outreach_partners
+outreach_statistics
+outreach_visits
+pa_systems
+panic_alert_history
+panic_alerts
+paper_backup_forms
+paper_backup_procedures
+paper_backup_submissions
+parent_connection_group_members
+parent_connection_groups
+parent_guardian_consents
+parent_home_visits
+parent_onboarding_sessions
+parent_resource_guide_items
+parent_resource_guide_sections
+partner_contact_directory
+partner_impact_reports
+partner_organizations
+partner_recognition
+partnership_agreements
+partnership_meetings
+## password_history  # un-deferred 2026-07-05: staff patron password-reset and password-info endpoints query this table unconditionally, no try/except -- core patron account flow (Task 4b static sweep)
+path_courses
+path_enrollments
+patron_accounts
+patron_activities
+patron_boundaries
+patron_chatbot_context
+patron_group_members
+patron_groups
+patron_medical_info
+## patron_merge_audits  # un-deferred 2026-07-05: staff patron-merge-history endpoint queries this table unconditionally, no try/except (Task 4b static sweep)
+patron_messages
+## patron_notes  # undeferred: needed by context-card endpoint
+## patron_notifications  # un-deferred 2026-07-05: GET /notifications and /notifications/live/unread-count (patron bell icon, hit on most logged-in page loads) query this table unconditionally, no try/except -- also written unconditionally from hold_service.py and fine_service.py (Task 4b static sweep)
+## patron_onboarding_progress  # un-deferred 2026-07-05: staff GET/POST /staff/patrons/{id}/onboarding-status queries this table unconditionally, no try/except (Task 4b static sweep)
+patron_preferences
+patron_purchase_requests
+patron_reading_history
+patron_shelf_preferences
+patron_statistics
+patron_streaming_limits
+patron_tags
+patron_tags_definitions
+patron_thank_yous
+patron_training_opt_outs
+patron_transactions
+payment_plans
+payroll_export_batches
+payroll_records
+pci_compliance
+peer_comparison_data
+peer_comparison_libraries
+perfectionism_antidotes
+perfectionism_milestones
+permissions
+phone_verifications
+pod_orders
+pod_title_configs
+policies
+policy_acknowledgments
+## policy_change_log  # un-deferred 2026-07-05: app/api/v1/operations_audit.py queries this table unconditionally on the (ungated) audit-log endpoints, no try/except (Task 4b static sweep)
+policy_enforcement_tracking
+policy_exceptions
+policy_feedback
+policy_overrides
+policy_reviews
+popular_book_club_picks
+positivity_entries
+post_disaster_assessments
+pre_arrival_checklist_items
+print_jobs
+print_notice_batches
+print_notice_cost_config
+print_notice_history
+print_notices
+print_pricing
+print_quotas
+print_refunds
+print_release_stations
+printer_alerts
+printers
+privacy_alerts
+prize_redemptions
+professional_development_activities
+professional_development_plans
+program_budget_items
+program_equipment_bookings
+program_evaluations
+program_marketing_milestones
+program_plans
+program_registrations
+program_room_bookings
+program_sessions
+program_statistics
+program_supply_items
+program_templates
+program_volunteer_assignments
+programs
+proxy_configurations
+pto_approvals
+pto_balance
+pto_conflicts
+pto_coverage
+pto_recurrences
+pto_reminders
+pto_requests
+pto_status_history
+pto_vacation_celebrations
+## public_domain_hashes  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+public_records_audit_logs
+public_records_redactions
+public_records_requests
+publisher_series
+publishers
+purchase_order_items
+purchase_orders
+quiz_attempts
+quiz_questions
+rally_points
+## reading_achievements  # un-deferred 2026-07-05: send_smart_automated_communications scheduler job queries this table unconditionally; the job's single outer try/except re-raises, so a missing table aborts the whole daily communications job (due-date, hold-expiring, card-expiry, winback, post-event-feedback all chained before it) (Task 4b static sweep)
+reading_activities
+reading_ambassador_certifications
+reading_exports
+reading_goals
+## reading_lists  # un-deferred 2026-07-05: GET /catalog/{id}/my-activity and staff patron-merge endpoint query this table unconditionally, no try/except (Task 4b static sweep)
+## reading_log_entries  # un-deferred 2026-07-05: grant_event_attendance_credits writes this table unconditionally; only IntegrityError is caught, not a missing-table ProgrammingError (Task 4b static sweep)
+reading_logs
+reading_milestones
+reading_order_event_issues
+reading_order_events
+reading_prizes
+reading_programs
+reading_progress
+## reading_registrations  # un-deferred 2026-07-05: grant_event_attendance_credits (event check-in -> reading-program credit flow) queries this table unconditionally, no try/except (Task 4b static sweep)
+reading_stats
+## reading_statuses  # un-deferred 2026-07-05: GET /catalog/{id}/my-activity queries this table unconditionally for the logged-in patron, no try/except -- core patron catalog-item page (Task 4b static sweep)
+recent_searches
+reciprocal_borrowing_settings
+reference_questions
+reference_statistics
+regulation_alerts
+regulation_monitors
+regulatory_changes
+repair_records
+repeat_attendees
+report_schedules
+resource_sharing_requests
+retaliation_prevention_policies
+retention_policy_rules
+reunification_events
+## reviews  # un-deferred 2026-07-05: GET /catalog/{id}/my-activity queries this table unconditionally, no try/except (Task 4b static sweep)
+rfid_readers
+rfid_scans
+rfid_sessions
+rfid_tags
+risk_assessments
+risk_mitigation_strategies
+risk_reviews
+role_permissions
+role_required_skills
+## role_settings  # un-deferred 2026-07-05: scheduler job queries this table unconditionally (Task 4, dist-install-characterization.md §4/§5)
+room_amenities
+room_equipment
+room_occupancy_sensors
+room_prep_notes
+room_queues
+room_usage_stats
+room_waitlist
+## royalty_audit_logs  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## royalty_disputes  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+royalty_transactions
+rubric_assessments
+rubric_criteria
+rubrics
+safety_inspections
+scan_to_emails
+schedule_balance_metrics
+schedule_explanations
+schedule_generations
+school_badges
+school_badges_earned
+school_verification_letters
+seasonal_faqs
+security_alerts
+security_integration_logs
+security_system_logs
+security_systems
+selection_list_items
+## semantic_search_cache  # un-deferred 2026-07-05: semantic search caching; scheduler job crash-loops without it (Task 4, dist-install-characterization.md §4/§5)
+serial_claim_logs
+serial_issues
+serial_prediction_patterns
+serial_subscriptions
+serial_titles
+series_completion
+series_notification_rules
+series_popularity
+series_reading_order
+series_recommendations
+series_waitlist
+service_continuity_priorities
+service_enrollment_facilitations
+session_extension_requests
+setting_definitions
+setting_overrides
+share_events
+share_statistics
+shared_events
+shared_reading_list_items
+shared_reading_lists
+shelf_reading_scans
+shelf_reading_schedules
+shelf_reading_sessions
+shift_checklist_sessions
+shift_constraint_violations
+shift_preferences
+shift_swap_audits
+shift_swap_claims
+shift_swap_listings
+shift_swap_matches
+shift_swap_notifications
+signage_analytics
+signage_branch_content
+signage_content
+signage_content_display
+signage_content_optimization
+signage_display
+signage_display_branch
+signage_emergency_message
+signage_event_promotion
+signage_occupancy_sensor
+signage_occupancy_trigger
+signage_schedule
+signage_template
+signage_wayfinder_node
+signage_weather_data
+signage_weather_trigger
+sip2_devices
+sip2_terminals
+sip2_transactions
+skill_assessment_questions
+skills
+sms_cost_records
+sms_delivery_log
+sms_opt_outs
+sms_queue
+sms_templates
+social_media_configs
+social_sharing_config
+staff_access_logs
+## staff_author_list_items  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+## staff_author_lists  # STALE 2026-07-05: no matching model, pruned from active skip list (Task 4, §8)
+staff_bios
+staff_board_posts
+staff_board_replies
+staff_certifications
+staff_checkins
+staff_expertise
+staff_fatigue_records
+staff_incident_reports
+staff_medical_training
+staff_onboarding
+staff_panic_alerts
+staff_preference_profiles
+staff_projects
+staff_protection_measures
+staff_scheduling_profiles
+staff_shifts
+staff_status_notifications
+staff_support_resources
+standard_ebook_downloads
+standard_ebook_favorites
+standard_ebook_sync_status
+standard_ebooks
+state_compliance_configs
+state_confidentiality_exceptions
+state_library_requirements
+state_report_templates
+statistical_reports
+story_arc_issues
+story_arcs
+storytime_annual_plans
+storytime_attendance
+storytime_books
+storytime_crafts
+storytime_monthly_plans
+storytime_rhymes
+storytime_series
+storytime_sessions
+storytime_songs
+storytime_sub_leaders
+storytime_themes
+strategic_attachments
+strategic_audit_logs
+strategic_budgets
+strategic_comments
+strategic_goal_templates
+strategic_goals
+strategic_initiatives
+strategic_kpis
+strategic_metric_history
+strategic_metrics
+strategic_milestones
+strategic_notifications
+strategic_plans
+strategic_risks
+streaming_budgets
+streaming_catalog_items
+streaming_checkouts
+streaming_service_configs
+streaming_usage_stats
+sub_leader_assignments
+subscriber_interests
+summer_reading_helper_assignments
+support_tickets
+swapper_reliability_scores
+system_access
+system_access_provisioning
+system_health
+system_health_metrics
+system_security_checks
+system_status_logs
+take_home_reading_bundles
+task_batch_suggestions
+teacher_training_modules
+## tech_assistance_bookings  # needed by scheduler tech booking reminders
+## tech_assistance_staff  # undeferred: required by tech_assistance_bookings FK
+tech_classes
+tech_follow_up_bookings
+tech_help_options
+tech_help_resources
+tech_quick_links
+tech_resource_handouts
+tech_session_notes
+tech_skill_impact
+tech_volunteer_tutors
+teen_achievements
+teen_advisory_board_members
+teen_volunteer_hour_logs
+teen_volunteer_tasks
+teen_volunteers
+template_budget_items
+template_marketing_milestones
+template_supply_items
+## text_embeddings  # un-deferred 2026-07-05: semantic search (GET /api/v1/search/semantic 500s without it) (Task 4, dist-install-characterization.md §4/§5)
+thank_you_messages
+threat_alerts
+threat_response_plans
+tracker_authors
+tracker_books
+training_announcement_dismissals
+training_announcements
+training_completions
+training_examples
+training_module_assignments
+training_modules
+## transit_requests  # un-deferred 2026-07-05: scheduler job queries this table unconditionally (Task 4, dist-install-characterization.md §4/§5)
+transit_shipment_items
+transit_shipments
+translation_requests
+translation_services
+unified_compliance_requirements
+unreasonable_demand_logs
+usage_statistics_settings
+user_antidotes
+user_follows
+## user_notification_preferences  # un-deferred 2026-07-05: patron notification-preferences endpoint queries this table unconditionally, no try/except -- core notifications flow (Task 4b static sweep)
+user_skills
+variant_covers
+vendor_edi_profiles
+vendors
+version_history
+visit_counts
+visit_statistics
+visitor_management_systems
+volunteer_hour_logs
+volunteer_schedules
+vpat_criteria
+vpat_reports
+watermark_records
+weather_alerts
+weeding_candidates
+weeding_rules
+welcome_packet_assemblies
+welcome_packet_distributions
+welcome_packets
+work_relationships
+workflow_executions
+workflow_steps
+workflows
+homebound_enrollments
+reading_preference_profiles
+module_sessions
+session_rsvps

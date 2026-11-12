@@ -1,0 +1,247 @@
+{
+  "$comment": "Auto-generated from app.schemas.circulation.HoldResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "HoldStatus": {
+      "enum": [
+        "pending",
+        "ready",
+        "fulfilled",
+        "cancelled",
+        "expired"
+      ],
+      "title": "HoldStatus",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "cancellation_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cancellation Reason"
+    },
+    "cancelled_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cancelled At"
+    },
+    "cancelled_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cancelled By"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "estimated_wait_days": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Estimated Wait Days"
+    },
+    "estimated_wait_weeks": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Estimated Wait Weeks"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expires At"
+    },
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "item_author": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Author"
+    },
+    "item_id": {
+      "title": "Item Id",
+      "type": "integer"
+    },
+    "item_title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Title"
+    },
+    "no_show_count": {
+      "default": 0,
+      "title": "No Show Count",
+      "type": "integer"
+    },
+    "notified_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Notified At"
+    },
+    "patron_on_way": {
+      "default": false,
+      "title": "Patron On Way",
+      "type": "boolean"
+    },
+    "pickup_branch_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pickup Branch Name"
+    },
+    "pickup_location_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pickup Location Id"
+    },
+    "position": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Position"
+    },
+    "qr_pickup_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Qr Pickup Code"
+    },
+    "queue_position": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Queue Position"
+    },
+    "shelf_slot": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Shelf Slot"
+    },
+    "status": {
+      "$ref": "#/$defs/HoldStatus"
+    },
+    "user_id": {
+      "title": "User Id",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "user_id",
+    "item_id",
+    "status"
+  ],
+  "title": "HoldResponse",
+  "type": "object"
+}

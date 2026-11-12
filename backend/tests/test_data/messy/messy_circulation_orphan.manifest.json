@@ -1,0 +1,17 @@
+{
+  "job_type": "circulation_history",
+  "rows": [
+    {
+      "row": 1,
+      "defect_class": "orphan_patron_barcode",
+      "expected_outcome": "orphan_fk",
+      "note": "ValueError(Patron not found) expected -> FAILED, graceful"
+    },
+    {
+      "row": 2,
+      "defect_class": "orphan_item_barcode",
+      "expected_outcome": "orphan_fk",
+      "note": "ValueError(Item not found) expected -> FAILED, graceful"
+    }
+  ]
+}

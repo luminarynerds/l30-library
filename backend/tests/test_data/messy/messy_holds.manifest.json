@@ -1,0 +1,17 @@
+{
+  "job_type": "holds",
+  "rows": [
+    {
+      "row": 1,
+      "defect_class": "valid",
+      "expected_outcome": "valid",
+      "note": "hold referencing seeded ISBN"
+    },
+    {
+      "row": 2,
+      "defect_class": "eu_date_and_bad_position",
+      "expected_outcome": "error",
+      "note": "non-numeric queue position 'two' is correctly rejected (a malformed position is an error, not a silently-defaulted warning)"
+    }
+  ]
+}

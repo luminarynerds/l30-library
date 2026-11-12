@@ -1,0 +1,200 @@
+/* 404 Bookshelf — library cabinet with opening doors
+   Uses L30 Nordic palette via CSS custom properties,
+   real <Link> elements, reduced-motion & dark-mode support */
+
+.shelf {
+  position: relative;
+  width: min(32rem, 90vw);
+  height: 14rem;
+  margin: 0 auto;
+  border: 0.5rem solid rgb(42 37 48);
+  border-radius: 0.5rem;
+  background-color: rgb(var(--accent-rose-rgb, 200 128 128) / 0.08);
+  perspective: 130rem;
+  box-shadow: inset 0 0 2rem rgba(0, 0, 0, 0.15);
+}
+
+.dark .shelf {
+  border-color: rgb(54 50 60);
+  background-color: rgb(var(--accent-rose-rgb, 200 128 128) / 0.06);
+}
+
+/* --- Cabinet doors --- */
+.door {
+  position: absolute;
+  width: calc(50% - 0.25rem);
+  height: 100%;
+  display: flex;
+  box-sizing: border-box;
+  padding: 1rem;
+  background-color: rgb(42 37 48);
+  align-items: center;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  outline: 1px solid transparent;
+  z-index: 2;
+}
+
+.dark .door {
+  background-color: rgb(58 53 64);
+}
+
+.door::before {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  content: "";
+}
+
+.door.left {
+  border-radius: 0 0.75rem 0.75rem 0;
+  justify-content: flex-end;
+  animation: leftDoorOpen 3.5s ease-out forwards 1s;
+  transform-origin: 0 0 0;
+}
+
+.door.right {
+  right: 0;
+  border-radius: 0.75rem 0 0 0.75rem;
+  animation: rightDoorOpen 3s ease-out forwards 1.5s;
+  transform-origin: 100% 0 0;
+}
+
+/* --- Books (navigation links) --- */
+.shelf .book {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 0.25rem;
+  background-color: rgb(var(--accent-rose-rgb, 200 128 128) / 0.15);
+  color: rgb(240 236 240);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: inset 0 0 0.75rem rgb(var(--accent-rose-rgb, 200 128 128) / 0.1);
+  transition: background-color 0.2s;
+  z-index: 1;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shelf .book:hover:not(.not-found),
+.shelf .book:focus-visible:not(.not-found) {
+  background-color: rgb(var(--accent-rose-rgb, 200 128 128) / 0.3);
+}
+
+/* Upright books (standing, rotated -90deg so text reads bottom-to-top) */
+.shelf .book.home-page {
+  width: 2.8rem;
+  height: 11rem;
+  bottom: 0;
+  left: 1.5rem;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 0.5rem 0.4rem;
+}
+
+.shelf .book.about-us {
+  width: 2.8rem;
+  height: 11rem;
+  bottom: 0;
+  left: 5rem;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 0.5rem 0.4rem;
+}
+
+/* Flat books (lying on the shelf) */
+.shelf .book.catalog {
+  bottom: 0.5rem;
+  right: 1rem;
+  padding: 0.6rem 1.2rem;
+}
+
+.shelf .book.events {
+  bottom: 3rem;
+  right: 0.5rem;
+  padding: 0.6rem 1.2rem;
+}
+
+/* Missing book — dashed outline, upright */
+.shelf .book.not-found {
+  width: 2.8rem;
+  height: 11rem;
+  bottom: 0;
+  left: 8.5rem;
+  border: 1px dashed rgb(var(--accent-rose-rgb, 200 128 128) / 0.35);
+  background-color: transparent;
+  cursor: default;
+  animation: bookFadeOut 2s ease-in-out infinite;
+  box-shadow: none;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 0;
+}
+
+.shelf .book.not-found::after {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-style: italic;
+  text-transform: none;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  content: "this page can't be found";
+  opacity: 0.35;
+  color: rgb(var(--accent-rose-rgb, 200 128 128));
+  writing-mode: vertical-rl;
+}
+
+/* --- Animations --- */
+@keyframes leftDoorOpen {
+  60% { transform: rotateY(-115deg); }
+  100% { transform: rotateY(-110deg); }
+}
+
+@keyframes rightDoorOpen {
+  60% { transform: rotateY(125deg); }
+  100% { transform: rotateY(120deg); }
+}
+
+@keyframes bookFadeOut {
+  0%, 100% { border-color: rgb(var(--accent-rose-rgb, 200 128 128) / 0.35); }
+  50% { border-color: rgb(var(--accent-rose-rgb, 200 128 128) / 0.12); }
+}
+
+/* prefers-reduced-motion: doors already open, no pulsing */
+@media (prefers-reduced-motion: reduce) {
+  .door.left {
+    animation: none;
+    transform: rotateY(-110deg);
+  }
+  .door.right {
+    animation: none;
+    transform: rotateY(120deg);
+  }
+  .shelf .book.not-found {
+    animation: none;
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .shelf { height: 12rem; }
+  .shelf .book { font-size: 0.65rem; }
+  .shelf .book.home-page,
+  .shelf .book.about-us,
+  .shelf .book.not-found {
+    height: 9rem;
+    width: 2.4rem;
+  }
+  .shelf .book.home-page { left: 1rem; }
+  .shelf .book.about-us { left: 4rem; }
+  .shelf .book.not-found { left: 7rem; }
+}

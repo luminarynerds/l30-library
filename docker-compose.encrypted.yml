@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# =============================================================================
+# L30 Library System - Encrypted-volume overlay
+# =============================================================================
+# Overlay for docker-compose.prod.yml. Re-points the named data volumes at
+# bind mounts under /opt/l30/secure (a LUKS-encrypted ext4 mount).
+#
+# Apply only AFTER provisioning the encrypted volume per
+# docs/security/disk-encryption.md, including the rsync of existing volume
+# data into /opt/l30/secure/<name>.
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml -f docker-compose.encrypted.yml up -d
+#
+# Volume `name:` values match the base file exactly so host nginx and the
+# CLAUDE.md container/volume contracts are preserved. Only the storage
+# location changes.
+#
+# This overlay does NOT re-point the `./backups:/backups` bind mount in the
+# database service — overlay merges append rather than replace for service
+# `volumes:`, so that swap is performed in the base file as a one-line edit
+# during the cutover (see disk-encryption.md, "Data migration"):
+#
+#   -      - ./backups:/backups:rw
+#   +      - /opt/l30/secure/backups:/backups:rw
+#
+# Keep the postgres data volume's `name:` identical (`l30_l30_postgres_data`)
+# — Compose otherwise sees a different identity and refuses to bind-mount
+# over an existing volume.
+# =============================================================================
+
+volumes:
+  l30_postgres_data:
+    name: l30_l30_postgres_data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/l30/secure/postgres
+
+  l30_redis_data:
+    name: l30_redis_data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/l30/secure/redis
+
+  l30_uploads:
+    name: l30_uploads
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/l30/secure/uploads
+
+  l30_audit_logs:
+    name: l30_audit_logs
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/l30/secure/audit_logs
+
+  # l30_nginx_cache is intentionally NOT moved — public asset cache, not
+  # sensitive, no need to consume encrypted volume space on it.

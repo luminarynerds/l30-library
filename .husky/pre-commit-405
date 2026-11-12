@@ -1,0 +1,40 @@
+#!/bin/sh
+# Pre-commit hook to run 405 error prevention tests
+#
+# This hook ensures that new code changes don't introduce HTTP 405 errors
+# by running the endpoint method tests before allowing a commit.
+#
+# To enable this hook, run:
+#   chmod +x .husky/pre-commit-405
+#   git config core.hooksPath .husky
+#
+
+set -e
+
+echo "Running HTTP 405 error prevention tests..."
+echo "==========================================="
+
+cd backend
+
+# Run only the endpoint method tests
+python -m pytest app/tests/test_endpoint_methods.py \
+    -c pytest_405.ini \
+    -v \
+    --tb=short \
+    -m "405_prevention or endpoint_methods" \
+    --timeout=300 \
+    2>&1 | tee test_results_405.log
+
+# Check test results
+if [ $? -eq 0 ]; then
+    echo ""
+    echo "✓ 405 error prevention tests PASSED"
+    echo ""
+    exit 0
+else
+    echo ""
+    echo "✗ 405 error prevention tests FAILED"
+    echo "Review the logs above and fix the issues before committing"
+    echo ""
+    exit 1
+fi

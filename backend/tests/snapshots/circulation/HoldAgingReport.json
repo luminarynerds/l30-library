@@ -1,0 +1,119 @@
+{
+  "$comment": "Auto-generated from app.schemas.circulation.HoldAgingReport. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "HoldAgingBracket": {
+      "properties": {
+        "bracket_label": {
+          "title": "Bracket Label",
+          "type": "string"
+        },
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "max_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Days"
+        },
+        "min_days": {
+          "title": "Min Days",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bracket_label",
+        "min_days",
+        "max_days",
+        "count"
+      ],
+      "title": "HoldAgingBracket",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "average_wait_days": {
+      "title": "Average Wait Days",
+      "type": "number"
+    },
+    "brackets": {
+      "items": {
+        "$ref": "#/$defs/HoldAgingBracket"
+      },
+      "title": "Brackets",
+      "type": "array"
+    },
+    "filtered_by_date_from": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Filtered By Date From"
+    },
+    "filtered_by_date_to": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Filtered By Date To"
+    },
+    "filtered_by_item_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Filtered By Item Id"
+    },
+    "filtered_by_location": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Filtered By Location"
+    },
+    "longest_wait_days": {
+      "title": "Longest Wait Days",
+      "type": "integer"
+    },
+    "total_pending_holds": {
+      "title": "Total Pending Holds",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "total_pending_holds",
+    "average_wait_days",
+    "longest_wait_days",
+    "brackets"
+  ],
+  "title": "HoldAgingReport",
+  "type": "object"
+}

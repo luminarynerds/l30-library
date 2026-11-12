@@ -1,0 +1,11 @@
+{
+  "job_type": "holdings",
+  "rows": [
+    {
+      "row": 1,
+      "defect_class": "orphan_catalog_id",
+      "expected_outcome": "orphan_fk",
+      "note": "numeric but nonexistent catalog_id; IntegrityError expected"
+    }
+  ]
+}

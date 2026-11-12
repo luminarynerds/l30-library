@@ -1,0 +1,126 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Luminary Nerds
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Print-only rules for the parent resources handout. Tailwind print: variants
+ * cover most of the on-page rules; this file exists for the things Tailwind
+ * can't express via class names: @page margins, break-* on selectors,
+ * print-only font-size scaling for the large-type toggle, and the cover
+ * sheet's break-after.
+ *
+ * Scoped to .parent-resources-print-root so admin chrome elsewhere stays
+ * untouched. The root class is set on the page wrapper in ParentResourcesPage.
+ */
+
+@media print {
+  @page {
+    margin: 0.75in;
+  }
+
+  /* Force white background, black text regardless of theme. Dark-mode prints
+     are universally bad — they bleed ink and lose contrast on B&W printers. */
+  .parent-resources-print-root,
+  .parent-resources-print-root * {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  /* Print body uses the L30 serif for cover-to-cover readability. */
+  .parent-resources-print-root {
+    font-family: 'Source Serif Pro', Georgia, serif;
+  }
+
+  /* Cover sheet ships first, then a forced page break before content. */
+  .handout-cover-sheet {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .handout-cover-inner {
+    padding-top: 1in;
+  }
+
+  .handout-cover-title {
+    font-size: 28pt;
+    font-weight: 700;
+    margin-bottom: 0.4in;
+  }
+
+  .handout-cover-library {
+    font-size: 16pt;
+    margin-bottom: 0.6in;
+  }
+
+  .handout-cover-prompt {
+    font-size: 14pt;
+    line-height: 1.4;
+    margin-bottom: 0.6in;
+    max-width: 5in;
+  }
+
+  .handout-cover-contact {
+    font-size: 14pt;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5em 1em;
+  }
+
+  .handout-cover-contact dt {
+    font-weight: 600;
+  }
+
+  /* Section and item cards: keep them together so a section doesn't split
+     mid-page. Heading should not strand at the bottom of a page. */
+  .parent-resources-print-root [data-handout-section] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #ccc !important;
+    border-radius: 0;
+    margin-bottom: 0.25in;
+  }
+
+  .parent-resources-print-root [data-handout-section-heading] {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .parent-resources-print-root [data-handout-item] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Large-type mode: scale all body text up for WCAG AAA low-vision baseline.
+     The wrapper attr `data-large-type` is toggled by the builder toolbar; the
+     attribute selector below applies only when on. */
+  .parent-resources-print-root[data-large-type="true"] {
+    font-size: 18pt;
+    line-height: 1.5;
+  }
+
+  .parent-resources-print-root[data-large-type="true"] [data-handout-item-title] {
+    font-size: 22pt;
+  }
+
+  .parent-resources-print-root[data-large-type="true"] [data-handout-section-heading] {
+    font-size: 28pt;
+  }
+
+  /* QR code sizing in print. The on-screen QR is sized at 64px in the
+     component; in print we bring it down to ~1.2cm so it pairs cleanly with
+     the URL text without dominating the item card. */
+  .parent-resources-print-root [data-handout-qr] {
+    width: 1.2cm;
+    height: 1.2cm;
+  }
+
+  /* The staff-shell sidebar and header live above the page in the React tree.
+     The shell does not ship print: utilities yet (would be a separate PR);
+     we hide them defensively here so a librarian who hits Ctrl-P on this
+     page gets the handout, not the dashboard chrome. */
+  [data-testid="staff-sidebar"],
+  nav[aria-label="Staff navigation"],
+  header[role="banner"] {
+    display: none !important;
+  }
+}

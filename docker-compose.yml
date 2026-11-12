@@ -1,0 +1,338 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# =============================================================================
+# L30 Library System - Development Docker Compose
+# =============================================================================
+# FOR DEVELOPMENT ONLY. Production uses docker-compose.prod.yml
+# This file has higher resource limits for local development.
+# =============================================================================
+
+name: l30
+
+# Docker Compose configuration for Library 2030 (L30)
+# Docker Compose for L30 — uses l30- prefix, own ports, volumes, and network
+
+services:
+  database:
+    image: pgvector/pgvector:pg16
+    container_name: l30-database
+    oom_score_adj: -900  # shield Postgres from the OOM-killer (2026-06-13, after agent-fleet OOM)
+    environment:
+      POSTGRES_USER: ${DB_USER:-lsc}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-lsc_library}
+    command:
+      - "postgres"
+      # Connection and memory settings
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=512MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "maintenance_work_mem=256MB"
+      # Autovacuum tuning for better maintenance
+      - "-c"
+      - "autovacuum_vacuum_scale_factor=0.05"
+      - "-c"
+      - "autovacuum_analyze_scale_factor=0.02"
+      - "-c"
+      - "autovacuum_vacuum_cost_limit=1000"
+      - "-c"
+      - "autovacuum_max_workers=4"
+      - "-c"
+      - "log_autovacuum_min_duration=1000"
+      # Slow query logging
+      - "-c"
+      - "log_min_duration_statement=500"
+      - "-c"
+      - "log_lock_waits=on"
+      - "-c"
+      - "log_temp_files=0"
+      # Lock table limit — raised from 64 to support test cleanup across 1000+ tables
+      - "-c"
+      - "max_locks_per_transaction=256"
+      # Enable pg_stat_statements for query analysis
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.track=all"
+    volumes:
+      - l30_postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups:rw
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/10-init-extensions.sql:ro
+      - ./scripts/init-bootstrap.sql:/docker-entrypoint-initdb.d/20-init-bootstrap.sql:ro
+    ports:
+      - "127.0.0.1:5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-lsc} -d ${DB_NAME:-lsc_library}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+    networks:
+      l30_network:
+        aliases:
+          - l30-db
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '1'
+          memory: 256M
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  redis:
+    image: redis:7-alpine
+    container_name: l30-redis
+    env_file: .env.prod
+    command: ["sh", "-c", "redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru --requirepass $$REDIS_PASSWORD"]
+    volumes:
+      - l30_redis_data:/data
+    ports:
+      - "127.0.0.1:6381:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $$REDIS_PASSWORD --no-auth-warning ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+    networks:
+      - l30_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+        reservations:
+          cpus: '0.5'
+          memory: 64M
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  l30-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: l30-backend
+    env_file: .env.prod
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${DB_USER:-lsc}:${DB_PASSWORD}@database:5432/${DB_NAME:-lsc_library}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DEBUG=false
+      - ENVIRONMENT=production
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - FROM_EMAIL=${FROM_EMAIL:-noreply@l30.org}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama-zcuy-ollama-1:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:3b}
+      - DISABLE_AGENT_LLM=${DISABLE_AGENT_LLM:-1}
+      - EMBEDDING_API_URL=${EMBEDDING_API_URL:-http://ollama-zcuy-ollama-1:11434/v1/embeddings}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text}
+      - EMBEDDING_DIMENSION=${EMBEDDING_DIMENSION:-768}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - WORKERS=1
+      - RATE_LIMIT_ENABLED=true
+      - TRUSTED_HOSTS=l30.org,localhost,l30-nginx
+      - API_DOCS_ENABLED=false
+      - SEARCH_ENGINE=${SEARCH_ENGINE:-postgresql}
+      - ELASTICSEARCH_ENABLED=false
+      - STORAGE_BACKEND=${STORAGE_BACKEND:-local}
+      - STORAGE_LOCAL_PATH=/app/uploads
+      - S3_BUCKET=${S3_BUCKET:-}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - S3_ENDPOINT_URL=${S3_ENDPOINT_URL:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - DB_POOL_SIZE=${DB_POOL_SIZE:-10}
+      - DB_MAX_OVERFLOW=${DB_MAX_OVERFLOW:-15}
+      - METISLIB_ENABLED=${METISLIB_ENABLED:-false}
+      - METISLIB_BASE_URL=${METISLIB_BASE_URL:-http://metislib-backend:8000/api/v1}
+      - METISLIB_API_KEY=${METISLIB_API_KEY}
+      - METISLIB_LIBRARY_ID=${METISLIB_LIBRARY_ID:-lsc}
+      - METISLIB_TIMEOUT_SECONDS=${METISLIB_TIMEOUT_SECONDS:-10}
+      - METISLIB_PATRON_HASH_SECRET=${METISLIB_PATRON_HASH_SECRET}
+      - TESTING_ENABLED=${TESTING_ENABLED:-false}
+      - AUDIT_LOG_ENABLED=${AUDIT_LOG_ENABLED:-true}
+      - AUDIT_LOG_PATH=${AUDIT_LOG_PATH:-/var/log/l30/audit.log}
+      - AUDIT_LOG_SIGNING_KEY=${AUDIT_LOG_SIGNING_KEY}
+    volumes:
+      - l30_uploads:/app/uploads
+      - ./backend/scripts:/app/scripts:ro
+      - l30_audit_logs:/var/log/l30
+      - l30_nginx_logs:/var/log/l30-nginx:ro
+      # Reranker weights (un-baked from the image; see backend/Dockerfile.prod
+      # for the one-time populate command). Empty volume = search degrades to
+      # FTS order, no 500.
+      - l30_models:/app/models
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-H", "X-Forwarded-Proto: https", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    restart: always
+    networks:
+      - l30_network
+      - metislib_default
+      - ollama-zcuy_default
+      - umami_default
+    ports:
+      - "127.0.0.1:8804:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 2.5G
+        reservations:
+          cpus: '2'
+          memory: 512M
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: l30-frontend
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - l30-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: always
+    networks:
+      - l30_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 128M
+        reservations:
+          cpus: '0.5'
+          memory: 64M
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile.prod
+    container_name: l30-nginx
+    ports:
+      - "127.0.0.1:8081:80"
+    volumes:
+      - l30_nginx_cache:/var/cache/nginx
+      - l30_nginx_logs:/var/log/nginx
+      - /opt/l30/media:/usr/share/nginx/media:ro
+    environment:
+      - DOMAIN=${DOMAIN:-l30.org}
+      - API_BACKEND=http://l30-backend:8000
+      - FRONTEND_BACKEND=http://l30-frontend:80
+    depends_on:
+      frontend:
+        condition: service_healthy
+      l30-backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    restart: always
+    networks:
+      - l30_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 128M
+        reservations:
+          cpus: '0.5'
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+volumes:
+  l30_postgres_data:
+    name: l30_l30_postgres_data
+    driver: local
+  l30_redis_data:
+    name: l30_l30_redis_data
+    driver: local
+  l30_nginx_cache:
+    name: l30_l30_nginx_cache
+  l30_nginx_logs:
+    name: l30_l30_nginx_logs
+    driver: local
+  l30_uploads:
+    name: l30_uploads
+    driver: local
+  l30_audit_logs:
+    name: l30_l30_audit_logs
+    driver: local
+  l30_models:
+    name: l30_l30_models
+    driver: local
+
+networks:
+  l30_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.default_bridge: "false"
+  metislib_default:
+    external: true
+  ollama-zcuy_default:
+    external: true
+  umami_default:
+    external: true

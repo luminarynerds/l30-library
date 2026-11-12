@@ -1,0 +1,104 @@
+# Multi-stage production build for L30 Library Backend
+# Stage 1: Builder
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy ALL source files BEFORE pip install (critical for editable installs)
+# If we only copy pyproject.toml, pip will build from an empty directory
+# and won't include the actual package source code
+COPY pyproject.toml .
+COPY app/ ./app/
+
+# Build wheels for faster installation
+# Install hatchling for the build backend specified in pyproject.toml
+# The CPU PyTorch index keeps torch's footprint to ~200MB instead of the
+# default 2GB+ CUDA wheel. The [rerank] extra pulls torch + sentence-
+# transformers in for the catalog cross-encoder reranker.
+RUN pip install --user --no-cache-dir --upgrade pip setuptools wheel hatchling && \
+    pip install --user --no-cache-dir \
+        --extra-index-url https://download.pytorch.org/whl/cpu \
+        ".[rerank]"
+
+# Reranker weights are NOT baked into the image. They live in the
+# l30-models named volume (mounted at /app/models by docker-compose) so
+# each image is ~2.2GB smaller and rebuilds skip the model download +
+# chown that repeatedly filled the VPS disk. Populate the volume once:
+#   docker run --rm -v l30_l30_models:/app/models l30-l30-backend:latest \
+#     python -c "from sentence_transformers import CrossEncoder; \
+#       CrossEncoder('BAAI/bge-reranker-v2-m3').save('/app/models/bge-reranker-v2-m3')"
+# If the volume is empty, reranked search degrades to FTS order (see
+# catalog/helpers.py) instead of 500ing.
+
+# Stage 2: Runtime
+FROM python:3.12-slim
+
+# Install runtime dependencies only (no build tools)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+WORKDIR /app
+
+# Copy Python packages from builder
+COPY --from=builder /root/.local /home/appuser/.local
+# /app/models is the mountpoint for the l30-models volume (reranker
+# weights). Created empty + appuser-owned so dev runs without the volume
+# still have a sane path.
+RUN mkdir -p /app/models && chown -R appuser:appuser /home/appuser /app/models
+
+# Remove build tools not needed at runtime (~22MB)
+RUN rm -rf /home/appuser/.local/lib/python3.12/site-packages/pip \
+    /home/appuser/.local/lib/python3.12/site-packages/setuptools \
+    /home/appuser/.local/bin/pip /home/appuser/.local/bin/pip3
+
+# Copy application code
+COPY --chown=appuser:appuser pyproject.toml .
+COPY --chown=appuser:appuser app/ ./app/
+COPY --chown=appuser:appuser scripts/ ./scripts/
+COPY --chown=appuser:appuser alembic.ini ./alembic.ini
+COPY --chown=appuser:appuser alembic/ ./alembic/
+COPY --chown=appuser:appuser entrypoint.sh ./entrypoint.sh
+
+# Create audit log directory (writable by appuser)
+RUN mkdir -p /var/log/l30 && chown appuser:appuser /var/log/l30
+
+# Uploads mount point + cover-proxy cache dirs, created empty and appuser-owned.
+# Docker seeds a fresh named volume from the image directory (contents AND
+# ownership), so a new install's l30_uploads volume comes up writable by
+# appuser. Without this it mounts root-owned and the cover-image proxy 502s on
+# [Errno 13] Permission denied writing /app/uploads/cover_cache. (Existing
+# volumes predating this must be chowned once: `chown -R appuser /app/uploads`.)
+RUN mkdir -p /app/uploads/cover_cache /app/uploads/cover_resize_cache && \
+    chown -R appuser:appuser /app/uploads
+
+# Set Python path to use local packages
+ENV PATH=/home/appuser/.local/bin:$PATH \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
+
+# Switch to non-root user
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+EXPOSE 8000
+
+# Set default worker count to 4 (can be overridden via WORKERS env var)
+ENV WORKERS=4
+
+# Run entrypoint (DB init/seed then gunicorn)
+ENTRYPOINT ["./entrypoint.sh"]

@@ -1,0 +1,59 @@
+{
+  "job_type": "patrons",
+  "rows": [
+    {
+      "row": 1,
+      "defect_class": "valid",
+      "expected_outcome": "valid",
+      "note": "clean baseline row"
+    },
+    {
+      "row": 2,
+      "defect_class": "encoding_smart_quotes",
+      "expected_outcome": "valid",
+      "note": "curly apostrophe in name"
+    },
+    {
+      "row": 3,
+      "defect_class": "encoding_nbsp",
+      "expected_outcome": "valid",
+      "note": "non-breaking space in name"
+    },
+    {
+      "row": 4,
+      "defect_class": "whitespace_and_case",
+      "expected_outcome": "valid",
+      "note": "leading/trailing spaces, lowercase type"
+    },
+    {
+      "row": 5,
+      "defect_class": "empty_required_email",
+      "expected_outcome": "error",
+      "note": "email is required"
+    },
+    {
+      "row": 6,
+      "defect_class": "malformed_email",
+      "expected_outcome": "error",
+      "note": "fails EMAIL_PATTERN"
+    },
+    {
+      "row": 7,
+      "defect_class": "malformed_barcode",
+      "expected_outcome": "error",
+      "note": "fails BARCODE_PATTERN"
+    },
+    {
+      "row": 8,
+      "defect_class": "unknown_patron_type",
+      "expected_outcome": "warning",
+      "note": "unknown type should warn not error"
+    },
+    {
+      "row": 9,
+      "defect_class": "duplicate_email_case",
+      "expected_outcome": "duplicate",
+      "note": "same email as row 1, different case"
+    }
+  ]
+}

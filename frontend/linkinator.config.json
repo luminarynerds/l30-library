@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JustinBeckwith/linkinator/main/config.schema.json",
+  "recurse": true,
+  "skip": [
+    "localhost",
+    "127.0.0.1",
+    "mailto:",
+    "tel:",
+    "javascript:",
+    "^#"
+  ],
+  "timeout": 30000,
+  "concurrency": 5,
+  "format": "json",
+  "verbosity": "WARNING"
+}

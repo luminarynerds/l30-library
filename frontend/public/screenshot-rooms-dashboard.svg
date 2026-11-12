@@ -1,0 +1,70 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" style="background:#faf8f5;font-family:'DM Sans',sans-serif">
+  <!-- Browser bar -->
+  <rect width="800" height="50" fill="#2C241B"/>
+  <circle cx="20" cy="25" r="6" fill="rgba(193,90,49,0.5)"/>
+  <circle cx="36" cy="25" r="6" fill="rgba(196,162,101,0.5)"/>
+  <circle cx="52" cy="25" r="6" fill="rgba(232,224,212,0.3)"/>
+  <text x="70" y="32" font-size="11" fill="#888">l30.org/staff/rooms</text>
+
+  <!-- Content area -->
+  <rect x="0" y="50" width="800" height="550" fill="#faf8f5"/>
+
+  <!-- Header -->
+  <text x="40" y="90" font-size="20" font-weight="700" fill="#2C241B">📅 Room Reservations</text>
+
+  <!-- Stats -->
+  <g>
+    <rect x="40" y="110" width="180" height="70" fill="#fff" stroke="#e5e5e5" stroke-width="1" rx="6"/>
+    <text x="55" y="130" font-size="11" font-weight="600" fill="#666">Bookings Today</text>
+    <text x="55" y="155" font-size="24" font-weight="700" fill="#C15A31">18</text>
+
+    <rect x="240" y="110" width="180" height="70" fill="#fff" stroke="#e5e5e5" stroke-width="1" rx="6"/>
+    <text x="255" y="130" font-size="11" font-weight="600" fill="#666">Pending</text>
+    <text x="255" y="155" font-size="24" font-weight="700" fill="#C15A31">4</text>
+
+    <rect x="440" y="110" width="180" height="70" fill="#fff" stroke="#e5e5e5" stroke-width="1" rx="6"/>
+    <text x="455" y="130" font-size="11" font-weight="600" fill="#666">Utilization</text>
+    <text x="455" y="155" font-size="24" font-weight="700" fill="#C15A31">78%</text>
+
+    <rect x="620" y="110" width="140" height="70" fill="#fff" stroke="#e5e5e5" stroke-width="1" rx="6"/>
+    <text x="635" y="130" font-size="11" font-weight="600" fill="#666">Equipment</text>
+    <text x="635" y="155" font-size="24" font-weight="700" fill="#C15A31">9/9</text>
+  </g>
+
+  <!-- Room list -->
+  <text x="40" y="215" font-size="12" font-weight="600" fill="#333">Active Bookings</text>
+
+  <!-- Row 1 -->
+  <rect x="40" y="230" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+  <text x="55" y="252" font-size="12" font-weight="600" fill="#333">Study Room A</text>
+  <text x="55" y="268" font-size="10" fill="#999">10 bookings • 2 pending approval</text>
+  <circle cx="710" cy="252" r="5" fill="#22863a"/>
+
+  <!-- Row 2 -->
+  <rect x="40" y="295" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+  <text x="55" y="317" font-size="12" font-weight="600" fill="#333">Meeting Room</text>
+  <text x="55" y="333" font-size="10" fill="#999">5 bookings • Equipment setup scheduled</text>
+  <circle cx="710" cy="317" r="5" fill="#22863a"/>
+
+  <!-- Row 3 -->
+  <rect x="40" y="360" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+  <text x="55" y="382" font-size="12" font-weight="600" fill="#333">Podcast Studio</text>
+  <text x="55" y="398" font-size="10" fill="#999">Recording session in progress • Staff assisted</text>
+  <circle cx="710" cy="382" r="5" fill="#22863a"/>
+
+  <!-- Row 4 -->
+  <rect x="40" y="425" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+  <text x="55" y="447" font-size="12" font-weight="600" fill="#333">Utilization Report</text>
+  <text x="55" y="463" font-size="10" fill="#999">78% utilization • Peak hours: 9am, 2pm</text>
+  <circle cx="710" cy="447" r="5" fill="#22863a"/>
+
+  <!-- Row 5 -->
+  <rect x="40" y="490" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+  <text x="55" y="512" font-size="12" font-weight="600" fill="#333">Equipment Inventory</text>
+  <text x="55" y="528" font-size="10" fill="#999">Projectors: 3 available • Video conference: ready</text>
+  <circle cx="710" cy="512" r="5" fill="#22863a"/>
+</svg>

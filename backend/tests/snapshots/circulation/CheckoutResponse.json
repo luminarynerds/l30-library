@@ -1,0 +1,104 @@
+{
+  "$comment": "Auto-generated from app.schemas.circulation.CheckoutResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "CheckoutStatus": {
+      "enum": [
+        "active",
+        "returned",
+        "overdue",
+        "lost",
+        "lost_by_patron",
+        "lost_in_transit",
+        "claims_returned",
+        "damaged",
+        "returned_damaged"
+      ],
+      "title": "CheckoutStatus",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "checked_out_at": {
+      "format": "date-time",
+      "title": "Checked Out At",
+      "type": "string"
+    },
+    "due_date": {
+      "format": "date-time",
+      "title": "Due Date",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "item_author": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Author"
+    },
+    "item_id": {
+      "title": "Item Id",
+      "type": "integer"
+    },
+    "item_title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Title"
+    },
+    "renewal_count": {
+      "default": 0,
+      "title": "Renewal Count",
+      "type": "integer"
+    },
+    "renewals_remaining": {
+      "default": 0,
+      "title": "Renewals Remaining",
+      "type": "integer"
+    },
+    "returned_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Returned At"
+    },
+    "status": {
+      "$ref": "#/$defs/CheckoutStatus"
+    },
+    "user_id": {
+      "title": "User Id",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "user_id",
+    "item_id",
+    "status",
+    "checked_out_at",
+    "due_date"
+  ],
+  "title": "CheckoutResponse",
+  "type": "object"
+}

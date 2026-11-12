@@ -1,0 +1,23 @@
+{
+  "job_type": "fines",
+  "rows": [
+    {
+      "row": 1,
+      "defect_class": "valid",
+      "expected_outcome": "valid",
+      "note": "clean fine"
+    },
+    {
+      "row": 2,
+      "defect_class": "currency_symbol_amount",
+      "expected_outcome": "error",
+      "note": "leading $ in amount; record actual handling"
+    },
+    {
+      "row": 3,
+      "defect_class": "empty_required_amount",
+      "expected_outcome": "error",
+      "note": "amount required"
+    }
+  ]
+}

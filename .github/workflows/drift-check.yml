@@ -1,0 +1,98 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Schema Drift Check
+on:
+  workflow_dispatch:
+
+jobs:
+  drift-check:
+    name: Enum & Schema Drift
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: l30
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: l30_library
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://l30:test@localhost:5432/l30_library
+      REDIS_URL: redis://localhost:6379/0
+      SECRET_KEY: test-secret-key-for-ci
+      JWT_SECRET_KEY: test-jwt-secret-for-ci
+      ENVIRONMENT: testing
+      PII_ENCRYPTION_ENABLED: "false"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install uv
+          uv sync
+
+      - name: Initialize schema from models
+        working-directory: backend
+        run: uv run python scripts/init_db.py
+
+      - name: Check enum column definitions
+        working-directory: backend
+        run: uv run python scripts/check_enum_columns.py --fix-hint
+
+      - name: Run drift check (full mode)
+        working-directory: backend
+        run: uv run python scripts/check_drift.py --mode full
+
+  api-types-freshness:
+    name: API Type Freshness
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          pip install uv
+          uv sync
+
+      - name: Generate OpenAPI spec
+        working-directory: backend
+        env:
+          DATABASE_URL: sqlite+aiosqlite:///./test.db
+          SECRET_KEY: openapi-generation
+          PII_ENCRYPTION_ENABLED: "false"
+          STORAGE_LOCAL_PATH: /tmp/l30-uploads
+        run: uv run python scripts/generate_openapi.py --format json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Check API types are fresh
+        working-directory: frontend
+        run: npm run api:check

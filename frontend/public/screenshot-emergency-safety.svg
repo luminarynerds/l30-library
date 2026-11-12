@@ -1,0 +1,52 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" style="background:#faf8f5;font-family:'DM Sans',sans-serif">
+  <!-- Browser bar -->
+  <rect width="800" height="50" fill="#2C241B"/>
+  <circle cx="20" cy="25" r="6" fill="rgba(193,90,49,0.5)"/>
+  <circle cx="36" cy="25" r="6" fill="rgba(196,162,101,0.5)"/>
+  <circle cx="52" cy="25" r="6" fill="rgba(232,224,212,0.3)"/>
+  <text x="70" y="32" font-size="11" fill="#888">l30.org/patron/safety</text>
+
+  <!-- Content area -->
+  <rect x="0" y="50" width="800" height="550" fill="#faf8f5"/>
+
+  <!-- Header -->
+  <text x="40" y="90" font-size="20" font-weight="700" fill="#2C241B">🆘 Safety & Wellbeing</text>
+
+  <!-- SOS Button - Large & Prominent -->
+  <rect x="120" y="120" width="560" height="120" fill="rgba(220, 38, 38, 0.08)" stroke="#dc2626" stroke-width="2" rx="12"/>
+  <circle cx="400" cy="180" r="40" fill="#dc2626"/>
+  <text x="400" y="195" font-size="50" fill="#fff" text-anchor="middle" font-weight="700">🚨</text>
+  <text x="400" y="270" font-size="16" font-weight="700" fill="#dc2626" text-anchor="middle">SOS Panic Button</text>
+  <text x="400" y="285" font-size="11" fill="#666" text-anchor="middle">Notifies emergency contacts instantly</text>
+
+  <!-- Settings -->
+  <text x="40" y="330" font-size="12" font-weight="600" fill="#333">Emergency Features</text>
+
+  <!-- Toggle rows -->
+  <g>
+    <!-- Row 1: Offline Mode -->
+    <rect x="40" y="345" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+    <text x="55" y="365" font-size="12" font-weight="600" fill="#333">Offline Mode</text>
+    <text x="55" y="381" font-size="10" fill="#999">Operations continue without connectivity</text>
+    <rect x="720" y="357" width="28" height="16" fill="#22863a" rx="8"/>
+    <circle cx="741" cy="365" r="5" fill="#fff"/>
+
+    <!-- Row 2: Emergency Cascade -->
+    <rect x="40" y="410" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+    <text x="55" y="430" font-size="12" font-weight="600" fill="#333">Emergency Contact Cascade</text>
+    <text x="55" y="446" font-size="10" fill="#999">Contacts notified in sequence</text>
+    <rect x="720" y="422" width="28" height="16" fill="#22863a" rx="8"/>
+    <circle cx="741" cy="430" r="5" fill="#fff"/>
+
+    <!-- Row 3: Focus Mode -->
+    <rect x="40" y="475" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+    <text x="55" y="495" font-size="12" font-weight="600" fill="#333">Focus Mode</text>
+    <text x="55" y="511" font-size="10" fill="#999">Hide distractions for neurodivergent users</text>
+    <rect x="720" y="487" width="28" height="16" fill="#22863a" rx="8"/>
+    <circle cx="741" cy="495" r="5" fill="#fff"/>
+  </g>
+</svg>

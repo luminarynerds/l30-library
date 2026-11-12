@@ -1,0 +1,211 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .notice-header {
+            border-bottom: 2px solid #2C1810;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .library-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #2C1810;
+        }
+        .library-address {
+            font-size: 9pt;
+            color: #666;
+        }
+        .notice-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #C41E3A;
+            margin: 20px 0 10px 0;
+        }
+        .patron-info {
+            margin-bottom: 20px;
+        }
+        .notice-date {
+            font-size: 9pt;
+            color: #666;
+            text-align: right;
+        }
+        .balance-box {
+            background-color: #C41E3A;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .balance-box .label {
+            font-size: 12pt;
+            margin-bottom: 5px;
+        }
+        .balance-box .amount {
+            font-size: 24pt;
+            font-weight: bold;
+        }
+        .fines-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .fines-table th {
+            background-color: #5C4F3D;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-size: 10pt;
+        }
+        .fines-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 10pt;
+        }
+        .fines-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .fines-table .total-row {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+        .payment-options {
+            background-color: #E8F5E9;
+            border: 1px solid #4CAF50;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .payment-options h4 {
+            color: #2E7D32;
+            margin: 0 0 10px 0;
+        }
+        .payment-options ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .warning-box {
+            background-color: #FFF5F5;
+            border: 1px solid #C41E3A;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning-box h4 {
+            color: #C41E3A;
+            margin: 0 0 10px 0;
+        }
+        .contact-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 9pt;
+            color: #666;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="notice-header">
+        <div class="library-name">{{ library_name }}</div>
+        <div class="library-address">
+            {{ library_address }}<br>
+            {{ library_phone }} | {{ library_email }}
+        </div>
+    </div>
+
+    <div class="notice-date">Notice Date: {{ notice_date }}</div>
+
+    <div class="notice-title">FINE NOTICE</div>
+
+    <div class="patron-info">
+        <strong>{{ patron_name }}</strong><br>
+        Library Card: {{ library_card }}
+    </div>
+
+    <p>Dear {{ patron_first_name }},</p>
+
+    <p>We're writing to let you know about fines on your library account. There are several easy ways to take care of this, and our staff are always happy to help if you have questions.</p>
+
+    <div class="balance-box">
+        <div class="label">Total Amount Due</div>
+        <div class="amount">${{ total_balance }}</div>
+    </div>
+
+    <h4>Fine Details</h4>
+    <table class="fines-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Item</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fine in fines %}
+            <tr>
+                <td>{{ fine.description }}</td>
+                <td>{{ fine.date }}</td>
+                <td>{{ fine.item_title }}</td>
+                <td>${{ fine.amount }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="total-row">
+                <td colspan="3">Total</td>
+                <td>${{ total_balance }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="payment-options">
+        <h4>Payment Options</h4>
+        <ul>
+            <li><strong>In Person:</strong> Visit any library branch during open hours</li>
+            <li><strong>Online:</strong> Pay securely at {{ library_website }}</li>
+            <li><strong>By Phone:</strong> Call {{ library_phone }}</li>
+            <li><strong>By Mail:</strong> Send check or money order to the address above</li>
+        </ul>
+        <p><em>We accept cash, check, credit/debit cards, and money orders.</em></p>
+    </div>
+
+    {% if account_blocked %}
+    <div class="warning-box">
+        <h4>Account Status: Temporarily Limited</h4>
+        <p>Because your fines have exceeded ${{ block_threshold }}, borrowing is paused until the balance is reduced. You can pay in full or make a partial payment - any amount helps. Your holds, reading history, and account are all safe and waiting for you.</p>
+    </div>
+    {% endif %}
+
+    {% if payment_plan_available %}
+    <p><strong>Need a payment plan?</strong> We offer flexible payment arrangements for balances over ${{ payment_plan_minimum }}. Please speak with a staff member or call us to discuss options.</p>
+    {% endif %}
+
+    <div class="contact-info">
+        <strong>Questions about your fines?</strong><br>
+        Visit us at {{ library_address }}<br>
+        Call us at {{ library_phone }}<br>
+        Email us at {{ library_email }}<br>
+        Library Hours: {{ library_hours }}
+    </div>
+
+    <div class="footer">
+        This notice was generated on {{ generated_date }}.<br>
+        {{ library_name }} - Serving our community since {{ library_since }}.
+    </div>
+</body>
+</html>

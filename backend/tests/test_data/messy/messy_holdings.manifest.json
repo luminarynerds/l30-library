@@ -1,0 +1,29 @@
+{
+  "job_type": "holdings",
+  "rows": [
+    {
+      "row": 1,
+      "defect_class": "valid",
+      "expected_outcome": "valid",
+      "note": "clean row, catalog_id substituted at upload"
+    },
+    {
+      "row": 2,
+      "defect_class": "whitespace_condition",
+      "expected_outcome": "valid",
+      "note": "padded condition string"
+    },
+    {
+      "row": 3,
+      "defect_class": "empty_required_barcode",
+      "expected_outcome": "error",
+      "note": "item_barcode required"
+    },
+    {
+      "row": 4,
+      "defect_class": "non_numeric_catalog_id",
+      "expected_outcome": "error",
+      "note": "validator flags non-numeric id"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "$comment": "Auto-generated from app.schemas.circulation.HoldAgingBracket. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "properties": {
+    "bracket_label": {
+      "title": "Bracket Label",
+      "type": "string"
+    },
+    "count": {
+      "title": "Count",
+      "type": "integer"
+    },
+    "max_days": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Max Days"
+    },
+    "min_days": {
+      "title": "Min Days",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "bracket_label",
+    "min_days",
+    "max_days",
+    "count"
+  ],
+  "title": "HoldAgingBracket",
+  "type": "object"
+}

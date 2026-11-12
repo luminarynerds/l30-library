@@ -1,0 +1,10 @@
+name,email,barcode,patron_type
+Alice Johnson,alice@example.com,L30-AAAA-0001,PATRON
+O’Brien,obrien@example.com,L30-AAAA-0002,PATRON
+Jane Doe,jane@example.com,L30-AAAA-0003,PATRON
+  Bob  Spaces  ,  bob@example.com  ,L30-AAAA-0004,patron
+No Email,,L30-AAAA-0005,PATRON
+Bad Email,not-an-email,L30-AAAA-0006,PATRON
+Bad Barcode,bb@example.com,!!! bad !!!,PATRON
+Mystery Role,mr@example.com,L30-AAAA-0008,WIZARD
+Dup Alice,ALICE@EXAMPLE.COM,L30-AAAA-0009,PATRON

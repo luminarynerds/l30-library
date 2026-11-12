@@ -1,0 +1,123 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Mutation Testing (Critical Domains)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_module:
+        description: 'Module to mutate (e.g., app/domain/finance/)'
+        required: false
+        default: 'app/domain/finance/'
+
+jobs:
+  mutation-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    services:
+      # Ephemeral CI-only database, created fresh each run and destroyed after workflow completes
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: lsc
+          POSTGRES_PASSWORD: test_password  # Ephemeral CI-only database, destroyed after workflow run
+          POSTGRES_DB: lsc_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    strategy:
+      matrix:
+        target:
+          - name: finance-domain
+            path: app/domain/finance/
+            tests: tests/e2e/test_payment_e2e.py tests/unit/test_fine_calculation.py
+          - name: circulation-domain
+            path: app/domain/circulation/
+            tests: tests/e2e/test_circulation_e2e.py tests/unit/test_circulation_race.py
+          - name: makerspace-domain
+            path: app/domain/makerspaces/
+            tests: tests/e2e/test_makerspace_e2e.py
+          - name: fine-service
+            path: app/services/fine_service.py
+            tests: tests/services/test_fine_service.py tests/e2e/test_payment_e2e.py
+          - name: hold-service
+            path: app/services/hold_service.py
+            tests: tests/test_hold_expiration_scheduler.py tests/test_workflow_hold_lifecycle.py
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install -e ".[dev]"
+          pip install mutmut>=2.4.0
+
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U lsc; do
+            sleep 1
+          done
+
+      - name: Initialize test database
+        working-directory: backend
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        run: |
+          python -c "
+          import asyncio
+          from tests.database_setup import initialize_test_database
+          asyncio.run(initialize_test_database('$TEST_DATABASE_URL', use_alembic=False))
+          "
+
+      - name: Run mutation testing - ${{ matrix.target.name }}
+        working-directory: backend
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+        run: |
+          TARGET="${{ github.event.inputs.target_module || matrix.target.path }}"
+          mutmut run \
+            --paths-to-mutate="$TARGET" \
+            --tests-dir=tests \
+            --runner="python -m pytest ${{ matrix.target.tests }} -x -q --no-header --tb=no" \
+            --no-progress \
+            || true  # Don't fail the workflow on surviving mutants
+
+      - name: Generate mutation report
+        working-directory: backend
+        if: always()
+        run: |
+          echo "## Mutation Testing Results: ${{ matrix.target.name }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          mutmut results 2>/dev/null >> $GITHUB_STEP_SUMMARY || echo "No results available" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # Calculate mutation score
+          KILLED=$(mutmut results 2>/dev/null | grep -c "Killed" || echo "0")
+          SURVIVED=$(mutmut results 2>/dev/null | grep -c "Survived" || echo "0")
+          TOTAL=$((KILLED + SURVIVED))
+          if [ "$TOTAL" -gt 0 ]; then
+            SCORE=$(echo "scale=1; $KILLED * 100 / $TOTAL" | bc)
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Mutation Score: ${SCORE}%** (${KILLED}/${TOTAL} killed)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload mutation results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: mutation-report-${{ matrix.target.name }}
+          path: backend/.mutmut-cache/
+          retention-days: 30

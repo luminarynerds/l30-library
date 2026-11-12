@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://l30.org/sitemap-pages.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://l30.org/api/v1/blog/sitemap.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://l30.org/api/v1/events/sitemap-events.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://l30.org/api/v1/seo/learn/sitemap.xml</loc>
+  </sitemap>
+</sitemapindex>

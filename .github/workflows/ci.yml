@@ -1,0 +1,165 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  backend-lint:
+    name: Backend lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install ruff
+        run: pip install ruff
+      - name: ruff check
+        working-directory: backend
+        run: ruff check app
+
+  backend-smoke:
+    name: Backend smoke tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: l30
+          POSTGRES_PASSWORD: l30  # ephemeral CI-only database
+          POSTGRES_DB: l30_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/pyproject.toml
+      - name: Size PostgreSQL lock table for the full model schema
+        # Fresh create_all holds locks on thousands of tables, indexes and sequences.
+        # PostgreSQL's default of 64 exhausts the shared lock table before commit.
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          docker exec "$PG_CONTAINER" psql -U l30 -d l30_test -v ON_ERROR_STOP=1 \
+            -c 'ALTER SYSTEM SET max_locks_per_transaction = 1024;'
+          docker restart "$PG_CONTAINER"
+          for attempt in {1..30}; do
+            if docker exec "$PG_CONTAINER" pg_isready -U l30 -d l30_test; then
+              docker exec "$PG_CONTAINER" psql -U l30 -d l30_test -Atqc \
+                'SHOW max_locks_per_transaction' | grep -qx 1024
+              exit 0
+            fi
+            sleep 1
+          done
+          exit 1
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install -e .
+          pip install pytest pytest-asyncio pytest-cov aiosqlite jsonschema faker
+      - name: Create test DB extensions
+        run: |
+          PGPASSWORD=l30 psql -h localhost -U l30 -d l30_test \
+            -c 'CREATE EXTENSION IF NOT EXISTS vector;' \
+            -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm;' \
+            -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto;'
+      - name: Pre-create /app paths
+        # Several modules default to hardcoded /app paths (uploads, branding,
+        # cover cache); the runner user can't create them at request time.
+        run: sudo mkdir -p /app/uploads && sudo chown -R "$USER" /app
+      - name: Run smoke suite
+        working-directory: backend
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://l30:l30@localhost:5432/l30_test
+          SECRET_KEY: test-secret-key-ci-only
+          PII_ENCRYPTION_ENABLED: 'false'
+        run: pytest -m smoke tests/smoke -q
+
+      - name: Dependency security regressions
+        working-directory: backend
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://l30:l30@localhost:5432/l30_test
+          TEST_REQUIRE_POSTGRES: '1'
+          SECRET_KEY: test-secret-key-ci-only
+          PII_ENCRYPTION_ENABLED: 'false'
+        run: >-
+          pytest tests/test_images_cover.py tests/test_catalog_reranker.py
+          tests/core/test_sanitization.py tests/unit/test_jwt_key_rotation.py -q
+
+  backend-typecheck-delta:
+    name: Backend type-check (ratchet)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements-typecheck.txt
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install -r requirements-typecheck.txt
+      - name: Type ratchet regression tests
+        working-directory: backend
+        run: python -m unittest discover -s scripts/tests -v
+      - name: mypy delta (blocks only NEW errors)
+        working-directory: backend
+        run: python scripts/mypy_delta.py
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      # Page backgrounds must use the tenant-theme-aware token (bg-lsc-cream),
+      # not the raw palette shade — raw bg-earth-50 wrappers ignore per-tenant
+      # theming and render the stock lavender on themed installs (swept 2026-07-05).
+      - name: No raw bg-earth-50 page wrappers
+        run: |
+          if grep -rn "min-h-screen bg-earth-50" src --include="*.tsx"; then
+            echo "::error::Use bg-lsc-cream (tenant surface token) for page backgrounds, not raw bg-earth-50."
+            exit 1
+          fi
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      # Full-repo missing-key check: pre-commit only covers staged files, so
+      # keys lost in merges slip through without this. Baseline is 0 as of
+      # 2026-07-06 — keep it there.
+      - name: i18n keys resolve (lint:i18n)
+        run: npm run lint:i18n
+      - name: Translation catalogs complete (en/es parity)
+        run: node ../scripts/validate-translations.js
+      - name: Build
+        run: npm run build
+      - name: Type ratchet regression tests
+        run: node --test scripts/tsc-delta.test.mjs
+      - name: Type-check delta (ratchet — blocks only NEW errors)
+        env:
+          # The full source tree exceeds Node's default compiler heap.
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: node scripts/tsc-delta.mjs
+      # NOTE: coverage-floor gate deferred. The full-suite vitest --coverage run
+      # fails on a pre-existing CI-only flake (src/pages/events/utils/formatters.test.ts
+      # passes in isolation, fails in the full CI run; local single-thread runs are
+      # inconclusive due to coverage/.tmp collisions). Re-add once that's root-caused.

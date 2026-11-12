@@ -1,0 +1,4 @@
+name,email,barcode,phone,address,patron_type,home_branch
+,bad-email,!!!INVALID!!!,,,UNKNOWN_TYPE,
+Valid Person,valid@example.com,LSC-VALID-001,555-0010,"Addr",PATRON,MAIN
+,,,,,,,

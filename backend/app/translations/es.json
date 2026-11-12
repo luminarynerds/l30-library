@@ -1,0 +1,131 @@
+{
+  "email": {
+    "automated_notice": "Esta es una notificación automática. Por favor no responda a este correo.",
+    "checkout_receipt": {
+      "subject": "Recibo de préstamo: {item_title}",
+      "heading": "Artículo prestado",
+      "greeting": "Hola {user_name},",
+      "body": "Has prestado exitosamente el siguiente artículo:",
+      "due_date_label": "Fecha de vencimiento:",
+      "checked_out_label": "Prestado:",
+      "return_reminder": "Por favor devuelve este artículo antes de la fecha de vencimiento para que otros también puedan disfrutarlo.",
+      "return_reminder_extended": "Por favor devuelve este artículo antes de la fecha de vencimiento para que otros también puedan disfrutarlo. Puedes devolver artículos en cualquier sucursal o buzón de devolución.",
+      "view_checkouts": "Ver mis préstamos"
+    },
+    "due_date_reminder": {
+      "subject": "Recordatorio de vencimiento: {item_title}",
+      "heading": "Recordatorio de vencimiento",
+      "greeting": "Hola {user_name},",
+      "body": "Este es un recordatorio amable de que el siguiente artículo vence en {days_until_due} día(s):",
+      "due_date_label": "Fecha de vencimiento:",
+      "return_or_renew": "Por favor devuelve o renueva este artículo antes de la fecha de vencimiento.",
+      "return_or_renew_extended": "Por favor devuelve o renueva este artículo antes de la fecha de vencimiento. ¿Necesitas más tiempo? ¡Puedes renovar fácilmente en línea o en la biblioteca!",
+      "view_checkouts": "Renovar o ver préstamos"
+    },
+    "overdue_notice": {
+      "subject": "Aviso de artículo vencido: {item_title}",
+      "heading": "Aviso de artículo vencido",
+      "greeting": "Hola {user_name},",
+      "body": "El siguiente artículo tiene <strong>{days_overdue} día(s) de retraso</strong>.",
+      "body_extended": "El siguiente artículo tiene <strong>{days_overdue} día(s) de retraso</strong>. Por favor devuélvelo lo antes posible.",
+      "was_due_label": "Venció:",
+      "days_overdue_label": "Días de retraso:",
+      "return_message": "Por favor devuelve este artículo cuando puedas para que otros puedan disfrutarlo.",
+      "return_message_extended": "¡Sabemos que la vida es ajetreada! Por favor devuelve este artículo cuando puedas para que otros puedan disfrutarlo. Puedes devolver artículos en cualquier sucursal o buzón de devolución. ¿Necesitas ayuda? ¡Solo pregunta!",
+      "view_checkouts": "Ver mis préstamos"
+    },
+    "hold_ready": {
+      "subject": "Tu reserva está lista: {item_title}",
+      "heading": "¡Tu reserva está lista!",
+      "greeting": "Hola {user_name},",
+      "body": "¡Buenas noticias! El artículo que reservaste ya está disponible para recoger.",
+      "pickup_by_label": "Recoger antes de:",
+      "pickup_location_label": "Lugar de recogida:",
+      "pickup_reminder": "Por favor recoge tu artículo antes de la fecha indicada.",
+      "pickup_reminder_extended": "Por favor recoge tu artículo antes de la fecha indicada. Después de esta fecha, la reserva expirará y el artículo estará disponible para el siguiente usuario en la cola.",
+      "view_holds": "Ver mis reservas"
+    },
+    "hold_expiring": {
+      "subject": "Reserva por vencer: {item_title}",
+      "heading": "Reserva por vencer",
+      "greeting": "Hola {user_name},",
+      "body": "Tu reserva expirará en {days_until_expiry} día(s). ¡Por favor recoge tu artículo pronto!",
+      "expires_label": "Expira:",
+      "expiry_warning": "Si no recoges este artículo antes de que expire, estará disponible para el siguiente usuario en la cola.",
+      "view_holds": "Ver mis reservas"
+    },
+    "hold_cancelled": {
+      "subject": "Reserva cancelada: {item_title}",
+      "heading": "Reserva cancelada",
+      "greeting": "Hola {user_name},",
+      "body": "Tu reserva del siguiente artículo ha sido cancelada.",
+      "reason_label": "Motivo:"
+    },
+    "fine_notice": {
+      "subject": "Aviso de multa - {amount}",
+      "heading": "Aviso de multa",
+      "greeting": "Hola {user_name},",
+      "body": "Se ha agregado una multa de {amount} a tu cuenta.",
+      "item_label": "Artículo:",
+      "amount_label": "Monto:",
+      "view_account": "Ver mi cuenta"
+    },
+    "welcome": {
+      "subject": "¡Bienvenido a {library_name}!",
+      "heading": "¡Bienvenido a la biblioteca!",
+      "greeting": "Hola {user_name},",
+      "body": "Tu cuenta de biblioteca ha sido creada exitosamente. Tu número de tarjeta de biblioteca es:",
+      "card_number_label": "Tarjeta de biblioteca:",
+      "get_started": "Comienza explorando nuestro catálogo, revisando los eventos o explorando nuestros recursos digitales.",
+      "explore_catalog": "Explorar el catálogo"
+    },
+    "password_reset": {
+      "subject": "Solicitud de restablecimiento de contraseña",
+      "heading": "Restablecer contraseña",
+      "greeting": "Hola {user_name},",
+      "body": "Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón a continuación para crear una nueva contraseña.",
+      "reset_button": "Restablecer contraseña",
+      "expiry_notice": "Este enlace expirará en {hours} horas.",
+      "ignore_notice": "Si no solicitaste esto, puedes ignorar este correo de forma segura."
+    },
+    "account_deletion": {
+      "subject": "Eliminación de cuenta programada",
+      "heading": "Eliminación de cuenta programada",
+      "greeting": "Hola {user_name},",
+      "body": "Tu cuenta ha sido programada para eliminación el {date}.",
+      "cancel_notice": "Si cambias de opinión, puedes cancelar esta solicitud antes de esa fecha iniciando sesión en tu cuenta.",
+      "view_account": "Ver mi cuenta"
+    },
+    "due_group": {
+      "greeting": "Hola {user_name},",
+      "subject_predue": "Recordatorio: artículos por vencer en 3 días",
+      "intro_predue": "Solo un aviso: estos artículos vencen en 3 días.",
+      "subject_due_today": "Recordatorio: tus artículos de la biblioteca vencen hoy",
+      "intro_due_today": "Estos artículos vencen hoy. Devuélvelos o renuévalos ahora para evitar avisos de vencimiento.",
+      "subject_overdue": "Aviso de vencimiento (Día {day}) - por favor devuelve tus artículos de la biblioteca",
+      "intro_overdue": "Este es tu aviso de vencimiento del día {day}. Por favor devuelve estos artículos lo antes posible.",
+      "item_due_label": "(vence el {due_date})",
+      "manage_items_button": "Gestionar mis préstamos",
+      "sent_footer": "Enviado el {date} por {app_name}."
+    }
+  },
+  "notifications": {
+    "checkout_receipt": "Artículo {item_title} prestado. Vence: {due_date}",
+    "due_date_reminder": "El artículo {item_title} vence en {days_until_due} día(s)",
+    "overdue_notice": "El artículo {item_title} tiene {days_overdue} día(s) de retraso",
+    "hold_ready": "El artículo {item_title} está listo para recoger hasta {expires_at}",
+    "hold_expiring": "Tu reserva expira en {days_until_expiry} día(s)",
+    "hold_cancelled": "Tu reserva de {item_title} ha sido cancelada",
+    "fine_added": "Se agregó una multa de {amount} a tu cuenta"
+  },
+  "sms": {
+    "delivery_reminder": "Recordatorio de entrega de la biblioteca: Mañana {time_window}. {item_count} artículos.",
+    "delivery_scheduled": "Entrega de la biblioteca programada para {delivery_date} entre {time_window}.",
+    "panic_alert": "URGENTE: Alerta de pánico en {location}. Personal: {staff_name}. Revisar app AHORA. Alerta #{alert_number}"
+  },
+  "common": {
+    "by": "por {author}",
+    "soon": "Pronto",
+    "library_name": "Biblioteca Regional de Library 2030 Creek"
+  }
+}

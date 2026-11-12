@@ -1,0 +1,112 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.4;
+            color: #333;
+            margin: 0;
+            padding: 15px;
+            max-width: 4in;
+        }
+        .slip-container {
+            border: 2px dashed #2C1810;
+            padding: 20px;
+            text-align: center;
+            min-height: 3in;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .header {
+            font-weight: bold;
+            font-size: 14pt;
+            color: #2C1810;
+            margin-bottom: 20px;
+        }
+        .library-name {
+            font-size: 11pt;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .patron-info {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #F0EDE8;
+            border-radius: 5px;
+        }
+        .label {
+            font-size: 10pt;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .value {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #2C1810;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        .barcode-section {
+            margin: 20px 0;
+        }
+        .barcode {
+            font-family: 'Code39', 'Courier New', monospace;
+            font-size: 24pt;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 10px 0;
+        }
+        .instruction {
+            font-size: 9pt;
+            color: #666;
+            font-style: italic;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .footer {
+            font-size: 8pt;
+            color: #999;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="slip-container">
+        <div>
+            <div class="header">Hold Ready for Pickup</div>
+            <div class="library-name">{{ library_name }}</div>
+        </div>
+
+        <div class="patron-info">
+            <div class="label">Patron Card Number</div>
+            <div class="value">{{ library_card }}</div>
+
+            <div class="barcode-section">
+                <div class="label">Scan Below</div>
+                <div class="barcode">*{{ barcode_value }}*</div>
+            </div>
+        </div>
+
+        <div>
+            <div class="instruction">
+                Staff: Scan barcode to retrieve item(s).<br>
+                Item details are private.
+            </div>
+
+            <div class="footer">
+                {{ notice_date }}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,154 @@
+{
+  "$comment": "Auto-generated from app.schemas.fine.PatronFineResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "FineType": {
+      "enum": [
+        "overdue",
+        "lost_item",
+        "damaged_item",
+        "other"
+      ],
+      "title": "FineType",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Amount"
+    },
+    "amount_paid": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Amount Paid"
+    },
+    "balance": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Balance"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Description"
+    },
+    "fine_type": {
+      "$ref": "#/$defs/FineType"
+    },
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "item_author": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Author"
+    },
+    "item_title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Title"
+    },
+    "paid_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Paid At"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "waived": {
+      "title": "Waived",
+      "type": "boolean"
+    },
+    "waived_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Waived At"
+    }
+  },
+  "required": [
+    "id",
+    "fine_type",
+    "status",
+    "amount",
+    "amount_paid",
+    "balance",
+    "description",
+    "paid_at",
+    "waived",
+    "waived_at"
+  ],
+  "title": "PatronFineResponse",
+  "type": "object"
+}

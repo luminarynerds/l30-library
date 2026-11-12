@@ -1,0 +1,12 @@
+# Copy this block (between the --- fences) into the top of every new doc.
+# Fill in each value before writing the doc body.
+---
+title: <human-readable title for navigation and search>
+audience: <one of: all-staff | circulation | tech-services | youth-services | admin>
+diataxis: <one of: tutorial | how-to | reference>
+estimated_time: <e.g. "15 min", "1-2 hours">
+last_reviewed: <YYYY-MM-DD; the date this doc was last read end-to-end>
+app_routes:
+  - <relative path, e.g. /staff/patrons>
+  - <another route if applicable>
+---

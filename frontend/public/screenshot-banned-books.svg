@@ -1,0 +1,65 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" style="background:#faf8f5;font-family:'DM Sans',sans-serif">
+  <!-- Browser bar -->
+  <rect width="800" height="50" fill="#2C241B"/>
+  <circle cx="20" cy="25" r="6" fill="rgba(193,90,49,0.5)"/>
+  <circle cx="36" cy="25" r="6" fill="rgba(196,162,101,0.5)"/>
+  <circle cx="52" cy="25" r="6" fill="rgba(232,224,212,0.3)"/>
+  <text x="70" y="32" font-size="11" fill="#888">l30.org/catalog/banned-books</text>
+
+  <!-- Content area -->
+  <rect x="0" y="50" width="800" height="550" fill="#faf8f5"/>
+
+  <!-- Header -->
+  <text x="40" y="90" font-size="20" font-weight="700" fill="#2C241B">📚 Banned Books Tracker</text>
+  <text x="40" y="110" font-size="11" fill="#999">Monitor & advocate for intellectual freedom</text>
+
+  <!-- Stats -->
+  <g>
+    <rect x="40" y="130" width="175" height="70" fill="#fff" stroke="#e5e5e5" stroke-width="1" rx="6"/>
+    <text x="55" y="148" font-size="11" font-weight="600" fill="#666">Challenges</text>
+    <text x="55" y="172" font-size="22" font-weight="700" fill="#C15A31">7</text>
+
+    <rect x="235" y="130" width="175" height="70" fill="#fff" stroke="#e5e5e5" stroke-width="1" rx="6"/>
+    <text x="250" y="148" font-size="11" font-weight="600" fill="#666">Advocacy</text>
+    <text x="250" y="172" font-size="22" font-weight="700" fill="#C15A31">42</text>
+
+    <rect x="430" y="130" width="175" height="70" fill="#fff" stroke="#e5e5e5" stroke-width="1" rx="6"/>
+    <text x="445" y="148" font-size="11" font-weight="600" fill="#666">Discussion</text>
+    <text x="445" y="172" font-size="22" font-weight="700" fill="#C15A31">134</text>
+
+    <rect x="625" y="130" width="135" height="70" fill="#fff" stroke="#e5e5e5" stroke-width="1" rx="6"/>
+    <text x="640" y="148" font-size="11" font-weight="600" fill="#666">Preserved</text>
+    <text x="640" y="172" font-size="22" font-weight="700" fill="#C15A31">5</text>
+  </g>
+
+  <!-- Books list -->
+  <text x="40" y="230" font-size="12" font-weight="600" fill="#333">Recently Challenged</text>
+
+  <!-- Book row 1 -->
+  <rect x="40" y="245" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+  <rect x="50" y="252" width="35" height="40" fill="#d4a574" rx="3"/>
+  <text x="100" y="263" font-size="12" font-weight="600" fill="#333">Gender Queer</text>
+  <text x="100" y="279" font-size="10" fill="#999">Maia Kobabe • Sexual content, LGBTQ+ themes</text>
+  <rect x="710" y="255" width="50" height="26" fill="#22863a" rx="4"/>
+  <text x="735" y="271" font-size="9" fill="#fff" font-weight="600" text-anchor="middle">In Stock</text>
+
+  <!-- Book row 2 -->
+  <rect x="40" y="310" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+  <rect x="50" y="317" width="35" height="40" fill="#8B5A3A" rx="3"/>
+  <text x="100" y="328" font-size="12" font-weight="600" fill="#333">The Handmaid's Tale</text>
+  <text x="100" y="344" font-size="10" fill="#999">Margaret Atwood • Violence, anti-religious themes</text>
+  <rect x="710" y="320" width="50" height="26" fill="#fbbf24" rx="4"/>
+  <text x="735" y="336" font-size="9" fill="#333" font-weight="600" text-anchor="middle">On Hold</text>
+
+  <!-- Book row 3 -->
+  <rect x="40" y="375" width="720" height="50" fill="#fff" stroke="#f0f0f0" stroke-width="1" rx="4"/>
+  <rect x="50" y="382" width="35" height="40" fill="#c15a31" rx="3"/>
+  <text x="100" y="393" font-size="12" font-weight="600" fill="#333">Demon Copperhead</text>
+  <text x="100" y="409" font-size="10" fill="#999">Barbara Kingsolver • Abuse content, substance use</text>
+  <rect x="710" y="385" width="50" height="26" fill="#22863a" rx="4"/>
+  <text x="735" y="401" font-size="9" fill="#fff" font-weight="600" text-anchor="middle">In Stock</text>
+</svg>

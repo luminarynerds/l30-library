@@ -1,0 +1,24 @@
+{
+  "$comment": "Auto-generated from app.schemas.circulation.CirculationStats. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "properties": {
+    "active_checkouts": {
+      "title": "Active Checkouts",
+      "type": "integer"
+    },
+    "overdue_items": {
+      "title": "Overdue Items",
+      "type": "integer"
+    },
+    "pending_holds": {
+      "title": "Pending Holds",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "active_checkouts",
+    "pending_holds",
+    "overdue_items"
+  ],
+  "title": "CirculationStats",
+  "type": "object"
+}

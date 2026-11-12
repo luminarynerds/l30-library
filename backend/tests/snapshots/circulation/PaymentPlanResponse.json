@@ -1,0 +1,227 @@
+{
+  "$comment": "Auto-generated from app.schemas.fine.PaymentPlanResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "PaymentPlanFrequency": {
+      "enum": [
+        "weekly",
+        "biweekly",
+        "monthly"
+      ],
+      "title": "PaymentPlanFrequency",
+      "type": "string"
+    },
+    "PaymentPlanStatus": {
+      "enum": [
+        "active",
+        "completed",
+        "cancelled",
+        "defaulted"
+      ],
+      "title": "PaymentPlanStatus",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "amount_paid": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Amount Paid"
+    },
+    "completed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Completed At"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "created_by_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Created By Id"
+    },
+    "created_by_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created By Name"
+    },
+    "frequency": {
+      "$ref": "#/$defs/PaymentPlanFrequency"
+    },
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "installment_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Installment Amount"
+    },
+    "last_reminder_sent": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Last Reminder Sent"
+    },
+    "next_payment_date": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Next Payment Date"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Notes"
+    },
+    "payments_made": {
+      "title": "Payments Made",
+      "type": "integer"
+    },
+    "progress_percentage": {
+      "title": "Progress Percentage",
+      "type": "number"
+    },
+    "remaining_balance": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Remaining Balance"
+    },
+    "reminder_enabled": {
+      "title": "Reminder Enabled",
+      "type": "boolean"
+    },
+    "start_date": {
+      "format": "date-time",
+      "title": "Start Date",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/PaymentPlanStatus"
+    },
+    "total_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Total Amount"
+    },
+    "total_payments_expected": {
+      "title": "Total Payments Expected",
+      "type": "integer"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Updated At"
+    },
+    "user_id": {
+      "title": "User Id",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "user_id",
+    "total_amount",
+    "installment_amount",
+    "frequency",
+    "status",
+    "amount_paid",
+    "remaining_balance",
+    "payments_made",
+    "total_payments_expected",
+    "progress_percentage",
+    "start_date",
+    "next_payment_date",
+    "completed_at",
+    "reminder_enabled",
+    "last_reminder_sent",
+    "notes",
+    "created_by_id",
+    "updated_at"
+  ],
+  "title": "PaymentPlanResponse",
+  "type": "object"
+}

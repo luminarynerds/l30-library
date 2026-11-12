@@ -1,0 +1,19 @@
+[
+  "src/__tests__/pages/AlternateFormatsRequestPage.test.tsx::TS2322",
+  "src/__tests__/pages/staff/patrons/components/CardStatusFilter.test.tsx::TS2739",
+  "src/__tests__/utils/mock-helpers.ts::TS2741",
+  "src/__tests__/utils/test-utils.tsx::TS1360",
+  "src/__tests__/utils/test-utils.tsx::TS2345",
+  "src/__tests__/utils/test-utils.tsx::TS2741",
+  "src/components/banned-books/__tests__/TransparencyLog.test.tsx::TS2550",
+  "src/components/staff/book-club-history/__tests__/BookClubHistoryPanel.test.tsx::TS2550",
+  "src/components/staff/parent-onboarding/__tests__/SessionFollowupsAndReferrals.test.tsx::TS2488",
+  "src/components/staff/parent-onboarding/__tests__/SessionFollowupsAndReferrals.test.tsx::TS2532",
+  "src/extensions/__tests__/blog-image.test.ts::TS2353",
+  "src/pages/BlogListPage.test.tsx::TS2532",
+  "src/pages/ChildcarePage.test.tsx::TS2532",
+  "src/pages/__tests__/AdminBrandingPage.test.tsx::TS2740",
+  "src/pages/__tests__/BlogDetailPage.test.tsx::TS2550",
+  "src/pages/__tests__/StaffBlogPage.test.tsx::TS18048",
+  "src/pages/__tests__/StaffProgramPartnersPage.test.tsx::TS2550"
+]

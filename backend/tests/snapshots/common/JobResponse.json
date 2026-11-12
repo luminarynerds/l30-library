@@ -1,0 +1,72 @@
+{
+  "$comment": "Auto-generated from app.schemas.common.JobResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "example": {
+    "job_id": "job_550e8400_e29b_41d4_a716",
+    "message": "Hold expiry processing completed",
+    "result": {
+      "failed": 2,
+      "processed": 100,
+      "succeeded": 98
+    },
+    "status": "completed",
+    "status_code": 200,
+    "timestamp": "2026-01-28T10:30:45.123000+00:00"
+  },
+  "properties": {
+    "job_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Job identifier for tracking",
+      "title": "Job Id"
+    },
+    "message": {
+      "description": "Job description or result message",
+      "title": "Message",
+      "type": "string"
+    },
+    "result": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Job execution result data",
+      "title": "Result"
+    },
+    "status": {
+      "description": "Job status (pending, running, completed, failed, cancelled)",
+      "title": "Status",
+      "type": "string"
+    },
+    "status_code": {
+      "default": 200,
+      "description": "HTTP status code",
+      "title": "Status Code",
+      "type": "integer"
+    },
+    "timestamp": {
+      "description": "When the job completed or status was last updated",
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "message"
+  ],
+  "title": "JobResponse",
+  "type": "object"
+}

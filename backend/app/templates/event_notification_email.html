@@ -1,0 +1,261 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming Event: {{ event_title }}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 8px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .event-details {
+            background-color: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .detail-row {
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        .detail-icon {
+            width: 24px;
+            margin-right: 12px;
+            text-align: center;
+            color: #667eea;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .detail-text {
+            flex: 1;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        .detail-value {
+            color: #666;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        .description {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 20px 0;
+            text-align: center;
+            cursor: pointer;
+        }
+        .cta-button:hover {
+            background-color: #5568d3;
+        }
+        .button-container {
+            text-align: center;
+            margin: 25px 0;
+        }
+        .secondary-button {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 12px 25px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 0 10px;
+            text-align: center;
+        }
+        .secondary-button:hover {
+            background-color: #e0e0e0;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #e0e0e0;
+        }
+        .footer-link {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        .hashtags {
+            color: #667eea;
+            font-size: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .category-badge {
+            display: inline-block;
+            background-color: #e8eaf6;
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>{{ event_title }}</h1>
+            <p>An event you might enjoy from your library</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Category & Audience -->
+            {% if category or audience %}
+            <div style="text-align: center; margin-bottom: 20px;">
+                {% if category %}
+                <span class="category-badge">{{ category }}</span>
+                {% endif %}
+                {% if audience %}
+                <span class="category-badge">{{ audience }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Event Details -->
+            <div class="event-details">
+                <!-- Date & Time -->
+                <div class="detail-row">
+                    <div class="detail-icon">📅</div>
+                    <div class="detail-text">
+                        <div class="detail-label">When</div>
+                        <div class="detail-value">
+                            {{ event_date_formatted }}
+                            {% if event_time %}<br/>{{ event_time }}{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="detail-row">
+                    <div class="detail-icon">📍</div>
+                    <div class="detail-text">
+                        <div class="detail-label">Where</div>
+                        <div class="detail-value">{{ location }}</div>
+                    </div>
+                </div>
+
+                <!-- Registration -->
+                {% if registration_required %}
+                <div class="detail-row">
+                    <div class="detail-icon">✓</div>
+                    <div class="detail-text">
+                        <div class="detail-label">Registration</div>
+                        <div class="detail-value">Required</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            {% if description %}
+            <div class="description">
+                {{ description }}
+            </div>
+            {% endif %}
+
+            <!-- Call to Action -->
+            <div class="button-container">
+                <a href="{{ registration_url }}" class="cta-button">
+                    {% if registration_required %}
+                        Register Now
+                    {% else %}
+                        Learn More & Register
+                    {% endif %}
+                </a>
+            </div>
+
+            <!-- Additional Info -->
+            <div style="margin: 20px 0; padding: 15px; background-color: #f9f9f9; border-radius: 4px; font-size: 13px; color: #666; line-height: 1.5;">
+                <strong>Can't make it?</strong> You can unsubscribe from these event notifications, or update your interests at any time.
+            </div>
+
+            <!-- Hashtags -->
+            {% if hashtags %}
+            <div class="hashtags">
+                {% for hashtag in hashtags %}
+                    #{{ hashtag }}{% if not loop.last %}&nbsp;&nbsp;{% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p style="margin: 0 0 10px 0;">
+                Sent by {{ library_name }} Library
+            </p>
+            <p style="margin: 0;">
+                <a href="{{ unsubscribe_url }}" class="footer-link">Unsubscribe from newsletters</a> •
+                <a href="{{ preferences_url }}" class="footer-link">Manage preferences</a>
+            </p>
+            <p style="margin: 10px 0 0 0; color: #bbb;">
+                We respect your privacy. You'll only receive emails about events you're interested in.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

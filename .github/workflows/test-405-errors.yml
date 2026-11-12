@@ -1,0 +1,205 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Test HTTP 405 Error Prevention
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-405-prevention:
+    name: 405 Error Prevention Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      # Ephemeral CI-only database, created fresh each run and destroyed after workflow completes
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: lsc
+          POSTGRES_PASSWORD: test_password  # Ephemeral CI-only database, destroyed after workflow run
+          POSTGRES_DB: lsc_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install pytest-timeout
+
+      - name: Wait for PostgreSQL
+        run: |
+          python -c "
+          import psycopg2
+          import time
+          import os
+          for i in range(30):
+              try:
+                  conn = psycopg2.connect(
+                      host='localhost',
+                      database='lsc_test',
+                      user='lsc',
+                      password='test_password'
+                  )
+                  conn.close()
+                  print('PostgreSQL is ready')
+                  break
+              except:
+                  time.sleep(1)
+          else:
+              raise Exception('PostgreSQL failed to start')
+          "
+
+      - name: Create test database schema
+        working-directory: backend
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+          DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+          SECRET_KEY: test-secret-key-ci-only
+          PII_ENCRYPTION_ENABLED: "false"
+        run: |
+          python -c "
+          import asyncio
+          from tests.database_setup import initialize_test_database
+          asyncio.run(initialize_test_database(use_alembic=False))
+          "
+
+      - name: Run 405 error prevention tests
+        continue-on-error: true
+        working-directory: backend
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+          DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+          SECRET_KEY: test-secret-key-ci-only
+          PII_ENCRYPTION_ENABLED: "false"
+          REDIS_URL: redis://localhost:6379/0
+        run: |
+          python -m pytest app/tests/test_endpoint_methods.py \
+            -c pytest_405.ini \
+            -v \
+            --tb=short \
+            --timeout=300 \
+            --junit-xml=test-results-405.xml \
+            --html=test-report-405.html \
+            --self-contained-html
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: 405-test-results
+          path: |
+            backend/test-results-405.xml
+            backend/test-report-405.html
+            backend/test_results_405.log
+          retention-days: 30
+
+      - name: Generate test summary
+        if: always()
+        working-directory: backend
+        run: |
+          if [ -f endpoint_gap_analysis.txt ]; then
+            echo "## 405 Test Analysis Report" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat endpoint_gap_analysis.txt >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = 'backend/endpoint_gap_analysis.txt';
+            if (fs.existsSync(path)) {
+              const report = fs.readFileSync(path, 'utf8');
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '## 405 Error Prevention Test Results\n\n' + '```\n' + report + '\n```'
+              });
+            }
+
+  test-integration:
+    name: 405 Integration with Full Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: test-405-prevention
+
+    services:
+      # Ephemeral CI-only database, created fresh each run and destroyed after workflow completes
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: lsc
+          POSTGRES_PASSWORD: test_password  # Ephemeral CI-only database, destroyed after workflow run
+          POSTGRES_DB: lsc_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run integrated endpoint tests
+        continue-on-error: true
+        working-directory: backend
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+          DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+          SECRET_KEY: test-secret-key-ci-only
+          PII_ENCRYPTION_ENABLED: "false"
+        run: |
+          python -m pytest app/tests/test_endpoint_methods.py::TestEndpointIntegrationWithRoutes \
+            -c pytest_405.ini \
+            -v \
+            --tb=short \
+            -m integration

@@ -1,0 +1,674 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Luminary Nerds
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+/**
+ * Accessible Print Stylesheet
+ *
+ * Optimized for printing with accessibility in mind:
+ * - High contrast black on white
+ * - Visible links with URLs
+ * - Larger text sizes
+ * - No background colors/images
+ * - Clear page breaks
+ * - Scannable barcode support
+ */
+
+/* Load barcode fonts for print - Code 39 and Code 128 support */
+@import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+39&family=Libre+Barcode+39+Extended+Text&family=Libre+Barcode+128&display=swap');
+
+@media print {
+  /* ========================================
+     RESET & BASICS
+     ======================================== */
+
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif !important;
+    font-size: 12pt !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+    padding: 0.5in !important;
+  }
+
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
+
+  h1 {
+    font-size: 24pt !important;
+    page-break-after: avoid;
+    margin-top: 0 !important;
+  }
+
+  h2 {
+    font-size: 18pt !important;
+    page-break-after: avoid;
+    margin-top: 1em !important;
+  }
+
+  h3 {
+    font-size: 14pt !important;
+    page-break-after: avoid;
+  }
+
+  h4, h5, h6 {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    page-break-after: avoid;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+    margin-bottom: 1em !important;
+  }
+
+  /* ========================================
+     LINKS
+     ======================================== */
+
+  /* Show link URLs after the link text */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 10pt;
+    color: #666 !important;
+    word-wrap: break-word;
+  }
+
+  /* Don't show URL for internal links or javascript */
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after,
+  a[href^="mailto:"]::after {
+    content: "";
+  }
+
+  /* Style mailto links nicely */
+  a[href^="mailto:"]::after {
+    content: " <" attr(href) ">";
+    font-size: 10pt;
+  }
+
+  /* Underline all links */
+  a {
+    text-decoration: underline !important;
+    color: black !important;
+  }
+
+  /* ========================================
+     HIDE NON-ESSENTIAL ELEMENTS
+     ======================================== */
+
+  /* Navigation and interactive elements */
+  nav,
+  header nav,
+  .nav,
+  .navbar,
+  .navigation,
+  .breadcrumb,
+  .sidebar,
+  .menu,
+  [role="navigation"],
+  [role="banner"] nav {
+    display: none !important;
+  }
+
+  /* UI controls */
+  button:not(.print-visible),
+  .btn,
+  .button,
+  input[type="button"],
+  input[type="submit"],
+  [role="button"]:not(.print-visible) {
+    display: none !important;
+  }
+
+  /* Forms (unless specifically marked for print) */
+  form:not(.print-visible),
+  input:not(.print-visible),
+  select:not(.print-visible),
+  textarea:not(.print-visible) {
+    display: none !important;
+  }
+
+  /* Interactive/dynamic content */
+  .modal,
+  .popup,
+  .tooltip,
+  .dropdown,
+  [role="dialog"],
+  [role="alertdialog"],
+  [role="menu"],
+  [role="listbox"],
+  .toast,
+  .notification,
+  [aria-label="Notifications"],
+  #__react-hot-toast {
+    display: none !important;
+  }
+
+  /* Accessibility tools (not needed in print) */
+  .reading-mask-container,
+  .line-focus-guide-element,
+  .voice-control-active,
+  .session-time-warning,
+  .accessibility-widget,
+  .quick-settings {
+    display: none !important;
+  }
+
+  /* Video and audio */
+  video,
+  audio,
+  iframe:not(.print-visible),
+  embed,
+  object {
+    display: none !important;
+  }
+
+  /* Ads and social */
+  .ad,
+  .advertisement,
+  .social-share,
+  .share-buttons,
+  [class*="social"],
+  [class*="ad-"] {
+    display: none !important;
+  }
+
+  /* Footer (keep minimal) */
+  footer {
+    border-top: 1pt solid #ccc !important;
+    padding-top: 0.5em !important;
+    margin-top: 2em !important;
+    font-size: 10pt !important;
+  }
+
+  footer nav,
+  footer .social,
+  footer button {
+    display: none !important;
+  }
+
+  /* ========================================
+     IMAGES
+     ======================================== */
+
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  /* Remove decorative images */
+  img[aria-hidden="true"],
+  img[role="presentation"],
+  img.decorative,
+  [data-decorative="true"] {
+    display: none !important;
+  }
+
+  /* Add alt text below images without alt */
+  img:not([alt])::after {
+    content: "[Image]";
+    display: block;
+    font-style: italic;
+    color: #666 !important;
+  }
+
+  /* ========================================
+     TABLES
+     ======================================== */
+
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  th,
+  td {
+    border: 1pt solid #ccc !important;
+    padding: 8pt !important;
+    text-align: left !important;
+  }
+
+  th {
+    background: #f5f5f5 !important;
+    font-weight: bold !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* ========================================
+     CODE & PRE
+     ======================================== */
+
+  pre,
+  code {
+    font-family: 'Courier New', monospace !important;
+    font-size: 10pt !important;
+    background: #f5f5f5 !important;
+    border: 1pt solid #ccc !important;
+    padding: 2pt 4pt !important;
+  }
+
+  pre {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    padding: 8pt !important;
+    page-break-inside: avoid;
+  }
+
+  /* ========================================
+     LISTS
+     ======================================== */
+
+  ul,
+  ol {
+    margin-left: 1.5em !important;
+    padding-left: 0 !important;
+  }
+
+  li {
+    margin-bottom: 0.5em !important;
+  }
+
+  /* ========================================
+     BLOCKQUOTES
+     ======================================== */
+
+  blockquote {
+    border-left: 3pt solid #ccc !important;
+    padding-left: 1em !important;
+    margin-left: 0 !important;
+    font-style: italic !important;
+    page-break-inside: avoid;
+  }
+
+  /* ========================================
+     PAGE BREAKS
+     ======================================== */
+
+  /* Avoid breaks after headings */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+
+  /* Avoid breaks inside these elements */
+  figure,
+  blockquote,
+  pre,
+  table,
+  ul,
+  ol {
+    page-break-inside: avoid;
+  }
+
+  /* Force breaks before major sections */
+  .page-break-before,
+  [data-print-break="before"] {
+    page-break-before: always;
+  }
+
+  .page-break-after,
+  [data-print-break="after"] {
+    page-break-after: always;
+  }
+
+  /* ========================================
+     ARTICLE/CONTENT SPECIFIC
+     ======================================== */
+
+  article,
+  main,
+  [role="main"],
+  .content,
+  .article-content {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Show print date */
+  body::after {
+    content: "Printed on " attr(data-print-date);
+    display: block;
+    margin-top: 2em;
+    font-size: 10pt;
+    color: #666 !important;
+    text-align: right;
+  }
+
+  /* ========================================
+     ACCESSIBILITY ENHANCEMENTS FOR PRINT
+     ======================================== */
+
+  /* Ensure abbreviations are expanded */
+  abbr[title]::after {
+    content: " (" attr(title) ")";
+    font-size: 10pt;
+  }
+
+  /* Show language for foreign text */
+  [lang]:not([lang="en"])::before {
+    content: "[" attr(lang) "] ";
+    font-size: 9pt;
+    color: #666 !important;
+  }
+
+  /* Mark required fields */
+  [aria-required="true"]::after,
+  .required::after {
+    content: " *";
+    color: black !important;
+  }
+
+  /* ========================================
+     SPECIAL CLASSES
+     ======================================== */
+
+  /* Hide on print */
+  .no-print,
+  .print-hide,
+  [data-print="hide"] {
+    display: none !important;
+  }
+
+  /* Show only on print */
+  .print-only,
+  [data-print="only"] {
+    display: block !important;
+  }
+
+  /* Print visible (override hiding) */
+  .print-visible {
+    display: block !important;
+  }
+
+  /* ========================================
+     BARCODE PRINTING
+     ======================================== */
+
+  /* Barcode container - ensure high contrast for scanning */
+  .barcode,
+  .barcode-container,
+  [data-barcode] {
+    background: white !important;
+    padding: 8pt 12pt !important;
+    margin: 8pt 0 !important;
+  }
+
+  /* Font-based barcodes (Code 39) */
+  .barcode-font,
+  .barcode-39 {
+    font-family: 'Libre Barcode 39', 'Libre Barcode 39 Extended Text', monospace !important;
+    font-size: 48pt !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0 !important;
+    color: black !important;
+    background: white !important;
+    display: block !important;
+    text-align: center !important;
+    padding: 4pt 8pt !important;
+  }
+
+  /* Font-based barcodes (Code 128) */
+  .barcode-128 {
+    font-family: 'Libre Barcode 128', monospace !important;
+    font-size: 48pt !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0 !important;
+    color: black !important;
+    background: white !important;
+    display: block !important;
+    text-align: center !important;
+    padding: 4pt 8pt !important;
+  }
+
+  /* Barcode text label below barcode */
+  .barcode-label {
+    font-family: 'Courier New', monospace !important;
+    font-size: 10pt !important;
+    text-align: center !important;
+    letter-spacing: 2pt !important;
+    margin-top: 4pt !important;
+  }
+
+  /* SVG barcodes - ensure they print at high quality */
+  .barcode svg,
+  .barcode-svg {
+    width: 100% !important;
+    max-width: 3in !important;
+    height: auto !important;
+    min-height: 0.5in !important;
+  }
+
+  /* Ensure barcode images print at high DPI */
+  .barcode img,
+  .barcode-image {
+    image-rendering: -webkit-optimize-contrast !important;
+    image-rendering: crisp-edges !important;
+    -ms-interpolation-mode: nearest-neighbor !important;
+  }
+
+  /* ========================================
+     RECEIPT PRINTING
+     ======================================== */
+
+  /* Receipt container */
+  .receipt,
+  .print-receipt {
+    width: 3in !important;
+    max-width: 100% !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+    background: white !important;
+    color: black !important;
+    padding: 0.25in !important;
+    margin: 0 auto !important;
+  }
+
+  /* Receipt header */
+  .receipt-header {
+    text-align: center !important;
+    border-bottom: 1pt dashed black !important;
+    padding-bottom: 8pt !important;
+    margin-bottom: 8pt !important;
+  }
+
+  /* Receipt line items */
+  .receipt-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 2pt 0 !important;
+  }
+
+  /* Receipt totals */
+  .receipt-total {
+    border-top: 1pt solid black !important;
+    padding-top: 8pt !important;
+    margin-top: 8pt !important;
+    font-weight: bold !important;
+  }
+
+  /* Receipt footer */
+  .receipt-footer {
+    text-align: center !important;
+    border-top: 1pt dashed black !important;
+    padding-top: 8pt !important;
+    margin-top: 8pt !important;
+    font-size: 9pt !important;
+  }
+
+  /* ========================================
+     COLLECTIBLE CARD PRINTING
+     ======================================== */
+
+  /* Collectible card - standard trading card size (2.5" x 3.5") */
+  .collectible-card-print {
+    width: 2.5in !important;
+    height: 3.5in !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border: 1pt solid #ccc !important;
+    border-radius: 6pt !important;
+    overflow: hidden !important;
+    position: relative !important;
+    background: white !important;
+  }
+
+  /* Keep cover image colors for collectible cards */
+  .collectible-card-print img {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Edition badge - preserve color */
+  .collectible-card-print .edition-badge {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Grid of cards — 3 across on letter paper */
+  .collectible-card-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 2.5in) !important;
+    gap: 0.25in !important;
+    justify-content: center !important;
+  }
+
+  /* ========================================
+     LIBRARY CARD PRINTING
+     ======================================== */
+
+  /* Library card - standard credit card size */
+  .library-card,
+  .patron-card {
+    width: 3.375in !important;
+    height: 2.125in !important;
+    border: 1pt solid black !important;
+    border-radius: 8pt !important;
+    padding: 12pt !important;
+    box-sizing: border-box !important;
+    background: white !important;
+    color: black !important;
+    page-break-inside: avoid !important;
+    position: relative !important;
+  }
+
+  /* Card header/branding - ensure readable in B&W */
+  .library-card .card-header,
+  .patron-card .card-header {
+    border-bottom: 1pt solid black !important;
+    padding-bottom: 6pt !important;
+    margin-bottom: 6pt !important;
+    font-weight: bold !important;
+    font-size: 11pt !important;
+  }
+
+  /* Patron info on card */
+  .library-card .patron-name,
+  .patron-card .patron-name {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+  }
+
+  .library-card .card-number,
+  .patron-card .card-number {
+    font-family: 'Courier New', monospace !important;
+    font-size: 11pt !important;
+    letter-spacing: 2pt !important;
+    margin: 6pt 0 !important;
+  }
+
+  /* Barcode area on card */
+  .library-card .card-barcode,
+  .patron-card .card-barcode {
+    position: absolute !important;
+    bottom: 12pt !important;
+    left: 12pt !important;
+    right: 12pt !important;
+    text-align: center !important;
+  }
+
+  /* ========================================
+     ENHANCED PAGE BREAK HANDLING
+     ======================================== */
+
+  /* Apply orphans/widows to all text-containing elements */
+  p, li, dd, dt, td, th, caption, figcaption {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Avoid breaking inside these elements */
+  .no-break,
+  .keep-together,
+  [data-print-keep-together] {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Force page break before chapter/section headings */
+  .chapter-heading,
+  .section-start,
+  [data-print-break="chapter"] {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Avoid orphaned headings */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Keep caption with its figure/table */
+  figure,
+  .figure-container {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Multi-page table support */
+  table.allow-break {
+    page-break-inside: auto !important;
+  }
+
+  table.allow-break tr {
+    page-break-inside: avoid !important;
+  }
+
+  /* Long content sections that need careful breaks */
+  .long-content {
+    page-break-inside: auto !important;
+  }
+
+  .long-content > * {
+    page-break-inside: avoid !important;
+  }
+}
+
+/* Hide print-only content on screen */
+@media screen {
+  .print-only,
+  [data-print="only"] {
+    display: none !important;
+  }
+}

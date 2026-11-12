@@ -1,0 +1,65 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Order Rejected</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #2C1810; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #f8d7da; padding: 30px; border-radius: 8px; border-left: 5px solid #dc3545; margin-bottom: 20px;">
+        <h2 style="color: #721c24; margin-top: 0; font-size: 24px;">Purchase Order Rejected</h2>
+        <p style="color: #721c24; font-size: 16px;">Your purchase order has been rejected and returned to DRAFT status.</p>
+        
+        <div style="background-color: white; padding: 20px; border-radius: 5px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 10px 0; font-weight: bold; color: #2C1810;">PO Number:</td>
+                    <td style="padding: 10px 0; color: #5C4F3D;">{{ po_number }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; font-weight: bold; color: #2C1810;">Rejected By:</td>
+                    <td style="padding: 10px 0; color: #5C4F3D;">{{ rejected_by }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; font-weight: bold; color: #2C1810;">Vendor:</td>
+                    <td style="padding: 10px 0; color: #5C4F3D;">{{ vendor_name }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; font-weight: bold; color: #2C1810;">Total Amount:</td>
+                    <td style="padding: 10px 0; color: #dc3545; font-weight: bold; font-size: 18px;">${{ total_amount }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        {% if rejection_notes %}
+        <div style="background-color: #fff; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 3px solid #ffc107; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <p style="margin: 0 0 10px 0; font-weight: bold; color: #2C1810;">Rejection Notes:</p>
+            <p style="margin: 0; color: #5C4F3D;">{{ rejection_notes }}</p>
+        </div>
+        {% endif %}
+        
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="{{ view_url }}" 
+               style="display: inline-block; background-color: {{ primary_color }}; color: white; padding: 14px 35px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                Edit and Resubmit
+            </a>
+        </div>
+        
+        <div style="margin-top: 25px; padding: 20px; background-color: #e7f3ff; border-radius: 5px; border-left: 4px solid #007bff;">
+            <p style="margin: 0; color: #004085; font-weight: bold;">Next Steps:</p>
+            <p style="color: #004085; margin: 10px 0 0 0;">
+                Review the rejection notes, make necessary changes to your purchase order, and resubmit for approval.
+            </p>
+        </div>
+    </div>
+    
+    <p style="font-size: 12px; color: #8B7B6A; text-align: center; margin-top: 30px;">
+        {{ library_name }} - Acquisitions Department<br>
+        This is an automated message, please do not reply.
+    </p>
+</body>
+</html>

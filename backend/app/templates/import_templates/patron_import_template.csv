@@ -1,0 +1,4 @@
+name,email,barcode,phone,address,patron_type,home_branch
+Jane Doe,jane.doe@example.com,LSC-1234-5678,555-0100,"123 Main St, Anytown, ST 12345",PATRON,MAIN
+John Smith,john.smith@example.com,LSC-2345-6789,555-0101,"456 Oak Ave, Anytown, ST 12345",PATRON,MAIN
+Maria Garcia,maria.garcia@example.com,LSC-3456-7890,555-0102,"789 Elm St, Anytown, ST 12345",CHILD,NORTH

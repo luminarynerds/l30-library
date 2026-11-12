@@ -1,0 +1,1677 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Luminary Nerds
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@import './styles/dyslexia-friendly.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Inherit the page font in all form controls; browser default is system monospace */
+input, textarea, select { font-family: inherit; }
+
+:root {
+  font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color-scheme: dark;
+
+  /* L30 — Nordic Cultural Institution */
+  --bg-cream: #1E1A24;
+  --text-dark: #F0ECF0;
+  --brown-header: #14111A;
+  --accent-rose: #8B5E5E;
+  --accent-rose-light: #D49898;
+  /* Rose RGB stays at unlifted brand value (139 94 94 = #8b5e5e). The lifted
+     value is only applied to `--accent-rose-text-rgb` (text utilities) so
+     `bg-lsc-rose` keeps 4.5:1 contrast with white text. PR #677 over-lifted
+     the bg color; this split is the surgical fix. */
+  --accent-rose-rgb: 139 94 94;
+  --accent-rose-light-rgb: 212 152 152;
+  /* Text-only lifted vars (dark mode default — overridden in .light / .high-contrast).
+     Used exclusively by `text-*` Tailwind utilities via tailwind.config.js textColor. */
+  --accent-rose-text-rgb: 224 173 173;
+  --accent-rose-light-text-rgb: 212 152 152;
+  /* Derived accent shade scale (dark mode defaults) */
+  --accent-50-rgb: 250 243 243;
+  --accent-100-rgb: 242 224 224;
+  --accent-200-rgb: 230 200 200;
+  --accent-300-rgb: 212 152 152;
+  --accent-400-rgb: 200 128 128;
+  --accent-500-rgb: 176 112 112;
+  --accent-600-rgb: 144 78 78;
+  --accent-700-rgb: 120 62 62;
+  --accent-800-rgb: 96 46 46;
+  --accent-900-rgb: 72 32 32;
+  /* Legacy aliases */
+  --accent-rose: var(--accent-rose);
+  --accent-rose-light: var(--accent-rose-light);
+  --accent-rose-rgb: 139 94 94;
+  --accent-rose-light-rgb: 212 152 152;
+  --card-white: #252030;
+  --card-white-rgb: 37 32 48;
+  --border-light: #3A3540;
+  --border-light-rgb: 58 53 64;
+  --ai-blue: #7BA098;
+  --foundation-green: #7BA098;
+
+  /* Text */
+  --text-muted: #A09CA8;
+  --text-muted-light: #A8A4B0;
+
+  /* Header & navigation */
+  --shadow-soft: 0 1px 0 0 rgba(0, 0, 0, 0.2);
+
+  /* Component tokens */
+  --border-medium: #4A4550;
+  --border-subtle: #3A3540;
+  --text-heading: #F0ECF0;
+  --bg-subtle: #252030;
+  --bg-muted: #2A2530;
+  --dark-card-bg: #252030;
+  --dark-border: #3A3540;
+  --dark-text-light: #F0ECF0;
+
+  /* Legacy variables */
+  --focus-bg: #2A2530;
+  --bg-paper: #252030;
+  --bg-dark: #1E1A24;
+  --bg-purple: #2A2530;
+  --accent-green: #7BA098;
+  --text-primary-light: #F0ECF0;
+  --text-primary-dark: #1E1A24;
+  --focus-bg-dark: #2A2530;
+  --highlight-bg: #302838;
+  --focus-ring-color: #A07070;
+}
+
+/* Suppress all transitions during initial render to prevent FOUC/flicker */
+.no-transitions,
+.no-transitions *,
+.no-transitions *::before,
+.no-transitions *::after {
+  transition-duration: 0s !important;
+  animation-duration: 0s !important;
+}
+
+@layer base {
+/* Contain full-bleed breakouts (e.g. the tenant hero photo, sized 100vw) so a
+   viewport slightly wider than the content area can't spawn a horizontal
+   scrollbar. Applied to html because html is the scroll container here; `clip`
+   (not `hidden`) avoids creating a scroll container, so position:sticky and the
+   sticky header keep working. */
+html {
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+  border-color: var(--border-medium);
+  overflow-x: clip;
+}
+/* WCAG 1.4.12 — ensure headings have comfortable line-height */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.3;
+}
+}
+
+@layer base {
+  .light body,
+  .light #root {
+    background-color: var(--bg-cream);
+    color: var(--text-dark);
+  }
+  .light {
+    color: var(--text-dark);
+  }
+}
+
+/* ============================================================================
+   Light mode support (toggled via class)
+
+   The :root:where(...) fallback also applies these tokens when <html> carries
+   no theme class at all. The :root block above holds dark tokens, so a page
+   that loses its theme class mid-session (applicator hiccup, third-party
+   script) would otherwise render dark cards under light-mode text — an
+   unreadable hybrid. Class-less must degrade to light, the public default.
+   :where() keeps specificity at (0,1,0) so this block still loses to any
+   later equal-specificity override, exactly like the bare .light selector.
+   ============================================================================ */
+
+.light,
+:root:where(:not(.dark):not(.high-contrast)) {
+  color-scheme: light;
+  --bg-cream: #FAF8FA;
+  --text-dark: #1E1A24;
+  --brown-header: #1E1A24;
+  --accent-rose: #7A4040;
+  --accent-rose-light: #8B5050;
+  --accent-rose-rgb: 122 64 64;
+  --accent-rose-light-rgb: 139 80 80;
+  /* Light mode: text-rgb matches rgb (no dark-mode lift needed). */
+  --accent-rose-text-rgb: 122 64 64;
+  --accent-rose-light-text-rgb: 139 80 80;
+  /* Derived accent shade scale (light mode -- darker for white bg contrast) */
+  --accent-50-rgb: 250 243 243;
+  --accent-100-rgb: 237 214 214;
+  --accent-200-rgb: 214 173 173;
+  --accent-300-rgb: 184 128 128;
+  --accent-400-rgb: 158 96 96;
+  --accent-500-rgb: 122 64 64;
+  --accent-600-rgb: 100 50 50;
+  --accent-700-rgb: 80 38 38;
+  --accent-800-rgb: 62 28 28;
+  --accent-900-rgb: 46 18 18;
+  --accent-rose: var(--accent-rose);
+  --accent-rose-light: var(--accent-rose-light);
+  --accent-rose-rgb: 122 64 64;
+  --accent-rose-light-rgb: 139 80 80;
+  --card-white: #FFFFFF;
+  --card-white-rgb: 255 255 255;
+  /* Tenant themes derive --brand-border-rgb from surface+ink (BrandingContext);
+     the fallback is the stock cool-gray border. Scoped to .light so dark and
+     high-contrast keep their own values. */
+  --border-light: rgb(var(--brand-border-rgb, 224 220 228));
+  --border-light-rgb: var(--brand-border-rgb, 224 220 228);
+  --text-muted: #6E6A76;
+  --text-muted-light: #706C78;
+  --bg-subtle: #F0ECF0;
+  --bg-muted: #E0DCE4;
+  --text-heading: #1E1A24;
+  --border-medium: #C8C4CE;
+  --border-subtle: #E0DCE4;
+  --focus-ring-color: #945252;
+  --ai-blue: #4A6E66;
+  --foundation-green: #4A6E66;
+}
+
+
+
+
+
+
+
+/* ============================================================================
+   High Contrast mode
+   Maximum contrast ratios, bold borders, no subtle/muted colors.
+   Applied when .high-contrast class is on <html>.
+   ============================================================================ */
+
+.high-contrast {
+  color-scheme: light;
+  --bg-cream: #FFFFFF;
+  --text-dark: #000000;
+  --brown-header: #000000;
+  --accent-rose: #B22222;
+  --accent-rose-light: #CC3333;
+  --accent-rose-rgb: 178 34 34;
+  --accent-rose-light-rgb: 204 51 51;
+  /* High contrast: text-rgb matches rgb. */
+  --accent-rose-text-rgb: 178 34 34;
+  --accent-rose-light-text-rgb: 204 51 51;
+  /* Derived accent shade scale (high contrast -- maximum distinction) */
+  --accent-50-rgb: 255 240 240;
+  --accent-100-rgb: 255 204 204;
+  --accent-200-rgb: 238 153 153;
+  --accent-300-rgb: 220 100 100;
+  --accent-400-rgb: 200 60 60;
+  --accent-500-rgb: 178 34 34;
+  --accent-600-rgb: 148 20 20;
+  --accent-700-rgb: 118 10 10;
+  --accent-800-rgb: 90 0 0;
+  --accent-900-rgb: 64 0 0;
+  --accent-rose: var(--accent-rose);
+  --accent-rose-light: var(--accent-rose-light);
+  --accent-rose-rgb: 178 34 34;
+  --accent-rose-light-rgb: 204 51 51;
+  --card-white: #FFFFFF;
+  --card-white-rgb: 255 255 255;
+  --border-light: #000000;
+  --border-light-rgb: 0 0 0;
+  --text-muted: #222222;
+  --text-muted-light: #333333;
+  --bg-subtle: #F0F0F0;
+  --bg-muted: #E0E0E0;
+  --text-heading: #000000;
+  --border-medium: #000000;
+  --border-subtle: #555555;
+  --focus-ring-color: #0000FF;
+  --ai-blue: #005500;
+  --foundation-green: #005500;
+  --shadow-soft: 0 1px 0 0 rgba(0, 0, 0, 0.5);
+}
+
+.high-contrast body,
+.high-contrast #root {
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+}
+
+/* Force all text to maximum contrast */
+.high-contrast .text-gray-400,
+.high-contrast .text-gray-500,
+.high-contrast .text-gray-600,
+.high-contrast .text-slate-400,
+.high-contrast .text-slate-500,
+.high-contrast .text-slate-600,
+.high-contrast .text-neutral-400,
+.high-contrast .text-neutral-500,
+.high-contrast .text-neutral-600 {
+  color: #222222 !important;
+}
+
+.high-contrast .text-gray-700,
+.high-contrast .text-gray-800,
+.high-contrast .text-gray-900,
+.high-contrast .text-slate-700,
+.high-contrast .text-slate-800,
+.high-contrast .text-slate-900,
+.high-contrast .text-neutral-700,
+.high-contrast .text-neutral-800,
+.high-contrast .text-neutral-900,
+.high-contrast .text-black {
+  color: #000000 !important;
+}
+
+/* Earth palette overrides for high contrast */
+.high-contrast .text-earth-400,
+.high-contrast .text-earth-500,
+.high-contrast .text-earth-600,
+.high-contrast [class*="text-lsc-dark/"] {
+  color: #222222 !important;
+}
+
+.high-contrast .text-earth-700,
+.high-contrast .text-earth-800,
+.high-contrast .text-earth-900,
+.high-contrast .text-earth-950 {
+  color: #000000 !important;
+}
+
+.high-contrast .bg-earth-50,
+.high-contrast .bg-earth-100 {
+  background-color: #FFFFFF !important;
+}
+
+.high-contrast .bg-earth-200 {
+  background-color: #E0E0E0 !important;
+}
+
+.high-contrast .border-earth-100,
+.high-contrast .border-earth-200,
+.high-contrast .border-earth-300 {
+  border-color: #000000 !important;
+}
+
+/* Header search overlay (.header-search-panel): an always-dark panel that
+   renders inside <header>. The light-HC rules above force header buttons and
+   earth-* text toward black, which would land on this dark chrome (measured
+   1.23:1 live 2026-07-06), so flip the whole panel light instead. The
+   .dark.high-contrast combo needs no companion: the panel is already dark
+   and the dark-HC text rules lighten its text. */
+.high-contrast:not(.dark) .header-search-panel {
+  background-color: #FFFFFF !important;
+  border-color: #000000 !important;
+}
+.high-contrast:not(.dark) .header-search-panel .bg-earth-800 {
+  background-color: #F0F0F0 !important;
+}
+.high-contrast:not(.dark) .header-search-panel .bg-earth-700,
+.high-contrast:not(.dark) .header-search-panel .hover\:bg-earth-700:hover {
+  background-color: #DDDDDD !important;
+}
+.high-contrast:not(.dark) .header-search-panel .bg-earth-600 {
+  background-color: #CCCCCC !important;
+}
+.high-contrast:not(.dark) .header-search-panel .text-lsc-cream {
+  color: #000000 !important;
+}
+.high-contrast:not(.dark) .header-search-panel .text-earth-100,
+.high-contrast:not(.dark) .header-search-panel .text-earth-200,
+.high-contrast:not(.dark) .header-search-panel .text-earth-300,
+.high-contrast:not(.dark) .header-search-panel .text-earth-400 {
+  color: #222222 !important;
+}
+.high-contrast:not(.dark) .header-search-panel .placeholder\:text-earth-300::placeholder {
+  color: #333333 !important;
+}
+.high-contrast:not(.dark) .header-search-panel .text-brand-200,
+.high-contrast:not(.dark) .header-search-panel .text-brand-300 {
+  color: var(--accent-rose) !important;
+}
+/* Active scope/facet chips: keep white label on the rose fill (the generic
+   `.high-contrast header button` rule would force it black, 3.86:1 on the
+   HC rose). Applies in both light-HC and dark-HC. */
+.high-contrast .header-search-panel button.bg-lsc-rose {
+  color: #FFFFFF !important;
+}
+
+/* Forest/sage palette overrides for high contrast */
+.high-contrast .text-forest-400,
+.high-contrast .text-forest-500,
+.high-contrast .text-forest-600 {
+  color: #1A4A40 !important;
+}
+
+.high-contrast .bg-forest-500,
+.high-contrast .bg-forest-600,
+.high-contrast .bg-forest-700 {
+  background-color: #1A4A40 !important;
+}
+
+/* Backgrounds: no subtle grays, pure white */
+.high-contrast .bg-white,
+.high-contrast .bg-gray-50,
+.high-contrast .bg-gray-100,
+.high-contrast .bg-slate-50,
+.high-contrast .bg-slate-100,
+.high-contrast .bg-neutral-50,
+.high-contrast .bg-neutral-100 {
+  background-color: #FFFFFF !important;
+}
+
+.high-contrast .bg-gray-200,
+.high-contrast .bg-slate-200,
+.high-contrast .bg-neutral-200 {
+  background-color: #E0E0E0 !important;
+}
+
+/* Bold borders */
+.high-contrast .border-gray-100,
+.high-contrast .border-gray-200,
+.high-contrast .border-gray-300,
+.high-contrast .border-slate-100,
+.high-contrast .border-slate-200,
+.high-contrast .border-slate-300,
+.high-contrast .border-neutral-100,
+.high-contrast .border-neutral-200,
+.high-contrast .border-neutral-300 {
+  border-color: #000000 !important;
+}
+
+/* Links: underlined, high contrast blue */
+.high-contrast a {
+  color: #0000CC !important;
+  text-decoration: underline !important;
+}
+
+.high-contrast a:visited {
+  color: #660099 !important;
+}
+
+.high-contrast a:hover,
+.high-contrast a:focus {
+  color: #0000FF !important;
+  outline: 3px solid #0000FF !important;
+  outline-offset: 2px;
+}
+
+/* Focus indicators: thick and visible */
+.high-contrast :focus-visible {
+  outline: 3px solid #0000FF !important;
+  outline-offset: 2px;
+}
+
+/* Buttons: ensure visible borders on borderless buttons */
+.high-contrast button:not([class*="border"]),
+.high-contrast [role="button"]:not([class*="border"]) {
+  border: 2px solid #000000 !important;
+}
+
+/* Header icons/buttons: force visible color on white header */
+.high-contrast header button,
+.high-contrast header [role="button"],
+.high-contrast [role="banner"] button,
+.high-contrast [role="banner"] [role="button"] {
+  color: #000000 !important;
+}
+
+.high-contrast header button:hover,
+.high-contrast header [role="button"]:hover {
+  background-color: #E0E0E0 !important;
+}
+
+/* Footer: dark bg with hardcoded grays needs explicit contrast.
+   Scoped to the site footer (#footer): the bare `footer` selector used to
+   blacken ANY nested <footer> (e.g. inside a blockquote) at 1.15:1. */
+.high-contrast footer#footer {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+.high-contrast footer#footer a {
+  color: #FFFFFF !important;
+  text-decoration: underline !important;
+}
+
+.high-contrast footer#footer a:hover {
+  color: #CCCCFF !important;
+}
+
+/* The footer's earth-* text/border utilities would be forced dark by the
+   global light-HC rules above; pin them light on the forced-black footer. */
+.high-contrast footer#footer .text-earth-300,
+.high-contrast footer#footer .text-earth-400 {
+  color: #FFFFFF !important;
+}
+.high-contrast footer#footer .border-earth-100,
+.high-contrast footer#footer .border-earth-500,
+.high-contrast footer#footer .border-earth-700,
+.high-contrast footer#footer .border-earth-800 {
+  border-color: #FFFFFF !important;
+}
+
+/* Rose CTAs: the lsc-rose accent is a pale dusty rose that fails AA with
+   white text everywhere; in high contrast the CTA becomes a standard black
+   button. Matches the HC button treatment above (black on white, bordered). */
+.high-contrast .bg-lsc-rose,
+.high-contrast .bg-lsc-rose-light {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #000000 !important;
+}
+
+.high-contrast .bg-lsc-rose:hover,
+.high-contrast .bg-lsc-rose:focus,
+.high-contrast .bg-lsc-rose-light:hover,
+.high-contrast .bg-lsc-rose-light:focus {
+  background-color: #333333 !important;
+  color: #FFFFFF !important;
+}
+
+/* Status badges */
+.high-contrast .bg-status-success-100 { background-color: #CCFFCC !important; }
+.high-contrast .bg-status-danger-100 { background-color: #FFCCCC !important; }
+.high-contrast .text-status-success-800 { color: #005500 !important; }
+.high-contrast .text-status-danger-800 { color: #AA0000 !important; }
+
+/* Error/alert messages: maximum contrast */
+.high-contrast [role="alert"],
+.high-contrast .text-status-danger-500,
+.high-contrast .text-status-danger-600,
+.high-contrast .text-status-danger-700 {
+  color: #AA0000 !important;
+  font-weight: 700 !important;
+}
+
+.high-contrast .bg-status-danger-50,
+.high-contrast .bg-status-danger-100 {
+  background-color: #FFE0E0 !important;
+  border: 2px solid #AA0000 !important;
+}
+
+.high-contrast .bg-status-warning-50,
+.high-contrast .bg-status-warning-100 {
+  background-color: #FFF8CC !important;
+  border: 2px solid #886600 !important;
+}
+
+.high-contrast .text-status-warning-700,
+.high-contrast .text-status-warning-800 {
+  color: #664400 !important;
+  font-weight: 700 !important;
+}
+
+
+/* ============================================================================
+   DARK + HIGH CONTRAST companion overrides.
+   The .high-contrast rules above assume a light (white) background. cssApplicator.ts
+   adds `high-contrast` ALONGSIDE `dark` (<html class="dark high-contrast">) when the
+   highContrast boolean is on with a dark theme, so Tailwind dark: variants keep
+   surfaces dark while those rules force text/backgrounds toward black-on-white --
+   forced-dark text then lands on dark panels and is invisible (e.g. Quick Settings:
+   #222 text on earth-900 = 1.07:1). These rules (specificity = 2 classes, beating
+   the 1-class .high-contrast rules despite their !important) invert the scheme to a
+   coherent light-on-black. Brand accents (rose) and footer/status islands are left
+   as-is; they already pair a color with its own background.
+   ============================================================================ */
+
+.dark.high-contrast {
+  color-scheme: dark;
+  --bg-cream: #000000;
+  --text-dark: #FFFFFF;
+  --brown-header: #FFFFFF;
+  --card-white: #000000;
+  --card-white-rgb: 0 0 0;
+  --border-light: #FFFFFF;
+  --border-light-rgb: 255 255 255;
+  --text-muted: #E0E0E0;
+  --text-muted-light: #CCCCCC;
+  --bg-subtle: #111111;
+  --bg-muted: #1A1A1A;
+  --text-heading: #FFFFFF;
+  --border-medium: #FFFFFF;
+  --border-subtle: #AAAAAA;
+  --focus-ring-color: #66CCFF;
+}
+
+.dark.high-contrast body,
+.dark.high-contrast #root {
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+}
+
+/* Muted text -> near-white (was forced #222 on a dark surface) */
+.dark.high-contrast .text-gray-400,
+.dark.high-contrast .text-gray-500,
+.dark.high-contrast .text-gray-600,
+.dark.high-contrast .text-slate-400,
+.dark.high-contrast .text-slate-500,
+.dark.high-contrast .text-slate-600,
+.dark.high-contrast .text-neutral-400,
+.dark.high-contrast .text-neutral-500,
+.dark.high-contrast .text-neutral-600,
+.dark.high-contrast .text-earth-400,
+.dark.high-contrast .text-earth-500,
+.dark.high-contrast .text-earth-600,
+.dark.high-contrast [class*="text-lsc-dark/"] {
+  color: #F5F5F5 !important;
+}
+
+/* Strong text -> pure white (was forced #000) */
+.dark.high-contrast .text-gray-700,
+.dark.high-contrast .text-gray-800,
+.dark.high-contrast .text-gray-900,
+.dark.high-contrast .text-slate-700,
+.dark.high-contrast .text-slate-800,
+.dark.high-contrast .text-slate-900,
+.dark.high-contrast .text-neutral-700,
+.dark.high-contrast .text-neutral-800,
+.dark.high-contrast .text-neutral-900,
+.dark.high-contrast .text-black,
+.dark.high-contrast .text-earth-700,
+.dark.high-contrast .text-earth-800,
+.dark.high-contrast .text-earth-900,
+.dark.high-contrast .text-earth-950 {
+  color: #FFFFFF !important;
+}
+
+/* Backgrounds the light HC theme forced white -> force dark (prevents the
+   inverse bug: light text on a force-whitened surface) */
+.dark.high-contrast .bg-white,
+.dark.high-contrast .bg-gray-50,
+.dark.high-contrast .bg-gray-100,
+.dark.high-contrast .bg-slate-50,
+.dark.high-contrast .bg-slate-100,
+.dark.high-contrast .bg-neutral-50,
+.dark.high-contrast .bg-neutral-100,
+.dark.high-contrast .bg-earth-50,
+.dark.high-contrast .bg-earth-100 {
+  background-color: #000000 !important;
+}
+
+.dark.high-contrast .bg-gray-200,
+.dark.high-contrast .bg-slate-200,
+.dark.high-contrast .bg-neutral-200,
+.dark.high-contrast .bg-earth-200 {
+  background-color: #1A1A1A !important;
+}
+
+/* Borders -> white (black borders vanish on dark) */
+.dark.high-contrast .border-earth-100,
+.dark.high-contrast .border-earth-200,
+.dark.high-contrast .border-earth-300,
+.dark.high-contrast .border-gray-100,
+.dark.high-contrast .border-gray-200,
+.dark.high-contrast .border-gray-300,
+.dark.high-contrast .border-slate-100,
+.dark.high-contrast .border-slate-200,
+.dark.high-contrast .border-slate-300,
+.dark.high-contrast .border-neutral-100,
+.dark.high-contrast .border-neutral-200,
+.dark.high-contrast .border-neutral-300 {
+  border-color: #FFFFFF !important;
+}
+
+/* Forest/sage text -> light teal */
+.dark.high-contrast .text-forest-400,
+.dark.high-contrast .text-forest-500,
+.dark.high-contrast .text-forest-600 {
+  color: #6FE7D2 !important;
+}
+
+/* Links -> light blue on dark */
+.dark.high-contrast a {
+  color: #99CCFF !important;
+}
+
+.dark.high-contrast a:visited {
+  color: #CC99FF !important;
+}
+
+.dark.high-contrast a:hover,
+.dark.high-contrast a:focus {
+  color: #CCE5FF !important;
+  outline-color: #66CCFF !important;
+}
+
+.dark.high-contrast :focus-visible {
+  outline-color: #66CCFF !important;
+}
+
+/* Borderless buttons -> white border */
+.dark.high-contrast button:not([class*="border"]),
+.dark.high-contrast [role="button"]:not([class*="border"]) {
+  border-color: #FFFFFF !important;
+}
+
+/* Header buttons on a dark header -> white */
+.dark.high-contrast header button,
+.dark.high-contrast header [role="button"],
+.dark.high-contrast [role="banner"] button,
+.dark.high-contrast [role="banner"] [role="button"] {
+  color: #FFFFFF !important;
+}
+
+.dark.high-contrast header button:hover,
+.dark.high-contrast header [role="button"]:hover {
+  background-color: #333333 !important;
+}
+
+/* ============================================================================
+   Dark mode class overrides
+   Force Tailwind light-mode utilities to render dark when .dark is active.
+   ============================================================================ */
+
+.dark .bg-white,
+.dark .bg-white\/80,
+.dark .bg-white\/90,
+.dark .bg-white\/95 {
+  background-color: #252030 !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-slate-50,
+.dark .bg-slate-100,
+.dark .bg-neutral-50,
+.dark .bg-neutral-100 {
+  background-color: #1E1A24 !important;
+}
+
+.dark .bg-gray-200,
+.dark .bg-slate-200,
+.dark .bg-neutral-200 {
+  background-color: #252030 !important;
+}
+
+.dark .bg-gray-300,
+.dark .bg-slate-300,
+.dark .bg-neutral-300 {
+  background-color: #2A2530 !important;
+}
+
+.dark .bg-gray-400,
+.dark .bg-gray-500,
+.dark .bg-gray-600,
+.dark .bg-slate-400,
+.dark .bg-slate-500,
+.dark .bg-slate-600,
+.dark .bg-neutral-400,
+.dark .bg-neutral-500,
+.dark .bg-neutral-600 {
+  background-color: #3A3540 !important;
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-neutral-900,
+.dark .text-neutral-800,
+.dark .text-black {
+  color: #F0ECF0 !important;
+}
+
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark .text-neutral-700,
+.dark .text-neutral-600 {
+  color: #C0BCC8 !important;
+}
+
+.dark .text-gray-500,
+.dark .text-gray-400,
+.dark .text-slate-500,
+.dark .text-slate-400,
+.dark .text-neutral-500,
+.dark .text-neutral-400 {
+  color: #A09CA8 !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300,
+.dark .border-neutral-100,
+.dark .border-neutral-200,
+.dark .border-neutral-300 {
+  border-color: #3A3540 !important;
+}
+
+.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #3A3540 !important;
+}
+
+.dark .ring-gray-200,
+.dark .ring-gray-300,
+.dark .ring-slate-200,
+.dark .ring-slate-300 {
+  --tw-ring-color: #4A4550 !important;
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl {
+  --tw-shadow-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .to-white,
+.dark .to-gray-50,
+.dark .to-slate-50 {
+  --tw-gradient-to: #1E1A24 !important;
+}
+
+.dark .from-white,
+.dark .from-gray-50,
+.dark .from-slate-50 {
+  --tw-gradient-from: #1E1A24 !important;
+}
+
+.dark [class*="bg-white/"] {
+  background-color: rgba(37, 32, 48, var(--tw-bg-opacity, 0.95)) !important;
+}
+
+/* Status badges in dark mode */
+.dark .bg-status-success-100 { background-color: rgba(123, 160, 152, 0.15) !important; }
+.dark .bg-status-danger-100 { background-color: rgba(212, 160, 160, 0.15) !important; }
+.dark .text-status-success-800 { color: #93b8b0 !important; }
+.dark .text-status-danger-800 { color: #D49898 !important; }
+
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-gray-100:hover {
+  background-color: #2A2530 !important;
+}
+
+/* Dark mode form fields */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="hidden"]):not([type="color"]),
+.dark select,
+.dark textarea {
+  background-color: #252030;
+  color: #F0ECF0;
+  border-color: #4A4550;
+}
+
+.dark select option {
+  background-color: #252030;
+  color: #F0ECF0;
+  border-color: #4A4550;
+}
+
+/* ============================================================================
+   Light mode: remap dark utility classes used by components that assume dark
+   ============================================================================ */
+
+:root:not(.dark) .bg-gray-800,
+:root:not(.dark) .bg-gray-900,
+:root:not(.dark) .bg-slate-800,
+:root:not(.dark) .bg-slate-900,
+:root:not(.dark) .bg-neutral-800,
+:root:not(.dark) .bg-neutral-900 {
+  background-color: #FFFFFF !important;
+}
+
+:root:not(.dark) .bg-gray-700,
+:root:not(.dark) .bg-slate-700,
+:root:not(.dark) .bg-neutral-700 {
+  background-color: #F0ECF0 !important;
+}
+
+:root:not(.dark) .bg-gray-300,
+:root:not(.dark) .bg-slate-300,
+:root:not(.dark) .bg-neutral-300 {
+  background-color: #E0DCE4 !important;
+}
+
+:root:not(.dark) .bg-gray-400,
+:root:not(.dark) .bg-gray-500,
+:root:not(.dark) .bg-gray-600,
+:root:not(.dark) .bg-slate-400,
+:root:not(.dark) .bg-slate-500,
+:root:not(.dark) .bg-slate-600,
+:root:not(.dark) .bg-neutral-400,
+:root:not(.dark) .bg-neutral-500,
+:root:not(.dark) .bg-neutral-600 {
+  background-color: #C8C4CE !important;
+}
+
+/* Light mode text safety: Instead of a global override that can't detect
+   ancestor backgrounds, we use explicit light-mode text classes in components.
+   The previous rule checked element classes but not parent containers,
+   causing white text to become dark inside dark parent containers.
+
+   If you need white text on a dark background in light mode, the element
+   or a parent must have the dark bg class. Use: dark:text-white for dark mode,
+   and text-white or text-lsc-cream for light mode on dark containers. */
+
+/* ============================================================================
+   WCAG 1.4.3 Contrast Fix — boost low-opacity text colors
+   Light mode: text-lsc-dark/50 (3.28:1) and /60 (4.48:1) fail on white/cream.
+   Dark mode: text-lsc-cream/50 (4.17:1 on card surfaces) fails.
+   Remap to safe opacity values that pass 4.5:1 on all backgrounds.
+   ============================================================================ */
+:root:not(.dark) [class*="text-lsc-dark/50"] {
+  color: rgb(30 26 36 / 0.75) !important;
+}
+:root:not(.dark) [class*="text-lsc-dark/60"] {
+  color: rgb(30 26 36 / 0.75) !important;
+}
+.dark [class*="text-lsc-cream/50"] {
+  color: rgb(240 236 240 / 0.65) !important;
+}
+.dark [class*="text-lsc-cream/60"] {
+  color: rgb(240 236 240 / 0.70) !important;
+}
+/* text-earth-400 (#9E9AA6) fails 4.5:1 on both light and dark backgrounds */
+:root:not(.dark) .text-earth-400 {
+  color: #6E6A76 !important;
+}
+.dark .text-earth-400 {
+  color: #B8B4BC !important;
+}
+
+:root:not(.dark) .border-gray-700,
+:root:not(.dark) .border-gray-600,
+:root:not(.dark) .border-slate-700,
+:root:not(.dark) .border-slate-600 {
+  border-color: #E0DCE4 !important;
+}
+
+/* ============================================================================
+   Placeholder text
+   ============================================================================ */
+
+::placeholder {
+  color: #A8A4B0;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.875em;
+}
+
+.light ::placeholder {
+  color: #706C78;
+}
+
+/* ============================================================================
+   Accessibility: Focus styles
+   ============================================================================ */
+
+*:focus-visible {
+  outline: 2px solid var(--focus-ring-color, #A07070);
+  outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[role="tab"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--focus-ring-color, #A07070);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   WCAG 1.4.1: Inline text links must not rely on color alone.
+   Underline links inside text-content elements (p, li, td, etc.) by default.
+   :where() keeps specificity at 0 so Tailwind classes like no-underline win.
+   ============================================================================ */
+
+@layer base {
+  main :where(p, li, dd, td, th, blockquote, figcaption, label, span, dt) a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  }
+  main :where(p, li, dd, td, th, blockquote, figcaption, label, span, dt) a:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* ============================================================================
+   High contrast mode support
+   ============================================================================ */
+
+@media (prefers-contrast: more) {
+  :root {
+    --bg-cream: #000000;
+    --text-dark: #FFFFFF;
+    --border-light: #FFFFFF;
+    --border-light-rgb: 255 255 255;
+    --accent-rose: #FFB4B4;
+    --accent-rose-rgb: 255 180 180;
+    --accent-rose-light-rgb: 255 200 200;
+    --accent-rose-text-rgb: 255 180 180;
+    --accent-rose-light-text-rgb: 255 200 200;
+    --accent-rose: var(--accent-rose);
+    --accent-rose-rgb: 255 180 180;
+    --accent-rose-light-rgb: 255 200 200;
+    --text-muted: #CCCCCC;
+  }
+
+  *:focus-visible {
+    outline: 3px solid #FFFFFF;
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================================
+   Reduced motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* In-app "Reduce Motion" toggle (mirrors @media prefers-reduced-motion) */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ============================================================================
+   Forced colors (Windows High Contrast Mode)
+   ============================================================================ */
+
+@media (forced-colors: active) {
+  *:focus-visible {
+    outline: 2px solid LinkText;
+    outline-offset: 2px;
+  }
+
+  a {
+    color: LinkText;
+  }
+
+  button {
+    border: 1px solid ButtonText;
+  }
+
+  /* Nav active state — `bg-lsc-rose/10` collapses to transparent under
+     forced colors. Re-establish the active cue with a system-color border
+     and bold weight so HC users get a visible "you are here". */
+  .nav-active {
+    forced-color-adjust: none;
+    border-inline-start: 2px solid CanvasText;
+    font-weight: 700;
+  }
+}
+
+/* ============================================================================
+   Scrollbar styling (subtle)
+   ============================================================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3A3540;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4A4550;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #C8C4CE;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #A8A4B0;
+}
+
+/* ============================================================================
+   Selection
+   ============================================================================ */
+
+::selection {
+  background-color: var(--accent-rose);
+  color: #1E1A24;
+}
+
+.light ::selection {
+  background-color: var(--accent-rose);
+  color: #FFFFFF;
+}
+
+/* ============================================================================
+   L30 Identity Overrides
+   Remap blue/violet/purple/indigo/cyan to dusty rose palette.
+   Rose values route through the accent vars so the remaps follow per-library
+   branding and the mode-specific accent ramps (light/dark/high-contrast)
+   instead of pinning the stock dark-mode rose. Greens stay on the static
+   lsc-green value like the token itself.
+   ============================================================================ */
+
+/* --- Background colors: blue/violet/purple/indigo → dusty rose --- */
+.bg-status-info-500, .bg-status-info-600, .bg-indigo-500, .bg-indigo-600,
+.bg-violet-500, .bg-violet-600, .bg-category-500, .bg-category-600 {
+  background-color: rgb(var(--accent-rose-rgb)) !important;
+}
+.bg-status-info-400, .bg-indigo-400, .bg-violet-400, .bg-category-400 {
+  background-color: rgb(var(--accent-rose-light-rgb)) !important;
+}
+.bg-status-info-700, .bg-indigo-700, .bg-violet-700, .bg-category-700 {
+  background-color: rgb(var(--accent-600-rgb)) !important;
+}
+.bg-cyan-500, .bg-cyan-600, .bg-teal-500, .bg-teal-600 {
+  background-color: #7BA098 !important;
+}
+
+/* Hover variants */
+.hover\:bg-status-info-600:hover, .hover\:bg-status-info-700:hover,
+.hover\:bg-indigo-600:hover, .hover\:bg-indigo-700:hover,
+.hover\:bg-violet-600:hover, .hover\:bg-violet-700:hover,
+.hover\:bg-category-600:hover, .hover\:bg-category-700:hover {
+  background-color: rgb(var(--accent-600-rgb)) !important;
+}
+
+/* --- Border colors --- */
+.border-status-info-500, .border-status-info-600, .border-indigo-500, .border-indigo-600,
+.border-violet-500, .border-violet-600, .border-category-500, .border-category-600,
+.border-violet-400, .border-violet-300 {
+  border-color: rgb(var(--accent-rose-rgb)) !important;
+}
+.hover\:border-violet-400:hover, .hover\:border-status-info-500:hover {
+  border-color: rgb(var(--accent-rose-rgb)) !important;
+}
+
+/* --- Ring colors --- */
+.ring-blue-500, .ring-blue-600, .ring-indigo-500,
+.ring-violet-400, .ring-violet-500, .ring-category-500 {
+  --tw-ring-color: var(--focus-ring-color, #A07070) !important;
+}
+
+/* --- Focus ring colors --- */
+.focus\:ring-blue-500:focus, .focus\:ring-indigo-500:focus,
+.focus\:ring-violet-400:focus, .focus\:ring-violet-500:focus,
+.focus-visible\:ring-blue-500:focus-visible,
+.focus-visible\:ring-violet-400:focus-visible {
+  --tw-ring-color: var(--focus-ring-color, #A07070) !important;
+}
+
+/* --- Gradient stops --- */
+.from-violet-400, .from-violet-500, .from-violet-600,
+.from-blue-500, .from-blue-600, .from-indigo-500, .from-indigo-600 {
+  --tw-gradient-from: rgb(var(--accent-rose-rgb)) !important;
+}
+.to-violet-400, .to-cyan-400, .to-cyan-500, .to-cyan-600,
+.to-blue-500, .to-blue-600, .to-indigo-500 {
+  --tw-gradient-to: #7BA098 !important;
+}
+.via-violet-200, .via-violet-300 {
+  --tw-gradient-via: rgb(var(--accent-rose-light-rgb)) !important;
+}
+
+/* --- Shadow colors (glow effects → subtle rose) --- */
+.shadow-violet-500\/20, .shadow-violet-500\/30,
+.shadow-blue-500\/20, .shadow-blue-500\/30 {
+  --tw-shadow-color: rgb(var(--accent-rose-light-rgb) / 0.12) !important;
+}
+
+/* --- Dark mode variants for the above --- */
+.dark .bg-status-info-500, .dark .bg-status-info-600, .dark .bg-indigo-500, .dark .bg-indigo-600,
+.dark .bg-violet-500, .dark .bg-violet-600, .dark .bg-category-500, .dark .bg-category-600 {
+  background-color: rgb(var(--accent-rose-rgb)) !important;
+}
+
+.dark .border-status-info-500, .dark .border-violet-400, .dark .border-violet-500 {
+  border-color: rgb(var(--accent-rose-rgb)) !important;
+}
+.dark .border-status-info-200, .dark .border-violet-200, .dark .border-violet-300 {
+  border-color: #4A3545 !important;
+}
+
+/* --- Rounded overrides — softer than L30 but not pills --- */
+.rounded-full:not(span):not([class*="w-1"]):not([class*="w-2"]):not([class*="h-1"]):not([class*="h-2"]) {
+  border-radius: 12px !important;
+}
+/* Keep small dots/indicators circular */
+span.rounded-full, .rounded-full[aria-hidden="true"] {
+  border-radius: 9999px !important;
+}
+
+
+/* ============================================================================
+   Scroll-reveal animations (Greenshift-inspired)
+   ============================================================================ */
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.scroll-reveal-stagger.is-visible > *,
+.is-visible .scroll-reveal-stagger > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-reveal-stagger.is-visible > *:nth-child(1),
+.is-visible .scroll-reveal-stagger > *:nth-child(1) { transition-delay: 0ms; }
+.scroll-reveal-stagger.is-visible > *:nth-child(2),
+.is-visible .scroll-reveal-stagger > *:nth-child(2) { transition-delay: 80ms; }
+.scroll-reveal-stagger.is-visible > *:nth-child(3),
+.is-visible .scroll-reveal-stagger > *:nth-child(3) { transition-delay: 160ms; }
+.scroll-reveal-stagger.is-visible > *:nth-child(4),
+.is-visible .scroll-reveal-stagger > *:nth-child(4) { transition-delay: 240ms; }
+.scroll-reveal-stagger.is-visible > *:nth-child(5),
+.is-visible .scroll-reveal-stagger > *:nth-child(5) { transition-delay: 320ms; }
+.scroll-reveal-stagger.is-visible > *:nth-child(6),
+.is-visible .scroll-reveal-stagger > *:nth-child(6) { transition-delay: 400ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* In-app toggle mirror */
+.reduce-motion .scroll-reveal,
+.reduce-motion .scroll-reveal-stagger > * {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* ============================================================================
+   Gradient text — warm rose to sage
+   ============================================================================ */
+.text-gradient-warm {
+  background: linear-gradient(135deg, #8B5E5E 0%, #D49898 40%, #7BA098 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.light .text-gradient-warm {
+  background: linear-gradient(135deg, #904E4E 0%, #945252 40%, #4A6E66 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================================
+   Card lift — subtle scale + shadow on hover
+   ============================================================================ */
+.card-lift {
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.24), 0 0 16px rgba(212, 160, 160, 0.06);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-lift {
+    transition: none;
+  }
+  .card-lift:hover {
+    transform: none;
+  }
+}
+
+/* In-app toggle mirror */
+.reduce-motion .card-lift {
+  transition: none;
+}
+.reduce-motion .card-lift:hover {
+  transform: none;
+}
+
+/* ============================================================================
+   Section divider — soft SVG-like curve via CSS
+   ============================================================================ */
+.section-curve {
+  position: relative;
+}
+.section-curve::after {
+  content: '';
+  position: absolute;
+  bottom: -24px;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: inherit;
+  clip-path: ellipse(55% 100% at 50% 0%);
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-curve::after {
+    display: none;
+  }
+}
+
+/* In-app toggle mirror */
+.reduce-motion .section-curve::after {
+  display: none;
+}
+
+/* ============================================================================
+   L30 Specific — editorial flourishes
+   ============================================================================ */
+
+/* Ken Burns: slow zoom toward the building's upper-right focal point on the
+   tenant hero photo. Purely decorative. The global reduced-motion reset above
+   (@media prefers-reduced-motion + .reduce-motion toggle) disables this, so
+   motion-sensitive patrons get a static, slightly-zoomed frame. */
+@keyframes l30-ken-burns {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+.l30-ken-burns {
+  transform-origin: 65% 35%;
+  animation: l30-ken-burns 32s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Subtle grain texture overlay for depth */
+.l30-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Decorative separator line */
+.l30-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #8B5E5E 20%, #8B5E5E 80%, transparent 100%);
+  opacity: 0.2;
+}
+
+/* ============================================================================
+   Accessibility: Font Size Scaling
+   These MUST live in index.css (not lazy-loaded neuro-inclusive.css).
+   html. prefix ensures specificity beats dyslexia-friendly.css.
+   Percentage values scale all rem-based Tailwind sizing.
+   ============================================================================ */
+
+html.font-size-normal {
+  font-size: 100%;
+}
+
+html.font-size-large {
+  font-size: 112.5% !important;
+}
+
+html.font-size-xlarge {
+  font-size: 125% !important;
+}
+
+/* When dyslexia mode is on at normal size, enforce 18px minimum */
+html.font-size-normal[data-dyslexia-mode="true"] {
+  font-size: 112.5%;
+}
+
+/* ============================================================================
+   Accessibility: Line Spacing
+   Also must be always-loaded. html. prefix for specificity.
+   ============================================================================ */
+
+html.leading-relaxed {
+  line-height: 1.75;
+}
+
+html.leading-loose {
+  line-height: 2;
+}
+
+/* Cascade to text containers only — don't override Tailwind on buttons/badges */
+html.leading-relaxed p, html.leading-relaxed li, html.leading-relaxed td,
+html.leading-relaxed dd, html.leading-relaxed blockquote, html.leading-relaxed article,
+html.leading-loose p, html.leading-loose li, html.leading-loose td,
+html.leading-loose dd, html.leading-loose blockquote, html.leading-loose article {
+  line-height: inherit;
+}
+
+/* ============================================================================
+   Accessibility: Text Reflow
+   When font scaling or dyslexia mode is active, allow truncated text to reflow
+   instead of being clipped. This ensures WCAG 1.4.4 (Resize Text) compliance.
+   Use .truncate-always / .clamp-always to opt out for specific elements.
+   ============================================================================ */
+
+html.font-size-large .truncate:not(.truncate-always),
+html.font-size-xlarge .truncate:not(.truncate-always),
+html[data-dyslexia-mode="true"] .truncate:not(.truncate-always) {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: break-word;
+}
+
+html.font-size-large [class*="line-clamp"]:not(.clamp-always),
+html.font-size-xlarge [class*="line-clamp"]:not(.clamp-always),
+html[data-dyslexia-mode="true"] [class*="line-clamp"]:not(.clamp-always) {
+  -webkit-line-clamp: unset !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+/* Escape hatch: preserve truncation even under accessibility scaling */
+.truncate-always {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* ============================================================================
+   Readability: cap content width on text-heavy areas
+   ============================================================================ */
+
+.prose,
+article p,
+.item-description,
+.event-description,
+.page-description {
+  max-width: 70ch;
+}
+
+/* ============================================================================
+   TipTap editor content — restore prose styling that Tailwind preflight strips.
+   @tailwindcss/typography is not installed, so .prose alone gives no list/heading
+   styles inside the rich-text editor. Scoped to .ProseMirror so we only affect
+   editor content, not arbitrary .prose containers.
+   ============================================================================ */
+
+.ProseMirror ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin: 0.75em 0;
+}
+
+.ProseMirror ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  margin: 0.75em 0;
+}
+
+.ProseMirror ul ul {
+  list-style: circle;
+}
+
+.ProseMirror ul ul ul {
+  list-style: square;
+}
+
+.ProseMirror li {
+  margin: 0.25em 0;
+}
+
+.ProseMirror li > p {
+  margin: 0;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin: 0.83em 0 0.4em;
+  line-height: 1.25;
+}
+
+.ProseMirror h3 {
+  font-size: 1.25em;
+  font-weight: 700;
+  margin: 0.83em 0 0.4em;
+  line-height: 1.3;
+}
+
+.ProseMirror h4 {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin: 0.83em 0 0.4em;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid currentColor;
+  padding-left: 1em;
+  opacity: 0.8;
+  margin: 1em 0;
+  font-style: italic;
+}
+
+.ProseMirror pre {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.75em 1em;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  margin: 1em 0;
+}
+
+.dark .ProseMirror pre {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ProseMirror code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+.dark .ProseMirror code {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ProseMirror pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.ProseMirror p {
+  margin: 0.5em 0;
+}
+
+.ProseMirror a {
+  color: #9e5a2d;
+  text-decoration: underline;
+}
+
+.dark .ProseMirror a {
+  color: #e9a466;
+}
+
+
+/* Role-specific vibe overrides */
+
+/* Board President / Board Ops: Formal Heritage */
+.vibe-formal h2,
+.vibe-formal h3,
+.vibe-formal h4 {
+  font-family: var(--font-serif, ui-serif, Georgia, serif);
+}
+.vibe-formal .rounded-xl {
+  border-radius: 0.75rem;
+}
+
+/* Kids Services: Soft Play */
+.vibe-playful .rounded-xl {
+  border-radius: 1.25rem;
+}
+.vibe-playful .rounded-lg {
+  border-radius: 1rem;
+}
+.vibe-playful .gap-4 {
+  gap: 1.25rem;
+}
+.vibe-playful .gap-6 {
+  gap: 1.75rem;
+}
+
+/* Shelver: High-Contrast Utility */
+.vibe-utility {
+  font-variant-numeric: tabular-nums;
+}
+.vibe-utility .text-sm {
+  font-size: 0.8125rem;
+}
+.vibe-utility .gap-6 {
+  gap: 1rem;
+}
+.vibe-utility .gap-4 {
+  gap: 0.75rem;
+}
+
+/* Marketing: Creative */
+.vibe-creative h2,
+.vibe-creative h3 {
+  letter-spacing: -0.01em;
+}
+
+/* Staff circulation: printable checkout slip.
+   Always-mounted off-screen; only revealed during print when the slip's
+   Print button has added `.l30-printing-slip` to body. Other window.print()
+   callers (e.g. the staff Ctrl+P shortcut) are unaffected. */
+.l30-print-slip {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+@media print {
+  body.l30-printing-slip > * {
+    visibility: hidden !important;
+  }
+  body.l30-printing-slip .l30-print-slip,
+  body.l30-printing-slip .l30-print-slip * {
+    visibility: visible !important;
+  }
+  body.l30-printing-slip .l30-print-slip {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 80mm !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 6mm !important;
+    font-family: -apple-system, system-ui, 'Helvetica Neue', sans-serif !important;
+    font-size: 11pt !important;
+    color: black !important;
+    background: white !important;
+  }
+  body.l30-printing-slip .l30-print-slip__header {
+    font-size: 14pt;
+    font-weight: 700;
+    margin-bottom: 2mm;
+  }
+  body.l30-printing-slip .l30-print-slip__meta {
+    font-size: 9pt;
+    margin-bottom: 4mm;
+  }
+  body.l30-printing-slip .l30-print-slip__patron {
+    font-weight: 600;
+    margin-bottom: 3mm;
+  }
+  body.l30-printing-slip .l30-print-slip__item {
+    border-top: 1pt solid #000;
+    border-bottom: 1pt solid #000;
+    padding: 3mm 0;
+    margin-bottom: 3mm;
+  }
+  body.l30-printing-slip .l30-print-slip__title {
+    font-weight: 600;
+  }
+  body.l30-printing-slip .l30-print-slip__author {
+    font-size: 10pt;
+  }
+  body.l30-printing-slip .l30-print-slip__due {
+    margin-bottom: 4mm;
+  }
+  body.l30-printing-slip .l30-print-slip__footer {
+    font-size: 9pt;
+    margin-top: 6mm;
+    text-align: center;
+  }
+}
+
+/* ============================================================================
+   Dark-mode muted-text AA floor
+   text-lsc-dark/40 dark:text-lsc-cream/40 (tertiary) and /50 (secondary) are
+   the app's muted-text utilities. In dark mode, cream at 40%/50% opacity on
+   dark surfaces (earth-700/800/900) falls to ~3.3-4.2:1, under WCAG AA 4.5.
+   Raise the dark-mode alpha floor just enough to clear AA on elevated
+   (earth-700) surfaces; light mode and /60+ untouched. Uses --brand-surface-rgb
+   so it tracks the tenant/theme surface color.
+   ============================================================================ */
+.dark .dark\:text-lsc-cream\/40 { color: rgb(var(--brand-surface-rgb, 240 236 240) / 0.64) !important; }
+.dark .dark\:text-lsc-cream\/50 { color: rgb(var(--brand-surface-rgb, 240 236 240) / 0.68) !important; }
+
+/* ============================================================================
+   Dark-mode same-hue semantic badge contrast
+   Status/category/teal badges pair a colored bg (dark:bg-{c}-900/NN) with
+   same-hue -400 text; in dark mode that lands ~4.0-4.1:1 (< WCAG AA). Bump the
+   text to the -300 shade ONLY on the same-hue badge combo (both classes on one
+   element) so the ~600 neutral-surface -400 text uses stay untouched.
+   ============================================================================ */
+.dark [class*="dark:bg-status-danger-900"][class*="dark:text-status-danger-400"]{color:#fca5a5!important}
+.dark [class*="dark:bg-status-success-900"][class*="dark:text-status-success-400"]{color:#86efac!important}
+.dark [class*="dark:bg-status-warning-900"][class*="dark:text-status-warning-400"]{color:#fcd34d!important}
+.dark [class*="dark:bg-status-info-900"][class*="dark:text-status-info-400"]{color:#93c5fd!important}
+.dark [class*="dark:bg-category-900"][class*="dark:text-category-400"]{color:#d8b4fe!important}
+.dark [class*="dark:bg-teal-900"][class*="dark:text-teal-400"]{color:#5eead4!important}

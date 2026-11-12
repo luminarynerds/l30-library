@@ -1,0 +1,3 @@
+patron_barcode,item_barcode,checkout_date,return_date
+L30-NOPE-9999,COPY-CIRC-001,2024-01-15,
+L30-CIRC-0001,COPY-NOPE-9999,2024-01-15,

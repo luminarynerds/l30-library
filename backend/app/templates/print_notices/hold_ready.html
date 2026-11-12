@@ -1,0 +1,224 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .notice-header {
+            border-bottom: 2px solid #2C1810;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .library-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #2C1810;
+        }
+        .library-address {
+            font-size: 9pt;
+            color: #666;
+        }
+        .notice-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #2E7D32;
+            margin: 20px 0 10px 0;
+        }
+        .patron-info {
+            margin-bottom: 20px;
+        }
+        .notice-date {
+            font-size: 9pt;
+            color: #666;
+            text-align: right;
+        }
+        .good-news {
+            background-color: #E8F5E9;
+            border: 2px solid #4CAF50;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .good-news .icon {
+            font-size: 32pt;
+            color: #4CAF50;
+        }
+        .good-news h3 {
+            color: #2E7D32;
+            margin: 10px 0;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .items-table th {
+            background-color: #5C4F3D;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-size: 10pt;
+        }
+        .items-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 10pt;
+        }
+        .items-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .pickup-info {
+            background-color: #E3F2FD;
+            border: 1px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .pickup-info h4 {
+            color: #1565C0;
+            margin: 0 0 10px 0;
+        }
+        .important-notice {
+            background-color: #FFF9E6;
+            border: 1px solid #E89B44;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .important-notice h4 {
+            color: #D97706;
+            margin: 0 0 10px 0;
+        }
+        .expiry-warning {
+            color: #C41E3A;
+            font-weight: bold;
+            font-size: 12pt;
+        }
+        .contact-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 9pt;
+            color: #666;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="notice-header">
+        <div class="library-name">{{ library_name }}</div>
+        <div class="library-address">
+            {{ library_address }}<br>
+            {{ library_phone }} | {{ library_email }}
+        </div>
+    </div>
+
+    <div class="notice-date">Notice Date: {{ notice_date }}</div>
+
+    <div class="notice-title">HOLD READY FOR PICKUP</div>
+
+    <div class="patron-info">
+        <strong>{{ patron_name }}</strong><br>
+        Library Card: {{ library_card }}
+    </div>
+
+    <div class="good-news">
+        <div class="icon">&#10003;</div>
+        <h3>Your Hold is Ready!</h3>
+        <p>The item(s) you requested are now available for pickup.</p>
+    </div>
+
+    <p>Dear {{ patron_first_name }},</p>
+
+    <p>Great news! The following item(s) you placed on hold are now ready for you to pick up:</p>
+
+    {% if discreet_mode %}
+    <p style="margin: 15px 0; padding: 10px; background-color: #FFF9E6; border: 1px solid #E89B44;">
+        <strong>Privacy Mode Enabled:</strong> Item titles are not shown on this receipt for your privacy.
+        Please contact library staff or check online for pickup details.
+    </p>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Item #</th>
+                <th>Pickup By</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>Item {{ loop.index }}</td>
+                <td class="expiry-warning">{{ item.pickup_by }}</td>
+                <td>Ready for Pickup</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Format</th>
+                <th>Pickup By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.title }}</td>
+                <td>{{ item.author }}</td>
+                <td>{{ item.format }}</td>
+                <td class="expiry-warning">{{ item.pickup_by }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="pickup-info">
+        <h4>Pickup Location</h4>
+        <p><strong>{{ pickup_location }}</strong></p>
+        <p>{{ pickup_address }}</p>
+        <p>Hours: {{ pickup_hours }}</p>
+    </div>
+
+    <div class="important-notice">
+        <h4>Important</h4>
+        <p>Please pick up your item(s) by <span class="expiry-warning">{{ final_pickup_date }}</span>.</p>
+        <p>Items not picked up by this date will be returned to the shelf or sent to the next person on the waiting list.</p>
+        <p><strong>What to bring:</strong> Your library card or valid photo ID</p>
+    </div>
+
+    {% if has_outstanding_fines %}
+    <p><em>Note: You may have outstanding fines of ${{ fine_amount }} on your account. Please be prepared to pay when picking up your items, or speak with staff about payment options.</em></p>
+    {% endif %}
+
+    <div class="contact-info">
+        <strong>Can't make it?</strong><br>
+        Call us at {{ library_phone }} to extend your pickup time or cancel the hold.<br>
+        You can also manage your holds online at {{ library_website }}<br>
+        Library Hours: {{ library_hours }}
+    </div>
+
+    <div class="footer">
+        This notice was generated on {{ generated_date }}.<br>
+        {{ library_name }} - Serving our community since {{ library_since }}.
+    </div>
+</body>
+</html>

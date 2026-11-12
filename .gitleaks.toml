@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Gitleaks config for L30. Extends the default ruleset and allowlists known
+# non-secret matches so `secrets-scan.yml`'s gitleaks job stays actionable
+# instead of drowning in `generic-api-key` false positives.
+#
+# What's allowlisted and why (all verified 2026-07-07, none are live secrets):
+#   - test / fixture dirs: hardcoded throwaway keys & passwords by design
+#     (e.g. test_validation.py PII_ENCRYPTION_KEY, dist-smoke.sh ADMIN_PASSWORD).
+#   - backend/.hypothesis/: property-test cache, generated, gitignored.
+#   - frontend/e2e/.auth/: Playwright auth-state JWTs, generated, gitignored
+#     (also being untracked; kept here so history scans stay green).
+#   - docs + *.md/*.txt: architecture notes and AI-generated summaries contain
+#     illustrative curl auth-header and client_secret examples, not real creds.
+#   - UI key constants: localStorage/sessionStorage keys and feature-flag slugs
+#     assigned to lowercase identifiers -- matched by pattern, NOT whole files,
+#     so a real high-entropy secret in frontend/src still trips.
+#
+# The historical .env* / backups/ blobs that once needed path allowlists were
+# purged from git history on 2026-07-08 (git-filter-repo; every secret in them
+# had already been hash-verified dead + rotated on 2026-07-07). Those path
+# entries are gone -- there is nothing left to allowlist. .env.dist / .env.example
+# templates at HEAD scan clean on their own.
+
+title = "L30 Gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "L30 non-secret matches: test fixtures, generated caches, docs examples, UI/storage/feature-flag key constants, and hash-verified-dead .env history."
+commits = [
+  # a7a9afa4b (Jan 26 2026): apply_featured_migration.py hardcoded an LSC DB
+  # password, remediated to env-only by the Jan-27 security audit (#83).
+  # Hash-verified DEAD 2026-07-07 (matches no live deployment; LSC not running).
+  # Surgical per-commit allowlist so the current (clean) file stays scannable.
+  '''a7a9afa4beee4e5d470d5bf6c036678128d73ba0''',
+]
+paths = [
+  '''backend/tests/''',
+  '''backend/\.hypothesis/''',
+  '''frontend/e2e/''',
+  '''docs/''',
+  '''\.md$''',
+  '''\.txt$''',
+  '''__tests__/''',
+  '''\.test\.(ts|tsx|js|jsx)$''',
+  '''\.env\.example''',
+  '''scripts/dist-smoke\.sh''',
+  '''scripts/clean_secrets_from_history\.sh''',
+  '''backend/extract_all_models\.py''',
+]
+regexTarget = "line"
+regexes = [
+  # localStorage/sessionStorage keys and feature-flag identifiers: a *_KEY const
+  # or `key:` field assigned a lowercase slug string -- not a credential.
+  '''(const\s+[A-Z0-9_]+_KEY\s*=\s*|[A-Z0-9_]+_KEY\s*[:=]\s*|key:\s*)['"][A-Za-z0-9:_.\- ]+['"]''',
+]

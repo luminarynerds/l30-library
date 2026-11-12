@@ -1,0 +1,47 @@
+{
+  "job_type": "catalog_items",
+  "rows": [
+    {
+      "row": 1,
+      "defect_class": "valid",
+      "expected_outcome": "valid",
+      "note": "clean baseline row"
+    },
+    {
+      "row": 2,
+      "defect_class": "encoding_mojibake",
+      "expected_outcome": "valid",
+      "note": "double-encoded accent in title"
+    },
+    {
+      "row": 3,
+      "defect_class": "whitespace_and_case",
+      "expected_outcome": "valid",
+      "note": "padded fields, uppercase type"
+    },
+    {
+      "row": 4,
+      "defect_class": "empty_required_title",
+      "expected_outcome": "error",
+      "note": "title is required"
+    },
+    {
+      "row": 5,
+      "defect_class": "non_numeric_year",
+      "expected_outcome": "error",
+      "note": "validator flags non-numeric year"
+    },
+    {
+      "row": 6,
+      "defect_class": "unknown_item_type",
+      "expected_outcome": "warning",
+      "note": "unknown type should warn"
+    },
+    {
+      "row": 7,
+      "defect_class": "near_duplicate_title_author",
+      "expected_outcome": "duplicate",
+      "note": "same title, author missing a period; fuzzy >= 0.85 expected"
+    }
+  ]
+}

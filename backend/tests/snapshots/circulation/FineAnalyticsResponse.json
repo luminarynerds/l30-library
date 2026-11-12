@@ -1,0 +1,236 @@
+{
+  "$comment": "Auto-generated from app.schemas.fine.FineAnalyticsResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "FineAccumulationPoint": {
+      "properties": {
+        "amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Amount"
+        },
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "date": {
+          "title": "Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "date",
+        "amount",
+        "count"
+      ],
+      "title": "FineAccumulationPoint",
+      "type": "object"
+    },
+    "FineAnalyticsByType": {
+      "properties": {
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "fine_type": {
+          "$ref": "#/$defs/FineType"
+        },
+        "percentage": {
+          "title": "Percentage",
+          "type": "number"
+        },
+        "total_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Total Amount"
+        }
+      },
+      "required": [
+        "fine_type",
+        "count",
+        "total_amount",
+        "percentage"
+      ],
+      "title": "FineAnalyticsByType",
+      "type": "object"
+    },
+    "FineType": {
+      "enum": [
+        "overdue",
+        "lost_item",
+        "damaged_item",
+        "other"
+      ],
+      "title": "FineType",
+      "type": "string"
+    },
+    "PatronFinePatterns": {
+      "properties": {
+        "average_days_overdue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Days Overdue"
+        },
+        "average_fine_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Fine Amount"
+        },
+        "frequent_late_returns": {
+          "title": "Frequent Late Returns",
+          "type": "boolean"
+        },
+        "most_common_fine_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FineType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "total_lifetime_fines": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Total Lifetime Fines"
+        },
+        "total_lifetime_paid": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Total Lifetime Paid"
+        }
+      },
+      "required": [
+        "frequent_late_returns",
+        "average_days_overdue",
+        "most_common_fine_type",
+        "total_lifetime_fines",
+        "total_lifetime_paid",
+        "average_fine_amount"
+      ],
+      "title": "PatronFinePatterns",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "accumulation_history": {
+      "items": {
+        "$ref": "#/$defs/FineAccumulationPoint"
+      },
+      "title": "Accumulation History",
+      "type": "array"
+    },
+    "average_patron_balance": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Average Patron Balance"
+    },
+    "breakdown_by_type": {
+      "items": {
+        "$ref": "#/$defs/FineAnalyticsByType"
+      },
+      "title": "Breakdown By Type",
+      "type": "array"
+    },
+    "comparison_to_average": {
+      "title": "Comparison To Average",
+      "type": "string"
+    },
+    "current_balance": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Current Balance"
+    },
+    "patron_id": {
+      "title": "Patron Id",
+      "type": "integer"
+    },
+    "patron_name": {
+      "title": "Patron Name",
+      "type": "string"
+    },
+    "patterns": {
+      "$ref": "#/$defs/PatronFinePatterns"
+    },
+    "total_fines_count": {
+      "title": "Total Fines Count",
+      "type": "integer"
+    },
+    "unpaid_fines_count": {
+      "title": "Unpaid Fines Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "patron_id",
+    "patron_name",
+    "current_balance",
+    "total_fines_count",
+    "unpaid_fines_count",
+    "breakdown_by_type",
+    "accumulation_history",
+    "patterns",
+    "average_patron_balance",
+    "comparison_to_average"
+  ],
+  "title": "FineAnalyticsResponse",
+  "type": "object"
+}

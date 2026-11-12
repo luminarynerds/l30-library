@@ -1,0 +1,408 @@
+{
+  "$comment": "Auto-generated from app.schemas.user.UserResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "UserRole": {
+      "enum": [
+        "super_admin",
+        "admin",
+        "director",
+        "legal",
+        "library_admin",
+        "staff",
+        "patron",
+        "teacher",
+        "child",
+        "bookmobile",
+        "homebond"
+      ],
+      "title": "UserRole",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "accessibility_needs": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Accessibility Needs"
+    },
+    "address": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Address"
+    },
+    "aggregate_recommendations_opt_out": {
+      "default": false,
+      "title": "Aggregate Recommendations Opt Out",
+      "type": "boolean"
+    },
+    "card_expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Card Expires At"
+    },
+    "card_trial_expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Card Trial Expires At"
+    },
+    "card_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Card Type"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "current_checkouts": {
+      "default": 0,
+      "title": "Current Checkouts",
+      "type": "integer"
+    },
+    "current_holds": {
+      "default": 0,
+      "title": "Current Holds",
+      "type": "integer"
+    },
+    "date_of_birth": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Date Of Birth"
+    },
+    "deletion_scheduled_for": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deletion Scheduled For"
+    },
+    "email": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Email"
+    },
+    "email_masked": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Email Masked"
+    },
+    "email_verified": {
+      "title": "Email Verified",
+      "type": "boolean"
+    },
+    "fines_balance": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "default": "0.00",
+      "title": "Fines Balance"
+    },
+    "first_name": {
+      "title": "First Name",
+      "type": "string"
+    },
+    "home_branch_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Home Branch Id"
+    },
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "is_active": {
+      "title": "Is Active",
+      "type": "boolean"
+    },
+    "is_board_member": {
+      "default": false,
+      "title": "Is Board Member",
+      "type": "boolean"
+    },
+    "language_preference": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Language Preference"
+    },
+    "last_login": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Login"
+    },
+    "last_name": {
+      "title": "Last Name",
+      "type": "string"
+    },
+    "library_card": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Library Card"
+    },
+    "onboarding_completed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Onboarding Completed At"
+    },
+    "onboarding_skipped": {
+      "default": false,
+      "title": "Onboarding Skipped",
+      "type": "boolean"
+    },
+    "parental_consent_given": {
+      "default": false,
+      "title": "Parental Consent Given",
+      "type": "boolean"
+    },
+    "patron_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Patron Status"
+    },
+    "patron_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Patron Type"
+    },
+    "phone": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Phone"
+    },
+    "photo_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Photo Url"
+    },
+    "preferred_contact_method": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Preferred Contact Method"
+    },
+    "pronouns": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pronouns"
+    },
+    "role": {
+      "$ref": "#/$defs/UserRole"
+    },
+    "suspended_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Suspended Until"
+    },
+    "suspension_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Suspension Reason"
+    },
+    "track_reading_history": {
+      "title": "Track Reading History",
+      "type": "boolean"
+    },
+    "ui_mode": {
+      "default": "full",
+      "description": "UI preference: essentials or full",
+      "title": "Ui Mode",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "id",
+    "first_name",
+    "last_name",
+    "role",
+    "is_active",
+    "library_card",
+    "phone",
+    "address",
+    "email_verified",
+    "track_reading_history"
+  ],
+  "title": "UserResponse",
+  "type": "object"
+}

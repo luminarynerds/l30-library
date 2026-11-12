@@ -1,0 +1,183 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350" width="250" height="350">
+  <defs>
+    <!-- Gold foil gradient -->
+    <linearGradient id="goldFoil" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4A853"/>
+      <stop offset="25%" stop-color="#F2D68A"/>
+      <stop offset="50%" stop-color="#D4A853"/>
+      <stop offset="75%" stop-color="#F2D68A"/>
+      <stop offset="100%" stop-color="#C49639"/>
+    </linearGradient>
+    <!-- Card background gradient -->
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E1A24"/>
+      <stop offset="100%" stop-color="#2A2530"/>
+    </linearGradient>
+    <!-- Cover art gradient -->
+    <linearGradient id="coverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A3540"/>
+      <stop offset="50%" stop-color="#2A2530"/>
+      <stop offset="100%" stop-color="#1E1A24"/>
+    </linearGradient>
+    <!-- Holographic shimmer -->
+    <linearGradient id="holoShimmer" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C08080" stop-opacity="0.15"/>
+      <stop offset="20%" stop-color="#80C0C0" stop-opacity="0.08"/>
+      <stop offset="40%" stop-color="#C080C0" stop-opacity="0.12"/>
+      <stop offset="60%" stop-color="#80C080" stop-opacity="0.08"/>
+      <stop offset="80%" stop-color="#C0C080" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#C08080" stop-opacity="0.15"/>
+    </linearGradient>
+    <!-- Inner glow -->
+    <radialGradient id="innerGlow" cx="50%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#C88080" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#C88080" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Star pattern for rarity -->
+    <pattern id="starPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="0.5" fill="#D4A853" opacity="0.3"/>
+    </pattern>
+    <!-- Filigree corner filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Outer gold border -->
+  <rect x="0" y="0" width="250" height="350" rx="12" fill="url(#goldFoil)"/>
+
+  <!-- Inner card body -->
+  <rect x="4" y="4" width="242" height="342" rx="10" fill="url(#cardBg)"/>
+
+  <!-- Star particle overlay -->
+  <rect x="4" y="4" width="242" height="342" rx="10" fill="url(#starPattern)"/>
+
+  <!-- Holographic shimmer overlay -->
+  <rect x="4" y="4" width="242" height="342" rx="10" fill="url(#holoShimmer)"/>
+
+  <!-- Inner glow -->
+  <rect x="4" y="4" width="242" height="342" rx="10" fill="url(#innerGlow)"/>
+
+  <!-- Top decorative gold line -->
+  <line x1="30" y1="28" x2="220" y2="28" stroke="url(#goldFoil)" stroke-width="0.5" opacity="0.6"/>
+
+  <!-- L30 COLLECTOR SERIES header -->
+  <text x="125" y="22" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="#D4A853" letter-spacing="3" opacity="0.8">L30 COLLECTOR SERIES</text>
+
+  <!-- Gold inner frame for art area -->
+  <rect x="20" y="34" width="210" height="155" rx="6" fill="none" stroke="url(#goldFoil)" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Cover art area -->
+  <rect x="22" y="36" width="206" height="151" rx="5" fill="url(#coverGrad)"/>
+
+  <!-- Book illustration (open book with radiating light) -->
+  <g transform="translate(125, 105)">
+    <!-- Radiating lines from book -->
+    <g opacity="0.15" stroke="#C88080" stroke-width="0.7">
+      <line x1="0" y1="-15" x2="-30" y2="-50"/>
+      <line x1="0" y1="-15" x2="-20" y2="-52"/>
+      <line x1="0" y1="-15" x2="-10" y2="-53"/>
+      <line x1="0" y1="-15" x2="0" y2="-54"/>
+      <line x1="0" y1="-15" x2="10" y2="-53"/>
+      <line x1="0" y1="-15" x2="20" y2="-52"/>
+      <line x1="0" y1="-15" x2="30" y2="-50"/>
+    </g>
+    <!-- Glow behind book -->
+    <ellipse cx="0" cy="5" rx="35" ry="20" fill="#C88080" opacity="0.08"/>
+    <!-- Open book - left page -->
+    <path d="M-2,15 L-2,-15 C-2,-20 -10,-25 -38,-28 L-38,8 C-38,8 -10,-2 -2,15Z" fill="#E0DCE4" opacity="0.9"/>
+    <!-- Page lines left -->
+    <line x1="-8" y1="-8" x2="-32" y2="-14" stroke="#A09CA8" stroke-width="0.5" opacity="0.5"/>
+    <line x1="-8" y1="-3" x2="-32" y2="-10" stroke="#A09CA8" stroke-width="0.5" opacity="0.5"/>
+    <line x1="-8" y1="2" x2="-32" y2="-5" stroke="#A09CA8" stroke-width="0.5" opacity="0.5"/>
+    <line x1="-8" y1="7" x2="-32" y2="0" stroke="#A09CA8" stroke-width="0.5" opacity="0.5"/>
+    <!-- Open book - right page -->
+    <path d="M2,15 L2,-15 C2,-20 10,-25 38,-28 L38,8 C38,8 10,-2 2,15Z" fill="#F0ECF0" opacity="0.9"/>
+    <!-- Page lines right -->
+    <line x1="8" y1="-8" x2="32" y2="-14" stroke="#A09CA8" stroke-width="0.5" opacity="0.5"/>
+    <line x1="8" y1="-3" x2="32" y2="-10" stroke="#A09CA8" stroke-width="0.5" opacity="0.5"/>
+    <line x1="8" y1="2" x2="32" y2="-5" stroke="#A09CA8" stroke-width="0.5" opacity="0.5"/>
+    <line x1="8" y1="7" x2="32" y2="0" stroke="#A09CA8" stroke-width="0.5" opacity="0.5"/>
+    <!-- Book spine shadow -->
+    <line x1="0" y1="-15" x2="0" y2="15" stroke="#1E1A24" stroke-width="2" opacity="0.3"/>
+  </g>
+
+  <!-- FIRST EDITION badge (gold with shimmer) -->
+  <g filter="url(#glow)">
+    <rect x="145" y="40" width="78" height="18" rx="9" fill="#1E1A24" stroke="url(#goldFoil)" stroke-width="1"/>
+    <text x="184" y="52.5" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="#D4A853" letter-spacing="1.5" font-weight="bold">FIRST EDITION</text>
+  </g>
+
+  <!-- Signed autograph indicator -->
+  <g transform="translate(35, 165)" opacity="0.7">
+    <text font-family="'Brush Script MT', 'Segoe Script', cursive" font-size="11" fill="#D4A853" transform="rotate(-8)">Signed</text>
+  </g>
+
+  <!-- Divider line with diamond -->
+  <line x1="30" y1="198" x2="108" y2="198" stroke="url(#goldFoil)" stroke-width="0.5" opacity="0.5"/>
+  <polygon points="125,194 129,198 125,202 121,198" fill="url(#goldFoil)" opacity="0.5"/>
+  <line x1="142" y1="198" x2="220" y2="198" stroke="url(#goldFoil)" stroke-width="0.5" opacity="0.5"/>
+
+  <!-- Title -->
+  <text x="125" y="218" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#F0ECF0" font-weight="bold">The Midnight Garden</text>
+
+  <!-- Author -->
+  <text x="125" y="236" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#C88080" font-style="italic">by Elena Rosewood</text>
+
+  <!-- Thin separator -->
+  <line x1="80" y1="248" x2="170" y2="248" stroke="#C88080" stroke-width="0.3" opacity="0.4"/>
+
+  <!-- Genre / category -->
+  <text x="125" y="262" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#8A8690" letter-spacing="2">LITERARY FICTION</text>
+
+  <!-- Rarity stars -->
+  <g transform="translate(90, 272)" fill="#D4A853">
+    <polygon points="8,0 10,5 15,5.5 11,9 12.5,14 8,11.5 3.5,14 5,9 1,5.5 6,5" transform="scale(0.6)"/>
+    <polygon points="8,0 10,5 15,5.5 11,9 12.5,14 8,11.5 3.5,14 5,9 1,5.5 6,5" transform="translate(14,0) scale(0.6)"/>
+    <polygon points="8,0 10,5 15,5.5 11,9 12.5,14 8,11.5 3.5,14 5,9 1,5.5 6,5" transform="translate(28,0) scale(0.6)"/>
+    <polygon points="8,0 10,5 15,5.5 11,9 12.5,14 8,11.5 3.5,14 5,9 1,5.5 6,5" transform="translate(42,0) scale(0.6)"/>
+    <polygon points="8,0 10,5 15,5.5 11,9 12.5,14 8,11.5 3.5,14 5,9 1,5.5 6,5" transform="translate(56,0) scale(0.6)"/>
+  </g>
+
+  <!-- Bottom divider -->
+  <line x1="30" y1="292" x2="220" y2="292" stroke="url(#goldFoil)" stroke-width="0.5" opacity="0.4"/>
+
+  <!-- Serial number -->
+  <text x="30" y="308" font-family="'Courier New', monospace" font-size="7" fill="#6E6A76">L30-IND-2026-00042</text>
+
+  <!-- Card number / total -->
+  <text x="220" y="308" text-anchor="end" font-family="'Courier New', monospace" font-size="7" fill="#6E6A76">#042 / 500</text>
+
+  <!-- Bottom branding -->
+  <text x="125" y="330" text-anchor="middle" font-family="Georgia, serif" font-size="6" fill="#54505C" letter-spacing="1.5">L30 COMMUNITY LIBRARY</text>
+
+  <!-- Corner filigree decorations -->
+  <!-- Top-left -->
+  <g opacity="0.3" stroke="url(#goldFoil)" stroke-width="0.8" fill="none">
+    <path d="M15,15 C15,15 15,35 25,35 M15,15 C15,15 35,15 35,25"/>
+    <circle cx="15" cy="15" r="2" fill="url(#goldFoil)"/>
+  </g>
+  <!-- Top-right -->
+  <g opacity="0.3" stroke="url(#goldFoil)" stroke-width="0.8" fill="none" transform="translate(250,0) scale(-1,1)">
+    <path d="M15,15 C15,15 15,35 25,35 M15,15 C15,15 35,15 35,25"/>
+    <circle cx="15" cy="15" r="2" fill="url(#goldFoil)"/>
+  </g>
+  <!-- Bottom-left -->
+  <g opacity="0.3" stroke="url(#goldFoil)" stroke-width="0.8" fill="none" transform="translate(0,350) scale(1,-1)">
+    <path d="M15,15 C15,15 15,35 25,35 M15,15 C15,15 35,15 35,25"/>
+    <circle cx="15" cy="15" r="2" fill="url(#goldFoil)"/>
+  </g>
+  <!-- Bottom-right -->
+  <g opacity="0.3" stroke="url(#goldFoil)" stroke-width="0.8" fill="none" transform="translate(250,350) scale(-1,-1)">
+    <path d="M15,15 C15,15 15,35 25,35 M15,15 C15,15 35,15 35,25"/>
+    <circle cx="15" cy="15" r="2" fill="url(#goldFoil)"/>
+  </g>
+</svg>

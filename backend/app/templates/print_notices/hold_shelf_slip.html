@@ -1,0 +1,167 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Compact slip designed for 3" x 5" labels or small receipt paper */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            margin: 0;
+            padding: 8px;
+            width: 280px;
+        }
+        .slip {
+            border: 2px solid #2C1810;
+            padding: 10px;
+            page-break-after: always;
+        }
+        .patron-initials {
+            font-size: 36pt;
+            font-weight: bold;
+            color: #2C1810;
+            text-align: center;
+            padding: 8px 0;
+            border-bottom: 2px solid #5C4F3D;
+            margin-bottom: 8px;
+            letter-spacing: 4px;
+        }
+        .shelf-slot {
+            font-size: 20pt;
+            font-weight: bold;
+            color: #2E7D32;
+            text-align: center;
+            padding: 6px 0;
+            background-color: #E8F5E9;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .item-info {
+            margin: 8px 0;
+            padding: 6px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+        .item-title {
+            font-weight: bold;
+            font-size: 10pt;
+            color: #333;
+            word-wrap: break-word;
+        }
+        .item-author {
+            font-size: 9pt;
+            color: #666;
+        }
+        .item-details {
+            font-size: 8pt;
+            color: #888;
+            margin-top: 4px;
+        }
+        .expiry-box {
+            background-color: #FFF9E6;
+            border: 1px solid #E89B44;
+            padding: 6px;
+            margin: 8px 0;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .expiry-label {
+            font-size: 8pt;
+            color: #666;
+        }
+        .expiry-date {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #C41E3A;
+        }
+        .qr-section {
+            text-align: center;
+            margin: 8px 0 4px 0;
+            padding-top: 8px;
+            border-top: 1px dashed #ccc;
+        }
+        .qr-code {
+            /* QR code will be rendered as an image by the frontend/kiosk */
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: block;
+        }
+        .qr-label {
+            font-size: 7pt;
+            color: #999;
+            margin-top: 4px;
+        }
+        .pickup-location {
+            font-size: 8pt;
+            color: #666;
+            text-align: center;
+            margin-top: 4px;
+        }
+        .barcode-text {
+            font-family: monospace;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+            margin-top: 4px;
+        }
+        @media print {
+            body { margin: 0; padding: 0; }
+            .slip { border: 1px solid #000; }
+        }
+    </style>
+</head>
+<body>
+    <div class="slip">
+        <!-- Large patron initials for quick shelf sorting -->
+        <div class="patron-initials">{{ patron_initials }}</div>
+
+        <!-- Shelf slot assignment -->
+        {% if shelf_slot %}
+        <div class="shelf-slot">{{ shelf_slot }}</div>
+        {% endif %}
+
+        <!-- Item information -->
+        <div class="item-info">
+            <div class="item-title">{{ item_title }}</div>
+            {% if item_author %}
+            <div class="item-author">{{ item_author }}</div>
+            {% endif %}
+            <div class="item-details">
+                {% if call_number %}Call#: {{ call_number }}{% endif %}
+                {% if barcode %} | {{ barcode }}{% endif %}
+            </div>
+        </div>
+
+        <!-- Patron name -->
+        <div style="font-size: 9pt; color: #333; margin: 4px 0;">
+            <strong>{{ patron_name }}</strong>
+        </div>
+
+        <!-- Expiration date -->
+        {% if expires_at %}
+        <div class="expiry-box">
+            <div class="expiry-label">PICK UP BY</div>
+            <div class="expiry-date">{{ expires_at }}</div>
+        </div>
+        {% endif %}
+
+        <!-- QR code for self-pickup -->
+        {% if qr_pickup_code %}
+        <div class="qr-section">
+            <img class="qr-code"
+                 src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ qr_pickup_code }}"
+                 alt="Pickup QR Code" />
+            <div class="qr-label">Scan for self-pickup</div>
+        </div>
+        {% endif %}
+
+        <!-- Pickup location -->
+        {% if pickup_location %}
+        <div class="pickup-location">{{ pickup_location }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

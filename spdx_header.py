@@ -1,0 +1,293 @@
+#!/usr/bin/env python3
+"""
+spdx_header.py - Add SPDX license headers to L30 source files.
+
+Walks a source tree and adds an SPDX header to every recognized source file
+that doesn't already have one. Idempotent: re-running is safe.
+
+Usage
+-----
+Dry run (default - shows what would change without modifying files):
+
+    python spdx_header.py --root . --copyright "Jane Doe"
+
+Apply changes:
+
+    python spdx_header.py --root . --copyright "Jane Doe" --apply
+
+License defaults to AGPL-3.0-or-later. Override with --license if needed.
+Year defaults to current year.
+
+What it does
+------------
+- For every file with a recognized extension, inserts an SPDX header at the top
+  (or after the shebang if present, or after a BOM if present).
+- Skips files that already contain an SPDX-License-Identifier line.
+- Skips files marked as auto-generated.
+- Skips common build outputs, dependencies, lockfiles, and config files.
+
+What it doesn't do
+------------------
+- Doesn't touch JSON files (JSON has no comment syntax).
+- Doesn't touch binary files (skips on UnicodeDecodeError).
+- Doesn't try to fix files with non-SPDX existing copyright headers.
+- Doesn't handle DOCTYPE or XML declarations specially. HTML/XML files with
+  preambles may need manual review after running.
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+import sys
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+
+
+@dataclass(frozen=True)
+class CommentStyle:
+    """Describes how to wrap two lines of header text in this file's comment syntax."""
+    open: str     # opening of block comment, or empty for line-comment style
+    close: str    # closing of block comment, or empty for line-comment style
+    prefix: str   # prefix for each header line
+
+
+# Block-comment style: a single comment containing both header lines.
+BLOCK = CommentStyle(open="/**", close=" */", prefix=" * ")
+# Hash-comment style: each header line is its own line comment.
+HASH = CommentStyle(open="", close="", prefix="# ")
+DASH = CommentStyle(open="", close="", prefix="-- ")
+SEMI = CommentStyle(open="", close="", prefix=";; ")
+HTML = CommentStyle(open="<!--", close="-->", prefix="  ")
+
+
+# File extension to comment style.
+COMMENT_STYLES: dict[str, CommentStyle] = {
+    # JS / TS family
+    ".js": BLOCK, ".jsx": BLOCK, ".ts": BLOCK, ".tsx": BLOCK,
+    ".mjs": BLOCK, ".cjs": BLOCK,
+    # CSS family
+    ".css": BLOCK, ".scss": BLOCK, ".sass": BLOCK, ".less": BLOCK,
+    # C / C++ / Rust / Go / Java / Kotlin / Swift
+    ".c": BLOCK, ".h": BLOCK, ".cpp": BLOCK, ".hpp": BLOCK, ".cc": BLOCK,
+    ".rs": BLOCK, ".go": BLOCK, ".java": BLOCK, ".kt": BLOCK, ".swift": BLOCK,
+    # Hash family
+    ".py": HASH, ".sh": HASH, ".bash": HASH, ".zsh": HASH, ".fish": HASH,
+    ".rb": HASH, ".pl": HASH, ".r": HASH, ".jl": HASH,
+    ".yml": HASH, ".yaml": HASH, ".toml": HASH,
+    ".cfg": HASH, ".ini": HASH, ".conf": HASH,
+    # SQL
+    ".sql": DASH,
+    # Lisp family
+    ".lisp": SEMI, ".clj": SEMI, ".cljs": SEMI, ".el": SEMI,
+    # HTML / XML / SVG / Vue / Svelte
+    ".html": HTML, ".htm": HTML, ".xml": HTML, ".svg": HTML,
+    ".vue": HTML, ".svelte": HTML,
+    # Markdown uses HTML-style comments
+    ".md": HTML, ".markdown": HTML,
+}
+
+# Filenames we never touch, regardless of extension.
+SKIP_FILENAMES = {
+    # JS/TS
+    "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml",
+    "tsconfig.json", "jsconfig.json",
+    ".eslintrc.json", ".prettierrc", ".prettierrc.json", ".babelrc",
+    # PHP
+    "composer.json", "composer.lock",
+    # Python
+    "Pipfile", "Pipfile.lock", "poetry.lock", "uv.lock",
+    "requirements.txt", "requirements-dev.txt", "constraints.txt",
+    # Rust / Go
+    "Cargo.toml", "Cargo.lock", "go.sum", "go.mod",
+    # Misc
+    ".gitignore", ".gitattributes", ".dockerignore", ".npmignore",
+    ".env", ".env.example", ".env.local", ".env.production", ".env.development",
+    # Project meta files - these have their own conventions
+    "LICENSE", "LICENSE.txt", "LICENSE.md", "COPYING", "COPYING.md",
+    "README", "README.md", "README.txt",
+    "CHANGELOG.md", "AUTHORS.md", "CONTRIBUTORS.md", "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md", "SECURITY.md",
+}
+
+# Directories we skip entirely (matched by name, anywhere in the tree).
+SKIP_DIRS = {
+    # VCS
+    ".git", ".hg", ".svn",
+    # JS/TS
+    "node_modules", "bower_components",
+    ".next", ".nuxt", ".turbo", ".parcel-cache",
+    # Python
+    "__pycache__", ".venv", "venv", "env", ".tox", ".pytest_cache",
+    ".mypy_cache", ".ruff_cache",
+    # Build outputs
+    "dist", "build", "out", ".cache", "target", "bin", "obj",
+    # Vendored deps
+    "vendor", "third_party", "third-party",
+    # Generated
+    "migrations",  # most ORM migrations are auto-generated; review manually if not
+    # Coverage
+    "coverage", ".coverage", "htmlcov",
+}
+
+# Markers in the first 500 chars that indicate an auto-generated file.
+GENERATED_MARKERS = (
+    "@generated",
+    "AUTO-GENERATED",
+    "AUTOGENERATED",
+    "DO NOT EDIT",
+    "This file was automatically generated",
+    "This file is auto-generated",
+)
+
+SPDX_MARKER = "SPDX-License-Identifier"
+
+
+def has_spdx(content: str) -> bool:
+    """SPDX header present in the first 1500 chars."""
+    return SPDX_MARKER in content[:1500]
+
+
+def is_generated(content: str) -> bool:
+    head = content[:500]
+    return any(marker in head for marker in GENERATED_MARKERS)
+
+
+def build_header(style: CommentStyle, copyright_holder: str, year: int, license_id: str) -> str:
+    """Build the two-line SPDX header in the given comment style, ending with a newline."""
+    lines = [
+        f"SPDX-FileCopyrightText: {year} {copyright_holder}",
+        f"SPDX-License-Identifier: {license_id}",
+    ]
+    if style.open:
+        body = "\n".join(f"{style.prefix}{line}" for line in lines)
+        return f"{style.open}\n{body}\n{style.close}\n"
+    body = "\n".join(f"{style.prefix}{line}" for line in lines)
+    return f"{body}\n"
+
+
+def insert_header(content: str, header: str) -> str:
+    """Insert the header at the top of the file, preserving BOM and shebang."""
+    bom = ""
+    if content.startswith("﻿"):
+        bom = "﻿"
+        content = content[1:]
+
+    # Preserve shebang line if present
+    if content.startswith("#!"):
+        nl = content.find("\n")
+        if nl == -1:
+            return bom + content + "\n" + header
+        return bom + content[: nl + 1] + header + content[nl + 1:]
+
+    return bom + header + content
+
+
+def process_file(
+    path: Path,
+    copyright_holder: str,
+    year: int,
+    license_id: str,
+    apply: bool,
+) -> tuple[str, str]:
+    """Returns (status, message). status in {'updated', 'would-update', 'skip', 'error'}."""
+    ext = path.suffix.lower()
+    if ext not in COMMENT_STYLES:
+        return "skip", f"unhandled extension {ext or '(none)'}"
+
+    if path.name in SKIP_FILENAMES:
+        return "skip", "in SKIP_FILENAMES"
+
+    try:
+        content = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        return "skip", "not UTF-8 (likely binary)"
+    except OSError as e:
+        return "error", f"read failed: {e}"
+
+    if has_spdx(content):
+        return "skip", "already has SPDX header"
+
+    if is_generated(content):
+        return "skip", "auto-generated file"
+
+    style = COMMENT_STYLES[ext]
+    header = build_header(style, copyright_holder, year, license_id)
+    new_content = insert_header(content, header)
+
+    if apply:
+        try:
+            path.write_text(new_content, encoding="utf-8")
+            return "updated", "wrote header"
+        except OSError as e:
+            return "error", f"write failed: {e}"
+    return "would-update", "header would be added"
+
+
+def walk_files(root: Path):
+    """Walk root, yielding files, skipping SKIP_DIRS and most dotted dirs."""
+    keep_dotted = {".github", ".gitlab"}
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [
+            d for d in dirnames
+            if d not in SKIP_DIRS and (not d.startswith(".") or d in keep_dotted)
+        ]
+        for fn in filenames:
+            yield Path(dirpath) / fn
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Add SPDX headers to L30 source files.",
+    )
+    parser.add_argument("--root", type=Path, default=Path("."),
+                        help="Root directory to scan (default: current dir)")
+    parser.add_argument("--copyright", required=True,
+                        help='Copyright holder name, e.g. "Jane Doe"')
+    parser.add_argument("--year", type=int, default=datetime.now().year,
+                        help="Copyright year (default: current year)")
+    parser.add_argument("--license", default="AGPL-3.0-or-later", dest="license_id",
+                        help="SPDX license identifier (default: AGPL-3.0-or-later)")
+    parser.add_argument("--apply", action="store_true",
+                        help="Actually write changes (default: dry run)")
+    parser.add_argument("--verbose", "-v", action="store_true",
+                        help="Show every file processed, including skips")
+    args = parser.parse_args(argv)
+
+    if not args.root.exists():
+        print(f"error: {args.root} does not exist", file=sys.stderr)
+        return 1
+
+    counts = {"updated": 0, "would-update": 0, "skip": 0, "error": 0}
+
+    for path in walk_files(args.root):
+        status, message = process_file(
+            path, args.copyright, args.year, args.license_id, args.apply
+        )
+        counts[status] += 1
+
+        if status in ("updated", "would-update", "error"):
+            print(f"{status:>13}  {path}  ({message})")
+        elif args.verbose:
+            print(f"{status:>13}  {path}  ({message})")
+
+    print()
+    if args.apply:
+        print(
+            f"Done. {counts['updated']} updated, "
+            f"{counts['skip']} skipped, {counts['error']} errored."
+        )
+    else:
+        print(
+            f"Dry run. {counts['would-update']} would be updated, "
+            f"{counts['skip']} skipped, {counts['error']} errored."
+        )
+        if counts["would-update"] > 0:
+            print("Pass --apply to write changes.")
+
+    return 0 if counts["error"] == 0 else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,290 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# HTTP 405 Error Monitoring Dashboard Configuration
+# Use this configuration to set up monitoring dashboards in your preferred tool
+# (Sentry, Grafana, DataDog, etc.)
+
+dashboard:
+  name: "HTTP 405 Method Not Allowed Errors"
+  description: "Monitor and analyze HTTP 405 errors across the L30 Library system"
+  refresh_interval: "1m"
+  tags:
+    - monitoring
+    - errors
+    - api
+    - 405
+
+panels:
+  # Overview panel
+  - id: "405_overview"
+    title: "405 Error Overview"
+    type: "stat"
+    metrics:
+      - name: "Total 405 Errors (24h)"
+        query: "tag:http_status:405 created:>now-24h"
+        unit: "count"
+      - name: "Errors in Last Hour"
+        query: "tag:http_status:405 created:>now-1h"
+        unit: "count"
+      - name: "Error Rate (per hour)"
+        query: "tag:http_status:405 created:>now-24h | rate(1h)"
+        unit: "errors/hour"
+      - name: "Unique Endpoints Affected"
+        query: "tag:http_status:405 | distinct tag:endpoint"
+        unit: "count"
+
+  # Alert status panel
+  - id: "405_alert_status"
+    title: "Alert Status"
+    type: "status"
+    metrics:
+      - name: "Current Status"
+        query: "tag:alert_routing:http_405_errors | latest"
+        thresholds:
+          ok: 0
+          warning: 20
+          critical: 50
+
+  # Time series graph
+  - id: "405_trend"
+    title: "405 Errors Over Time (24h)"
+    type: "timeseries"
+    metrics:
+      - name: "Errors per Hour"
+        query: "tag:http_status:405 created:>now-24h"
+        interval: "1h"
+        fill: "linear"
+    annotations:
+      - name: "Alert Threshold"
+        value: 50
+        color: "red"
+        style: "dashed"
+      - name: "Warning Threshold"
+        value: 20
+        color: "orange"
+        style: "dashed"
+
+  # Top endpoints
+  - id: "405_top_endpoints"
+    title: "Top 10 Endpoints Returning 405"
+    type: "table"
+    metrics:
+      - name: "Endpoint"
+        query: "tag:http_status:405 | group_by(tag:endpoint) | count | top(10)"
+        columns:
+          - "endpoint"
+          - "method"
+          - "error_count"
+          - "last_occurrence"
+          - "affected_clients"
+
+  # Top problematic clients
+  - id: "405_top_clients"
+    title: "Top 10 Problematic Clients"
+    type: "table"
+    metrics:
+      - name: "Client IP"
+        query: "tag:http_status:405 | group_by(tag:client_ip) | count | top(10)"
+        columns:
+          - "client_ip"
+          - "error_count"
+          - "unique_endpoints_tried"
+          - "suspected_pattern"
+          - "last_error"
+
+  # Alert threshold status
+  - id: "405_thresholds"
+    title: "Alert Thresholds"
+    type: "stat"
+    metrics:
+      - name: "Low Threshold"
+        value: 20
+        unit: "errors/hour"
+        color: "blue"
+      - name: "Medium Threshold"
+        value: 50
+        unit: "errors/hour"
+        color: "yellow"
+      - name: "High Threshold"
+        value: 100
+        unit: "errors/hour"
+        color: "orange"
+      - name: "Critical Threshold"
+        value: 150
+        unit: "errors/hour"
+        color: "red"
+
+  # Error patterns
+  - id: "405_patterns"
+    title: "Client Behavior Patterns"
+    type: "pie"
+    metrics:
+      - name: "Pattern Distribution"
+        query: "tag:http_status:405 | group_by(tag:suspected_pattern) | count"
+        values:
+          - "automated_client"
+          - "endpoint_enumeration"
+          - "rapid_fire_requests"
+          - "normal_behavior"
+
+  # User agents heatmap
+  - id: "405_user_agents"
+    title: "User Agents Making 405 Requests"
+    type: "table"
+    metrics:
+      - name: "User Agent"
+        query: "tag:http_status:405 | group_by(tag:user_agent) | count"
+        sort: "desc"
+        limit: 20
+
+  # Affected users
+  - id: "405_affected_users"
+    title: "Users Affected by 405 Errors"
+    type: "table"
+    metrics:
+      - name: "User ID"
+        query: "tag:http_status:405 | user_id:* | group_by(user_id) | count"
+        columns:
+          - "user_id"
+          - "error_count"
+          - "endpoints_tried"
+          - "last_error"
+        limit: 20
+
+# Alert Rules Configuration
+alerts:
+  - id: "405_threshold_exceeded"
+    name: "HTTP 405 Error Rate Exceeded"
+    description: "Alert when 405 error rate exceeds threshold"
+    condition:
+      metric: "tag:http_status:405"
+      operator: ">"
+      threshold: 50
+      time_window: "1h"
+    severity: "high"
+    notification_channels:
+      - "slack"
+      - "email"
+      - "pagerduty"
+    notification_message: |
+      HTTP 405 error rate exceeded threshold!
+      Current rate: {{ errors_1h }} errors/hour
+      Threshold: {{ threshold }} errors/hour
+      Top endpoints:
+      {{ top_endpoints }}
+      Top clients:
+      {{ top_clients }}
+
+  - id: "405_critical_rate"
+    name: "HTTP 405 Critical Error Rate"
+    description: "Alert at critical threshold"
+    condition:
+      metric: "tag:http_status:405"
+      operator: ">"
+      threshold: 100
+      time_window: "1h"
+    severity: "critical"
+    notification_channels:
+      - "slack"
+      - "email"
+      - "pagerduty"
+      - "ops_team"
+    notification_message: |
+      CRITICAL: HTTP 405 error rate at critical level!
+      Current rate: {{ errors_1h }} errors/hour (threshold: {{ threshold }})
+      Immediate action required.
+
+  - id: "405_sustained_errors"
+    name: "Sustained 405 Errors"
+    description: "Alert if 405s continue for extended period"
+    condition:
+      metric: "tag:http_status:405"
+      operator: ">"
+      threshold: 20
+      time_window: "4h"
+      consecutive_breaches: 4  # 4 consecutive hours
+    severity: "medium"
+    notification_channels:
+      - "slack"
+      - "email"
+    notification_message: |
+      Sustained 405 errors detected over 4+ hours.
+      Investigation recommended.
+
+# Remediation Steps (automated suggestions)
+remediation:
+  single_endpoint:
+    - "Check endpoint definition in router"
+    - "Verify HTTP method is supported"
+    - "Run route analysis tool: ./scripts/analyze_routes.py"
+    - "Check for route conflicts or shadowing"
+    - "Review CORS configuration for method allowance"
+
+  multiple_endpoints:
+    - "Check for router registration issues"
+    - "Verify prefix configuration in main.py"
+    - "Run full route analysis: ./scripts/analyze_routes.py"
+    - "Check middleware for method filtering"
+
+  single_client:
+    - "Verify client is using correct endpoint"
+    - "Check client library/SDK version"
+    - "Verify client authentication if applicable"
+    - "Check for client-side path construction issues"
+
+  multiple_clients:
+    - "Check API documentation for endpoint accuracy"
+    - "Verify endpoint was not recently moved/renamed"
+    - "Check for client library updates needed"
+    - "Review recent deployment changes"
+
+# Integration Configuration
+integrations:
+  sentry:
+    enabled: true
+    project_id: "{{ SENTRY_PROJECT_ID }}"
+    organization: "{{ SENTRY_ORG }}"
+    tag_filter: "http_status:405"
+    event_tagging:
+      - "http_status"
+      - "endpoint"
+      - "method"
+      - "client_ip"
+      - "alert_routing"
+
+  grafana:
+    enabled: true
+    data_source: "prometheus"
+    dashboard_uid: "405_monitoring"
+    queries:
+      - name: "405_errors_total"
+        metric: "http_requests_total{status='405'}"
+        interval: "1m"
+      - name: "405_errors_by_endpoint"
+        metric: "http_requests_total{status='405'} by (endpoint)"
+        interval: "5m"
+      - name: "405_errors_by_method"
+        metric: "http_requests_total{status='405'} by (method)"
+        interval: "5m"
+
+  datadog:
+    enabled: true
+    service: "l30-library-api"
+    env: "{{ ENVIRONMENT }}"
+    tags:
+      - "monitoring:enabled"
+      - "error_tracking:405"
+    metrics:
+      - name: "l30.http.405.total"
+        type: "count"
+      - name: "l30.http.405.rate"
+        type: "gauge"
+
+# Dashboard Export Formats
+export:
+  - format: "grafana"
+    filename: "405_monitoring_grafana.json"
+  - format: "datadog"
+    filename: "405_monitoring_datadog.json"
+  - format: "sentry"
+    filename: "405_monitoring_sentry_config.py"

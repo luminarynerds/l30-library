@@ -1,0 +1,269 @@
+Section,Variable,Default Value,Required,Description,Required At First Deploy
+AUTHENTICATION & TOKENS,ACCESS_TOKEN_EXPIRE_MINUTES,15,No,Minutes before a login session expires,No
+AUTHENTICATION & TOKENS,ALGORITHM,HS256,No,Encryption method for login tokens,No
+AUTHENTICATION & TOKENS,CF_TURNSTILE_SECRET,,No,Cloudflare Turnstile secret key for bot verification on public forms. Production deployments MUST set this; fail-open in dev otherwise.,Yes
+AUTHENTICATION & TOKENS,JWT_SECRET_KEY,,No,Primary JWT signing key. Overrides SECRET_KEY for JWT signing when set. Used for zero-downtime key rotation.,No
+AUTHENTICATION & TOKENS,JWT_SECRET_KEY_PREVIOUS,,No,"Previous JWT signing key, kept for grace-period verification during a key rotation.",No
+AUTHENTICATION & TOKENS,LOCKOUT_DURATION_MINUTES,15,No,Minutes an account stays locked after too many failures,No
+AUTHENTICATION & TOKENS,MAX_LOGIN_ATTEMPTS,5,No,Failed logins before the account is locked,No
+AUTHENTICATION & TOKENS,PASSWORD_MIN_LENGTH,8,No,Minimum number of characters required for passwords,No
+AUTHENTICATION & TOKENS,RATE_LIMIT_ENABLED,true,No,Enable per-route rate limiting on the API.,No
+AUTHENTICATION & TOKENS,RATE_LIMIT_FALLBACK_ENABLED,true,No,Fall back to in-memory rate limiting if Redis is unreachable.,No
+AUTHENTICATION & TOKENS,RATE_LIMIT_FALLBACK_MULTIPLIER,0.5,No,Multiplier applied to limits during Redis-fallback mode (reduces per-route ceilings).,No
+AUTHENTICATION & TOKENS,RATE_LIMIT_OBSERVE_ONLY,true,No,"When true, rate limiting classifies and logs over-limit requests (would_block) but does not reject them. Set false to actually enforce limits.",No
+AUTHENTICATION & TOKENS,REFRESH_TOKEN_EXPIRE_DAYS,7,No,Days before a user must log in again,No
+AUTHENTICATION & TOKENS,REQUIRE_ADMIN_2FA,true,No,Force admin/super_admin/director accounts to set up TOTP 2FA on login. Self-host builds may set false to evaluate the system before standing up an authenticator app (2FA stays available to opt into).,No
+AUTHENTICATION & TOKENS,SECRET_KEY,(generate),Yes,Master signing key for sessions (generate a random value),Yes
+AUTHENTICATION & TOKENS,TEMPORARY_CARD_TRIAL_DAYS,7,No,Days a temporary library card remains valid before requiring full registration.,No
+AUTHENTICATION & TOKENS,TURNSTILE_DISABLED,false,No,Self-host escape hatch that bypasses Cloudflare Turnstile verification entirely when you have no Cloudflare account to issue a secret. Opt-in only; hosted deployments should leave this off.,No
+BACKUPS & OFF-SITE STORAGE,BACKUP_AGE_RECIPIENTS_FILE,,No,"Path to file listing age public-key recipients (one per line). When set, nightly backups are encrypted as .sql.gz.age. The matching private key is NEVER stored on this host.",No
+BACKUPS & OFF-SITE STORAGE,BACKUP_RCLONE_PATH,l30-backups/daily,No,Destination path within the rclone remote. Defaulted when BACKUP_RCLONE_REMOTE is set.,No
+BACKUPS & OFF-SITE STORAGE,BACKUP_RCLONE_REMOTE,,No,rclone remote name for off-site replication (e.g. b2backup for Backblaze B2). Uses BACKUP_RCLONE_PATH or l30-backups/daily as the destination.,No
+BACKUPS & OFF-SITE STORAGE,BACKUP_S3_BUCKET,,No,S3 bucket name for off-site backup replication via the aws CLI. Independent from rclone (both can be configured).,No
+BACKUPS & OFF-SITE STORAGE,BACKUP_WEBHOOK_URL,,No,"Webhook URL for backup success/failure notifications. POSTs JSON with status, message, timestamp.",No
+BACKUPS & OFF-SITE STORAGE,SLACK_WEBHOOK,,No,Slack incoming-webhook URL. Used by verify-backup-restore.sh monthly cron to post on failure.,No
+CACHE & STORAGE,AWS_ACCESS_KEY_ID,,No,AWS access key for the S3 storage backend (only used when STORAGE_BACKEND=s3).,No
+CACHE & STORAGE,AWS_SECRET_ACCESS_KEY,,No,AWS secret key for the S3 storage backend (only used when STORAGE_BACKEND=s3).,No
+CACHE & STORAGE,CACHE_REFRESH_INTERVAL_MINUTES,30,No,Minutes between automatic cache refreshes,No
+CACHE & STORAGE,CACHE_WARMING_ENABLED,true,No,Pre-load common data into cache on startup,No
+CACHE & STORAGE,COVER_CACHE_DIR,/app/uploads/cover_cache,No,Directory where fetched catalog cover images are cached.,No
+CACHE & STORAGE,COVER_RESIZE_CACHE_DIR,/app/uploads/cover_resize_cache,No,Directory where resized cover-image variants are cached (survives container rebuilds when volume-mounted).,No
+CACHE & STORAGE,REDIS_PASSWORD,(generate),Yes,Cache server credential (generate a random value),Yes
+CACHE & STORAGE,REDIS_SSL,false,No,Use encrypted connections to the cache server,No
+CACHE & STORAGE,REDIS_SSL_CA_CERTS,,No,Path to certificate authority file for cache SSL,No
+CACHE & STORAGE,REDIS_SSL_CERT_REQS,required,No,Whether to verify the cache server SSL certificate,No
+CACHE & STORAGE,REDIS_URL,(generate),Yes,Connection address for the Redis cache server,Yes
+CACHE & STORAGE,S3_BUCKET,,No,Cloud storage bucket name (only if using S3 backend),No
+CACHE & STORAGE,S3_ENDPOINT_URL,,No,Custom S3 endpoint for non-AWS providers,No
+CACHE & STORAGE,S3_REGION,us-east-1,No,Cloud storage region (only if using S3 backend),No
+CACHE & STORAGE,STORAGE_BACKEND,local,No,Where uploaded files are stored: local disk or S3,No
+CACHE & STORAGE,STORAGE_LOCAL_PATH,/app/uploads,No,Folder path for uploads when using local storage,No
+CORE APPLICATION,API_DOCS_ENABLED,false,No,Expose OpenAPI docs at /docs. Keep false in production.,No
+CORE APPLICATION,APP_NAME,L30 Library,No,"Internal application/product name (distinct from LIBRARY_NAME, which is your library's public name).",No
+CORE APPLICATION,APP_VERSION,1.0.0,No,Version string shown in the API and admin panel,No
+CORE APPLICATION,DEBUG,false,No,Show detailed error messages (disable in production),No
+CORE APPLICATION,DOMAIN,localhost,No,Your library's domain name. Templates TRUSTED_HOSTS and the nginx server name at container start.,Yes
+CORE APPLICATION,ENVIRONMENT,production,No,"Deployment mode: production, staging, or development",No
+CORE APPLICATION,FRONTEND_URL,https://l30.org,No,Public URL of the library website,No
+CORE APPLICATION,TRUSTED_HOSTS,"l30.org,localhost",No,Comma-separated list of hostnames allowed in the Host header.,Yes
+DATABASE CONFIGURATION (REQUIRED),DATABASE_REQUIRE_SSL,true,No,Require encrypted database connections (keep on in production),No
+DATABASE CONFIGURATION (REQUIRED),DATABASE_URL,(generate),Yes,Connection string for PostgreSQL (generate a strong password),Yes
+DATABASE CONFIGURATION (REQUIRED),DB_MAX_OVERFLOW,30,No,Extra connections allowed when the pool is full,No
+DATABASE CONFIGURATION (REQUIRED),DB_POOL_RECYCLE,3600,No,Seconds before a database connection is refreshed,No
+DATABASE CONFIGURATION (REQUIRED),DB_POOL_SIZE,20,No,Maximum number of database connections to keep open,No
+DATABASE CONFIGURATION (REQUIRED),DB_POOL_TIMEOUT,30,No,Seconds to wait for a connection before giving up,No
+DATABASE CONFIGURATION (REQUIRED),REPLICA_DATABASE_URL,,No,Optional read-replica connection string. Read-heavy queries route here when set; unset routes everything to the primary.,No
+DEVELOPMENT & OPTIONAL SETTINGS,DEMO_PUBLIC,false,No,"Mark deployment as a public demo (banner, reduced rate limits).",No
+DEVELOPMENT & OPTIONAL SETTINGS,L30_VERSION,0.0.0-dev,No,Build version stamped into distributable packages.,No
+DEVELOPMENT & OPTIONAL SETTINGS,OVERDUE_FINE_PER_DAY,0.25,No,Legacy daily fine rate (kept for backward compatibility),No
+DEVELOPMENT & OPTIONAL SETTINGS,UPDATE_CHECK,true,No,Phone home to check for L30 updates. Set false to disable.,No
+EMAIL & COMMUNICATION SERVICES,EMAIL_ALERT_THRESHOLD,100,No,Alert when hourly email volume exceeds this number.,No
+EMAIL & COMMUNICATION SERVICES,EMAIL_DAILY_SEND_CAP,500,No,Maximum total emails sent per day across all categories. Hard cap.,No
+EMAIL & COMMUNICATION SERVICES,EMAIL_DEDUP_WINDOW_HOURS,24,No,Suppress duplicate notifications to the same recipient within this window.,No
+EMAIL & COMMUNICATION SERVICES,FROM_EMAIL,noreply@l30.org,No,Sender address for system emails,No
+EMAIL & COMMUNICATION SERVICES,RESEND_API_KEY,,No,Resend.com API key for transactional email (preferred over SENDGRID_API_KEY when set).,No
+EMAIL & COMMUNICATION SERVICES,RESEND_MIN_INTERVAL_S,0.25,No,Minimum seconds between consecutive Resend API calls from one worker (keeps under Resend's rate limit). Set 0 to disable pacing.,No
+EMAIL & COMMUNICATION SERVICES,SMS_ENABLED,false,No,Turn on text message notifications. No SMS provider is currently wired up in this codebase; this flag has no effect until one is.,No
+EXTERNAL SERVICES & INTEGRATIONS,ACE_BINARY_PATH,npx,No,Path or command to invoke Ace by DAISY for EPUB accessibility checks.,No
+EXTERNAL SERVICES & INTEGRATIONS,ACE_TIMEOUT_SECONDS,120,No,Timeout for Ace accessibility checks in seconds.,No
+EXTERNAL SERVICES & INTEGRATIONS,CLAMAV_HOST,,No,ClamAV server hostname (if not using socket),No
+EXTERNAL SERVICES & INTEGRATIONS,CLAMAV_PORT,3310,No,ClamAV server port (if not using socket),No
+EXTERNAL SERVICES & INTEGRATIONS,CLAMAV_SOCKET,/var/run/clamav/clamd.sock,No,Unix socket path for local ClamAV connection,No
+EXTERNAL SERVICES & INTEGRATIONS,COURTLISTENER_API_TOKEN,,No,CourtListener API token for bankruptcy-filing lookups.,No
+EXTERNAL SERVICES & INTEGRATIONS,DISABLE_AGENT_LLM,false,No,Disable LLM calls from the staff library-agent tools (keeps the rule-based fallback only).,No
+EXTERNAL SERVICES & INTEGRATIONS,EMBEDDING_DIMENSION,1536,No,Vector size for search embeddings (match the model),No
+EXTERNAL SERVICES & INTEGRATIONS,EMBEDDING_MODEL,text-embedding-3-small,No,OpenAI model used for semantic search embeddings,No
+EXTERNAL SERVICES & INTEGRATIONS,FEDERATED_SEARCH_ENABLE_DEFAULTS,true,No,Seed the federated-search server list with built-in defaults. Set false to configure servers only via FEDERATED_SEARCH_SERVERS_JSON.,No
+EXTERNAL SERVICES & INTEGRATIONS,FEDERATED_SEARCH_SERVERS_JSON,,No,"JSON list of federated-search server definitions, overriding/extending the built-in defaults.",No
+EXTERNAL SERVICES & INTEGRATIONS,GOOGLE_BOOKS_API_KEY,,No,Google Books API key for cover art and metadata lookups (optional).,No
+EXTERNAL SERVICES & INTEGRATIONS,GOOGLE_MAPS_API_KEY,,No,Google Maps credential for delivery routing (optional),No
+EXTERNAL SERVICES & INTEGRATIONS,INDIE_EBOOK_STORAGE_SUBDIR,indie_ebooks,No,Storage subdirectory for locally-published indie author ebooks.,No
+EXTERNAL SERVICES & INTEGRATIONS,INDIE_OPDS_IMPORT_ENABLED,false,No,Enable importing indie ebooks from an external OPDS catalog feed.,No
+EXTERNAL SERVICES & INTEGRATIONS,KNOWLEDGE_PIPELINE_CAPTURE_ENABLED,false,No,Capture staff library-agent interactions into the knowledge base pipeline.,No
+EXTERNAL SERVICES & INTEGRATIONS,LIBRARIAN_AGENT_API_KEY,,No,API key for the librarian-agent service (omitted from requests when blank).,No
+EXTERNAL SERVICES & INTEGRATIONS,LIBRARIAN_AGENT_BASE_URL,,No,Base URL for the librarian-agent knowledge-base service. Blank disables all calls to it.,No
+EXTERNAL SERVICES & INTEGRATIONS,LIBRARIAN_AGENT_LIBRARY_SLUG,l30,No,This library's slug on the librarian-agent service.,No
+EXTERNAL SERVICES & INTEGRATIONS,LULU_CLIENT_KEY,,No,Lulu Direct API client key.,No
+EXTERNAL SERVICES & INTEGRATIONS,LULU_CLIENT_SECRET,,No,Lulu Direct API client secret.,No
+EXTERNAL SERVICES & INTEGRATIONS,LULU_SANDBOX,true,No,Use Lulu Direct sandbox for print-on-demand. Set false for production fulfillment.,No
+EXTERNAL SERVICES & INTEGRATIONS,LULU_WEBHOOK_SECRET,,No,Signing secret for Lulu Direct webhooks.,No
+EXTERNAL SERVICES & INTEGRATIONS,MAPBOX_API_KEY,,No,Mapbox credential for delivery routing (optional),No
+EXTERNAL SERVICES & INTEGRATIONS,METISLIB_API_KEY,,No,API key for MetisLib platform.,No
+EXTERNAL SERVICES & INTEGRATIONS,METISLIB_BASE_URL,http://localhost:8803,No,MetisLib API base URL.,No
+EXTERNAL SERVICES & INTEGRATIONS,METISLIB_ENABLED,false,No,Enable MetisLib cooperative ebook platform integration.,No
+EXTERNAL SERVICES & INTEGRATIONS,METISLIB_LIBRARY_ID,,No,This library's identifier on the MetisLib platform.,No
+EXTERNAL SERVICES & INTEGRATIONS,METISLIB_MOCK,true,No,Use the mock MetisLib client (no real platform calls). Keep true unless METISLIB_ENABLED is true.,No
+EXTERNAL SERVICES & INTEGRATIONS,METISLIB_PATRON_HASH_SECRET,(generate),No,"Secret used to HMAC-hash patron references shared with MetisLib, so no raw patron ID crosses the integration boundary. Generated automatically by setup.sh. Only relevant when METISLIB_ENABLED=true.",No
+EXTERNAL SERVICES & INTEGRATIONS,METISLIB_PUBLIC_URL,https://metislib.org,No,Public-facing MetisLib URL (linked from patron UI).,No
+EXTERNAL SERVICES & INTEGRATIONS,METISLIB_TIMEOUT_SECONDS,10,No,HTTP timeout for MetisLib calls in seconds.,No
+EXTERNAL SERVICES & INTEGRATIONS,OCLC_ENABLED,false,No,Enable OCLC WorldCat outbound submission queue.,No
+EXTERNAL SERVICES & INTEGRATIONS,OPENAI_API_KEY,,No,"AI features credential (optional, for catalog AI)",No
+EXTERNAL SERVICES & INTEGRATIONS,OSRM_SERVER_URL,https://router.project-osrm.org,No,OSRM server URL for delivery route calculation,No
+EXTERNAL SERVICES & INTEGRATIONS,PALACE_ENABLED,true,No,Enable Palace Project ebook / audiobook integration.,No
+EXTERNAL SERVICES & INTEGRATIONS,PEN_AMERICA_SHEET_CSV_URL,https://docs.google.com/spreadsheets/d/1slCpqLprPXHM-Wyt-WYJR30-NvbGLialVNR8qTsZFG8/export?format=csv,No,CSV export URL for the PEN America book-ban tracking spreadsheet.,No
+EXTERNAL SERVICES & INTEGRATIONS,RECRUITMENT_DIGEST_EMAIL,,No,Recipient for the MetisLib recruitment weekly digest email. Unset disables the digest job.,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_CONNECTION_TIMEOUT,300,No,Seconds before an idle SIP2 connection closes,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_ENABLED,false,No,Enable self-checkout kiosk protocol (SIP2),No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_HOST,0.0.0.0,No,Network address the SIP2 server listens on,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_INSTITUTION_ID,LSC,No,Library identifier sent in SIP2 messages,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_LIBRARY_NAME,L30 Library,No,Library name sent in SIP2 messages,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_MAX_CONNECTIONS,100,No,Max simultaneous SIP2 kiosk connections,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_PORT,6001,No,Port the SIP2 server listens on,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_REQUIRE_CHECKSUM,true,No,Require checksum validation on SIP2 messages,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_REQUIRE_LOGIN,true,No,Require kiosks to authenticate before SIP2 use,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_TERMINAL_PASSWORD,,No,Shared password for SIP2 kiosk authentication,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_TLS_CERT,,No,Path to TLS certificate file for SIP2,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_TLS_KEY,,No,Path to TLS private key file for SIP2,No
+EXTERNAL SERVICES & INTEGRATIONS,SIP2_USE_TLS,true,No,Encrypt SIP2 connections with TLS,No
+EXTERNAL SERVICES & INTEGRATIONS,STRIPE_OVERFLOW_WEBHOOK_SECRET,,No,Stripe webhook signing secret for overflow purchases.,No
+EXTERNAL SERVICES & INTEGRATIONS,STRIPE_POD_WEBHOOK_SECRET,,No,Stripe webhook signing secret for print-on-demand purchases.,No
+EXTERNAL SERVICES & INTEGRATIONS,STRIPE_SECRET_KEY,,No,Stripe secret key (overflow purchases).,No
+EXTERNAL SERVICES & INTEGRATIONS,UMAMI_PASS,,No,Umami login password (for proxied API access).,No
+EXTERNAL SERVICES & INTEGRATIONS,UMAMI_URL,,No,Umami analytics server URL.,No
+EXTERNAL SERVICES & INTEGRATIONS,UMAMI_USERNAME,,No,Umami login username (for proxied API access).,No
+EXTERNAL SERVICES & INTEGRATIONS,UMAMI_WEBSITE_ID,,No,Umami website identifier for this deployment.,No
+EXTERNAL SERVICES & INTEGRATIONS,VIRUS_SCAN_ENABLED,true,No,Scan uploaded files for malware via ClamAV,No
+EXTERNAL SERVICES & INTEGRATIONS,VIRUS_SCAN_FAIL_ON_ERROR,true,No,Reject uploads if virus scanner is unavailable,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_K10PLUS_SRU_URL,https://sru.k10plus.de/opac-de-627,No,"K10plus (German union catalog) SRU search endpoint, for copy cataloging.",No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_LIBRIS_SRU_URL,https://libris.kb.se/sru/libris,No,"LIBRIS (Swedish union catalog) SRU search endpoint, for copy cataloging.",No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_LOC_DATABASE,LCDB,No,Library of Congress Z39.50 database name.,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_LOC_HOST,lx2.loc.gov,No,Library of Congress Z39.50 server hostname.,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_LOC_PORT,210,No,Library of Congress Z39.50 server port.,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_LOC_SRU_URL,https://lx2.loc.gov/sru/lcdb,No,Library of Congress SRU search endpoint (used for copy cataloging).,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_OCLC_DATABASE,OLUCWorldCat,No,OCLC WorldCat Z39.50 database name.,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_OCLC_HOST,z3950.oclc.org,No,OCLC WorldCat Z39.50 server hostname.,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_OCLC_PORT,210,No,OCLC WorldCat Z39.50 server port.,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_OCLC_REQUIRES_AUTH,true,No,Whether the configured OCLC connection requires authentication (OCLC access needs a subscription).,No
+EXTERNAL SERVICES & INTEGRATIONS,Z3950_SOURCES_JSON,,No,JSON override for the full Z39.50/SRU source list (advanced use; overrides the individual Z3950_* variables below).,No
+FINANCIAL CONFIGURATION,AUTO_CONVERT_OVERDUE_TO_LOST,true,No,Automatically mark long-overdue items as lost,No
+FINANCIAL CONFIGURATION,CLAIMS_RETURNED_REVIEW_DAYS,30,No,Days staff have to review a claims-returned dispute,No
+FINANCIAL CONFIGURATION,DAMAGE_CHARGE_DESTROYED,1.00,No,Charge for destroyed items (1.0 = full replacement cost),No
+FINANCIAL CONFIGURATION,DAMAGE_CHARGE_MAJOR,0.50,No,Charge for major damage as fraction of replacement cost,No
+FINANCIAL CONFIGURATION,DAMAGE_CHARGE_MINOR,0.25,No,Charge for minor damage as fraction of replacement cost,No
+FINANCIAL CONFIGURATION,DAMAGE_CHARGE_MODERATE,0.50,No,Charge for moderate damage as fraction of replacement cost,No
+FINANCIAL CONFIGURATION,DAMAGE_CHARGE_NONE,0.0,No,Charge multiplier for undamaged items (0.0 = no charge),No
+FINANCIAL CONFIGURATION,FINE_BASE_DAILY_RATE,0.25,No,Daily overdue fine in dollars,No
+FINANCIAL CONFIGURATION,FINE_MAX_PER_USER,25.00,No,Maximum total fines one patron can owe,No
+FINANCIAL CONFIGURATION,FINE_TIER_1_MAX_DAYS,7,No,Last day of the tier 1 fine rate,No
+FINANCIAL CONFIGURATION,FINE_TIER_1_RATE,0.25,No,Daily fine rate for the first overdue period,No
+FINANCIAL CONFIGURATION,FINE_TIER_2_MAX_DAYS,14,No,Last day of the tier 2 fine rate,No
+FINANCIAL CONFIGURATION,FINE_TIER_2_RATE,0.50,No,Daily fine rate for the second overdue period,No
+FINANCIAL CONFIGURATION,FINE_TIER_3_RATE,1.00,No,Daily fine rate for items overdue past tier 2,No
+FINANCIAL CONFIGURATION,FOUND_ITEM_CREDIT_PERCENTAGE,100.0,No,Percent of charges refunded when a lost item is returned,No
+FINANCIAL CONFIGURATION,FOUND_ITEM_GRACE_PERIOD_DAYS,365,No,Days after loss when returning still earns a refund,No
+FINANCIAL CONFIGURATION,ITEM_REPLACEMENT_COST,25.00,No,Default cost to replace a lost item in dollars,No
+FINANCIAL CONFIGURATION,LOST_ITEM_DEFAULT_REPLACEMENT_COST,25.00,No,Fallback replacement cost when item has no price on record,No
+FINANCIAL CONFIGURATION,MAX_CLAIMS_PER_YEAR,3,No,Max times a patron can dispute charges per year,No
+FINANCIAL CONFIGURATION,MINOR_DAMAGE_CHARGE_PCT,0.0,No,Minor damage charge as percentage of replacement cost (config.py path; financial_config.py uses DAMAGE_CHARGE_MINOR separately).,No
+FINANCIAL CONFIGURATION,MODERATE_DAMAGE_CHARGE_PCT,25.0,No,Moderate damage charge as percentage of replacement cost (config.py path).,No
+FINANCIAL CONFIGURATION,PROCESSING_FEE,5.00,No,Admin fee added when an item is declared lost,No
+FINANCIAL CONFIGURATION,SEVERE_DAMAGE_CHARGE_PCT,50.0,No,Severe damage charge as percentage of replacement cost (config.py path).,No
+FINANCIAL CONFIGURATION,TOTAL_LOSS_DAMAGE_CHARGE_PCT,100.0,No,Total-loss damage charge as percentage of replacement cost (config.py path).,No
+LIBRARY IDENTITY,BIBFRAME_BASE_URI,https://l30.org,No,Base URI for BIBFRAME linked-data exports.,No
+LIBRARY IDENTITY,FACEBOOK_HANDLE,,No,Library Facebook page handle for social cards.,No
+LIBRARY IDENTITY,GENEALOGY_EMAIL,genealogy@l30.org,No,Genealogy-service contact address (only used by genealogy module).,No
+LIBRARY IDENTITY,LIBRARY_ADDRESS,,No,Library street address (for contact pages and structured data).,No
+LIBRARY IDENTITY,LIBRARY_CITY,,No,"Library city, used in schema.org structured data (separate field from LIBRARY_CITY_STATE_ZIP's free-text version).",No
+LIBRARY IDENTITY,LIBRARY_CITY_STATE_ZIP,,No,"City, state, and ZIP for the library (used in structured data).",No
+LIBRARY IDENTITY,LIBRARY_CODE,L30,No,Short library code used as a MARC cataloging source-code prefix.,No
+LIBRARY IDENTITY,LIBRARY_EMAIL,library@l30.org,No,General library contact address.,Yes
+LIBRARY IDENTITY,LIBRARY_ID,,No,"Stable identifier for this library, used in linked-data and external integrations.",No
+LIBRARY IDENTITY,LIBRARY_LATITUDE,0.0,No,"Latitude for the library's primary location (structured data, maps).",No
+LIBRARY IDENTITY,LIBRARY_LONGITUDE,0.0,No,"Longitude for the library's primary location (structured data, maps).",No
+LIBRARY IDENTITY,LIBRARY_NAME,My Library,No,Public-facing library name.,Yes
+LIBRARY IDENTITY,LIBRARY_PHONE,,No,Library phone number (public-facing).,No
+LIBRARY IDENTITY,LIBRARY_SERVICE_AREA,,No,Geographic service area description (used in structured data).,No
+LIBRARY IDENTITY,LIBRARY_STREET,,No,"Library street address, used in schema.org structured data (separate field from LIBRARY_ADDRESS's free-text version).",No
+LIBRARY IDENTITY,LIBRARY_USER_AGENT,L30Library/1.0 (library@l30.org),No,User-Agent string used when making outbound HTTP requests to external APIs.,No
+LIBRARY IDENTITY,LIBRARY_WEBSITE,https://l30.org,No,"Library public website URL (used in emails, RDF, OpenGraph).",Yes
+LIBRARY IDENTITY,PUBLIC_RECORDS_CLERK_EMAIL,,No,Recipient address for public-records-request form notifications.,No
+LIBRARY IDENTITY,SCHEMA_ORG_BASE_URL,https://l30.org,No,Base URL for schema.org structured data in HTML pages.,No
+LIBRARY IDENTITY,SUPPORT_EMAIL,support@l30.org,No,Patron-facing support contact address.,No
+LIBRARY IDENTITY,TWITTER_HANDLE,,No,Library Twitter handle for social cards (without the @).,No
+MONITORING & LOGGING,AUDIT_LOG_ENABLED,true,No,"Write an immutable audit log of security-critical events (logins, payments, permission changes).",No
+MONITORING & LOGGING,AUDIT_LOG_PATH,/var/log/l30/audit.log,No,Path to the audit log file. Must be writable by the backend container user.,No
+MONITORING & LOGGING,AUDIT_LOG_SIGNING_KEY,,No,HMAC key for signing audit log entries (tamper detection). Set in production.,Yes
+MONITORING & LOGGING,ENABLE_ENDPOINT_TRACKING,true,No,Track API endpoint usage and response times,No
+MONITORING & LOGGING,LOG_FORMAT,json,No,"Log output format (json for production, text for dev)",No
+MONITORING & LOGGING,LOG_LEVEL,INFO,No,"How much detail to write in logs (INFO, DEBUG, WARNING)",No
+MONITORING & LOGGING,OTEL_ENABLED,false,No,Enable OpenTelemetry distributed tracing export.,No
+MONITORING & LOGGING,OTEL_EXPORTER_OTLP_ENDPOINT,http://localhost:4317,No,OTLP collector endpoint URL.,No
+MONITORING & LOGGING,OTEL_EXPORTER_OTLP_PROTOCOL,grpc,No,OTLP transport: grpc or http/protobuf.,No
+MONITORING & LOGGING,OTEL_LOG_SPANS,false,No,Also log span events to stdout (verbose; debug only).,No
+MONITORING & LOGGING,OTEL_SERVICE_NAME,l30-library,No,Service name reported to the OTLP collector.,No
+MONITORING & LOGGING,OTEL_TRACES_SAMPLE_RATE,1.0,No,Fraction of traces to sample (0.0-1.0).,No
+MONITORING & LOGGING,SENTRY_DSN,,No,Error tracking service URL (optional),No
+MONITORING & LOGGING,SENTRY_ENVIRONMENT,production,No,"Environment label sent to Sentry (production, staging)",No
+MONITORING & LOGGING,SENTRY_TRACES_SAMPLE_RATE,0.1,No,Fraction of requests to trace in Sentry (0.0 to 1.0),No
+PRIVACY & RETENTION,ATTENDANCE_RECORD_RETENTION_DAYS,730,No,Days to retain attendance records before anonymizing.,No
+PRIVACY & RETENTION,DATABASE_ACCESS_LOG_RETENTION_DAYS,365,No,Days to retain the database-access audit log before the retention service prunes it.,No
+PRIVACY & RETENTION,EVENT_REGISTRATION_RETENTION_DAYS,365,No,Days to retain event registration records before anonymizing.,No
+PRIVACY & RETENTION,RETENTION_ANONYMIZE,true,No,Anonymize (true) vs delete (false) records past retention. Anonymize keeps aggregate counts stable.,No
+RESOURCE LIMITS & CONSTRAINTS,SMS_COST_PER_SEGMENT_CENTS,1,No,Cost per SMS text segment in cents for budgeting,No
+RESOURCE LIMITS & CONSTRAINTS,SMS_MAX_SEGMENTS_PER_MESSAGE,3,No,Max segments per SMS (limits message length and cost),No
+SCHEDULER & JOBS,COMPUTERS_AUTO_LOGOUT_ENABLED,false,No,Auto-logout active computer sessions when reservation expires.,No
+SCHEDULER & JOBS,COMPUTERS_AUTO_NO_SHOW_ENABLED,false,No,Auto-release computer reservations after no-show grace period.,No
+SCHEDULER & JOBS,COMPUTERS_AUTO_NO_SHOW_GRACE_MINUTES,10,No,Minutes after reservation start before marking as no-show.,No
+SCHEDULER & JOBS,EDI_POLLING_ENABLED,false,No,Poll EDI inbox for acquisition order updates.,No
+SCHEDULER & JOBS,JOB_ALERT_EMAIL,,No,Email address to receive job failure alerts,No
+SCHEDULER & JOBS,LIBRARY_TIMEZONE,America/New_York,No,Timezone for library-local scheduling (different from SCHEDULER_TIMEZONE which is for job-store internals).,Yes
+SCHEDULER & JOBS,SCHEDULER_ENABLED,true,No,"Run scheduled background jobs (overdue notices, cleanup)",No
+SCHEDULER & JOBS,SCHEDULER_JOB_STORE,sqlalchemy,No,Where to persist scheduled job state (sqlalchemy or memory),No
+SCHEDULER & JOBS,SCHEDULER_RETRY_ENABLED,true,No,Automatically retry failed scheduled jobs,No
+SCHEDULER & JOBS,SCHEDULER_TIMEZONE,UTC,No,"Timezone for scheduling jobs (e.g. UTC, America/New_York)",No
+SEARCH & EMBEDDINGS,CATALOG_RERANK_ENABLED,false,No,Enable AI cross-encoder reranking of catalog search results for better relevance. Off until the model is verified fast enough on your hardware.,No
+SEARCH & EMBEDDINGS,CATALOG_RERANK_MODEL_PATH,/app/models/bge-reranker-v2-m3,No,Filesystem path to the catalog reranker model inside the container.,No
+SEARCH & EMBEDDINGS,CATALOG_RERANK_TOP_N_CANDIDATES,50,No,"How many search results the reranker re-scores per query (higher = more accurate, slower).",No
+SEARCH & EMBEDDINGS,ELASTICSEARCH_ENABLED,false,No,Enable Elasticsearch backend (also set SEARCH_ENGINE=elasticsearch).,No
+SEARCH & EMBEDDINGS,EMBEDDING_API_URL,https://api.openai.com/v1/embeddings,No,Embedding-service endpoint. Set to an Ollama URL for local inference.,No
+SEARCH & EMBEDDINGS,OLLAMA_BASE_URL,http://localhost:11434,No,Local Ollama server URL for LLM/embedding inference.,No
+SEARCH & EMBEDDINGS,OLLAMA_MODEL,qwen2.5:3b,No,Ollama model name used for local chat/LLM extraction.,No
+SEARCH & EMBEDDINGS,SEARCH_ENGINE,postgres,No,Search backend: postgres (built-in FTS) or elasticsearch.,No
+SEARCH & EMBEDDINGS,SEARCH_FTS_MIN_QUERY_LENGTH,3,No,Queries shorter than this skip FTS and go straight to trigram.,No
+SEARCH & EMBEDDINGS,SEARCH_RRF_K,60,No,Reciprocal-rank-fusion constant. Raise to flatten top-rank contributions.,No
+SEARCH & EMBEDDINGS,SEARCH_TEXT_CONFIG,english,No,PostgreSQL FTS text-search config. Changing requires rebuilding the search_tsv generated column.,No
+SEARCH & EMBEDDINGS,SEARCH_TRIGRAM_THRESHOLD,0.15,No,"pg_trgm similarity threshold (0.0-1.0). Lower = more recall, more noise.",No
+SEARCH & EMBEDDINGS,SEARCH_TS_RANK_NORMALIZATION,32,No,"ts_rank_cd normalization flag (bitfield). 32 keeps scores in [0,1).",No
+SECURITY & ENCRYPTION,CORS_ORIGINS,"https://yourdomain.com,https://www.yourdomain.com,https://api.yourdomain.com",No,Allowed website origins for API requests (comma-separated),No
+SECURITY & ENCRYPTION,DOWNLOAD_IP_HASH_SALT,change-me-download-salt,No,Salt for hashing patron IPs in download-tracking records. MUST be changed from default in production.,Yes
+SECURITY & ENCRYPTION,DOWNLOAD_RETENTION_DAYS,90,No,Days to retain hashed download-tracking records.,No
+SECURITY & ENCRYPTION,PII_ENCRYPTION_ENABLED,true,No,Encrypt patron personal data in the database,No
+SECURITY & ENCRYPTION,PII_ENCRYPTION_KEY,(generate),Yes,Encryption key for patron data (generate with Fernet),Yes
+SECURITY & ENCRYPTION,PII_ENCRYPTION_KEY_PREVIOUS,,No,Previous Fernet key for PII decryption during a key rotation grace period.,No
+SECURITY & ENCRYPTION,PII_HASH_KEY,,No,HMAC key for blind-index hashes (email/name/phone lookups without decrypting). Falls back to SECRET_KEY when unset. Set before deploy; rotating it invalidates every blind index and requires a rehash backfill.,Yes
+SECURITY & ENCRYPTION,TOKEN_ENCRYPTION_KEY,,No,"Dedicated encryption key for stored vendor API tokens (e.g. SUSHI credentials), kept separate from SECRET_KEY. Falls back to SECRET_KEY when unset.",No
+SECURITY & ENCRYPTION,TOTP_ENCRYPTION_KEY,,No,"Dedicated encryption key for stored TOTP (2FA) secrets, kept separate from SECRET_KEY. Falls back to a SECRET_KEY-derived key when unset.",No
+SECURITY & ENCRYPTION,TOTP_ENCRYPTION_KEY_PREVIOUS,,No,"Previous TOTP encryption key, kept for grace-period verification during a key rotation.",No
+SECURITY & ENCRYPTION,WATERMARK_ENABLED,false,No,Apply visible/invisible social-DRM watermark to served files.,No
+SECURITY & ENCRYPTION,WATERMARK_SECRET_SALT,change-me-watermark-salt,No,Salt for watermark generation. MUST be changed from default in production (validated at boot).,Yes
+TIME CONFIGURATION,CERTIFICATE_EXPIRY_CRITICAL_DAYS,7,No,Days before SSL cert expiry to show a critical alert,No
+TIME CONFIGURATION,CERTIFICATE_EXPIRY_WARNING_DAYS,14,No,Days before SSL cert expiry to show a warning,No
+TIME CONFIGURATION,CHECKOUT_ANONYMIZE_YEARS,7,No,Years before checkout history is anonymized,No
+TIME CONFIGURATION,CLAIMS_REVIEW_DAYS,30,No,Days allowed for staff to review a patron dispute,No
+TIME CONFIGURATION,CONSENT_TOKEN_CLEANUP_DAYS,30,No,Days before expired consent tokens are deleted,No
+TIME CONFIGURATION,EQUIPMENT_MAINTENANCE_SCHEDULE_DAYS,90,No,Days between scheduled equipment maintenance checks,No
+TIME CONFIGURATION,EQUIPMENT_MAX_CHECKOUT_DAYS,7,No,Max days a patron can borrow equipment,No
+TIME CONFIGURATION,HOLD_EXPIRY_DAYS,7,No,Days before an unclaimed hold is cancelled,No
+TIME CONFIGURATION,HOLD_PICKUP_DAYS,7,No,Days a patron has to pick up a held item,No
+TIME CONFIGURATION,HOME_DELIVERY_DEFAULT_CHECKOUT_DAYS,28,No,Loan period for home delivery checkouts,No
+TIME CONFIGURATION,HOME_DELIVERY_DELIVERY_REMINDER_DAYS,1,No,Days before delivery to send a reminder,No
+TIME CONFIGURATION,HOME_DELIVERY_FEEDBACK_DELAY_HOURS,24,No,Hours after delivery before requesting feedback,No
+TIME CONFIGURATION,HOME_DELIVERY_REMINDER_DAYS,1,No,Days before delivery to send a reminder (alias for HOME_DELIVERY_DELIVERY_REMINDER_DAYS).,No
+TIME CONFIGURATION,HOME_DELIVERY_SERVICE_TIME_MINUTES,10,No,Estimated minutes per delivery stop for routing,No
+TIME CONFIGURATION,INACTIVE_ACCOUNT_YEARS,3,No,Years of inactivity before an account can be purged,No
+TIME CONFIGURATION,JOB_LOG_RETENTION_DAYS,90,No,Days to keep scheduled job logs before cleanup,No
+TIME CONFIGURATION,LOAN_PERIOD_DAYS,21,No,How many days patrons can keep checked-out items,No
+TIME CONFIGURATION,LOST_ITEM_THRESHOLD_DAYS,30,No,Days overdue before an item is marked lost,No
+TIME CONFIGURATION,OVERDUE_GRACE_HOURS,48,No,Hours after due date before fines start accruing,No
+TIME CONFIGURATION,OVERDUE_NOTICE_INTERVAL_DAYS,7,No,Days between overdue reminder notices,No
+TIME CONFIGURATION,OVERDUE_SUSPENSION_DAYS,14,No,Days overdue before a patron account is suspended,No
+TIME CONFIGURATION,PARENT_RESOURCE_STALE_AFTER_MONTHS,6,No,Months before a parent resource-guide entry is flagged stale for review.,No
+TIME CONFIGURATION,REFRESH_TOKEN_CLEANUP_DAYS,30,No,Days before expired refresh tokens are deleted,No
+TIME CONFIGURATION,ROOM_ADVANCE_BOOKING_DAYS,14,No,How far ahead patrons can reserve a room,No
+TIME CONFIGURATION,ROOM_MAX_CHECKOUT_DAYS,7,No,Max days for a single room reservation,No
+TIME CONFIGURATION,ROOM_NO_SHOW_GRACE_MINUTES,15,No,Minutes late before a room booking is released,No
+TIME CONFIGURATION,ROOM_REMINDER_HOURS_BEFORE,24,No,Hours before a room booking to send a reminder,No
+TIME CONFIGURATION,SMS_DND_END_HOUR,8,No,Hour (24h format) when SMS quiet hours end,No
+TIME CONFIGURATION,SMS_DND_START_HOUR,21,No,Hour (24h format) when SMS quiet hours begin,No
+TIME CONFIGURATION,SMS_VERIFICATION_CODE_LENGTH,6,No,Number of digits in SMS verification codes,No
+TIME CONFIGURATION,SMS_VERIFICATION_EXPIRY_MINUTES,10,No,Minutes before an SMS verification code expires,No

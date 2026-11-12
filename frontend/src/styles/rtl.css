@@ -1,0 +1,377 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Luminary Nerds
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+/**
+ * RTL (Right-to-Left) Language Support Styles
+ *
+ * Provides comprehensive RTL support for Arabic, Hebrew, Persian,
+ * and other RTL languages using CSS logical properties and
+ * directional overrides.
+ */
+
+/* ===============================================
+   BASE RTL SETUP
+   =============================================== */
+
+[dir="rtl"],
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ===============================================
+   LOGICAL PROPERTIES
+   Using CSS Logical Properties for automatic RTL
+   =============================================== */
+
+/* Margin logical properties */
+.ms-auto { margin-inline-start: auto; }
+.me-auto { margin-inline-end: auto; }
+.ms-0 { margin-inline-start: 0; }
+.me-0 { margin-inline-end: 0; }
+.ms-1 { margin-inline-start: 0.25rem; }
+.me-1 { margin-inline-end: 0.25rem; }
+.ms-2 { margin-inline-start: 0.5rem; }
+.me-2 { margin-inline-end: 0.5rem; }
+.ms-3 { margin-inline-start: 0.75rem; }
+.me-3 { margin-inline-end: 0.75rem; }
+.ms-4 { margin-inline-start: 1rem; }
+.me-4 { margin-inline-end: 1rem; }
+.ms-6 { margin-inline-start: 1.5rem; }
+.me-6 { margin-inline-end: 1.5rem; }
+.ms-8 { margin-inline-start: 2rem; }
+.me-8 { margin-inline-end: 2rem; }
+
+/* Padding logical properties */
+.ps-0 { padding-inline-start: 0; }
+.pe-0 { padding-inline-end: 0; }
+.ps-1 { padding-inline-start: 0.25rem; }
+.pe-1 { padding-inline-end: 0.25rem; }
+.ps-2 { padding-inline-start: 0.5rem; }
+.pe-2 { padding-inline-end: 0.5rem; }
+.ps-3 { padding-inline-start: 0.75rem; }
+.pe-3 { padding-inline-end: 0.75rem; }
+.ps-4 { padding-inline-start: 1rem; }
+.pe-4 { padding-inline-end: 1rem; }
+.ps-6 { padding-inline-start: 1.5rem; }
+.pe-6 { padding-inline-end: 1.5rem; }
+.ps-8 { padding-inline-start: 2rem; }
+.pe-8 { padding-inline-end: 2rem; }
+
+/* Border logical properties */
+.border-s { border-inline-start-width: 1px; }
+.border-e { border-inline-end-width: 1px; }
+.border-s-0 { border-inline-start-width: 0; }
+.border-e-0 { border-inline-end-width: 0; }
+.border-s-2 { border-inline-start-width: 2px; }
+.border-e-2 { border-inline-end-width: 2px; }
+
+/* Border radius logical properties */
+.rounded-s { border-start-start-radius: 0.25rem; border-end-start-radius: 0.25rem; }
+.rounded-e { border-start-end-radius: 0.25rem; border-end-end-radius: 0.25rem; }
+.rounded-ss { border-start-start-radius: 0.25rem; }
+.rounded-se { border-start-end-radius: 0.25rem; }
+.rounded-es { border-end-start-radius: 0.25rem; }
+.rounded-ee { border-end-end-radius: 0.25rem; }
+
+/* Position logical properties */
+.start-0 { inset-inline-start: 0; }
+.end-0 { inset-inline-end: 0; }
+.start-auto { inset-inline-start: auto; }
+.end-auto { inset-inline-end: auto; }
+.start-1 { inset-inline-start: 0.25rem; }
+.end-1 { inset-inline-end: 0.25rem; }
+.start-2 { inset-inline-start: 0.5rem; }
+.end-2 { inset-inline-end: 0.5rem; }
+.start-4 { inset-inline-start: 1rem; }
+.end-4 { inset-inline-end: 1rem; }
+
+/* Text alignment */
+.text-start { text-align: start; }
+.text-end { text-align: end; }
+
+/* Float */
+.float-start { float: inline-start; }
+.float-end { float: inline-end; }
+
+/* ===============================================
+   RTL-SPECIFIC OVERRIDES
+   =============================================== */
+
+[dir="rtl"] {
+  /* Reverse flex row direction */
+  --tw-flex-direction: row-reverse;
+}
+
+/* Icons that should flip in RTL */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Arrows and chevrons */
+[dir="rtl"] .icon-arrow-right,
+[dir="rtl"] .icon-chevron-right,
+[dir="rtl"] [data-icon="arrow-right"],
+[dir="rtl"] [data-icon="chevron-right"] {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .icon-arrow-left,
+[dir="rtl"] .icon-chevron-left,
+[dir="rtl"] [data-icon="arrow-left"],
+[dir="rtl"] [data-icon="chevron-left"] {
+  transform: scaleX(-1);
+}
+
+/* Progress bars */
+[dir="rtl"] .progress-bar {
+  transform-origin: right center;
+}
+
+[dir="rtl"] progress::-webkit-progress-value {
+  transform-origin: right center;
+}
+
+/* Sliders */
+[dir="rtl"] input[type="range"] {
+  direction: rtl;
+}
+
+/* ===============================================
+   NAVIGATION IN RTL
+   =============================================== */
+
+[dir="rtl"] nav ul {
+  padding-inline-start: 0;
+}
+
+[dir="rtl"] .breadcrumb {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .breadcrumb-separator {
+  transform: scaleX(-1);
+}
+
+/* ===============================================
+   FORM ELEMENTS IN RTL
+   =============================================== */
+
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+}
+
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="url"],
+[dir="rtl"] input[type="tel"],
+[dir="rtl"] input[type="number"] {
+  /* Keep LTR for these input types */
+  direction: ltr;
+  text-align: right;
+}
+
+[dir="rtl"] label {
+  text-align: right;
+}
+
+[dir="rtl"] .form-check {
+  padding-inline-start: 1.5rem;
+  padding-inline-end: 0;
+}
+
+[dir="rtl"] .form-check input {
+  float: right;
+  margin-inline-start: 0;
+  margin-inline-end: -1.5rem;
+}
+
+/* ===============================================
+   LISTS IN RTL
+   =============================================== */
+
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-inline-start: 2rem;
+  padding-inline-end: 0;
+}
+
+[dir="rtl"] li::marker {
+  unicode-bidi: isolate;
+}
+
+/* ===============================================
+   TABLES IN RTL
+   =============================================== */
+
+[dir="rtl"] table {
+  direction: rtl;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+[dir="rtl"] th:first-child,
+[dir="rtl"] td:first-child {
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+[dir="rtl"] th:last-child,
+[dir="rtl"] td:last-child {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* ===============================================
+   MODALS AND DIALOGS IN RTL
+   =============================================== */
+
+[dir="rtl"] .modal-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .modal-close {
+  margin-inline-start: auto;
+  margin-inline-end: 0;
+}
+
+/* ===============================================
+   ACCESSIBILITY COMPONENTS IN RTL
+   =============================================== */
+
+/* Quick settings widget */
+[dir="rtl"] .quick-settings-widget {
+  left: 1rem;
+  right: auto;
+}
+
+[dir="rtl"] .quick-settings-widget[data-position="bottom-left"] {
+  right: 1rem;
+  left: auto;
+}
+
+/* Reading mask */
+[dir="rtl"] .reading-mask-handle {
+  left: 1rem;
+  right: auto;
+}
+
+/* Line focus guide keyboard hint */
+[dir="rtl"] .line-focus-guide-hint {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+/* Voice control indicator */
+[dir="rtl"] .voice-control-active {
+  left: 1rem;
+  right: auto;
+}
+
+/* ===============================================
+   ANIMATIONS IN RTL
+   =============================================== */
+
+[dir="rtl"] .slide-in-right {
+  animation-name: slideInLeft;
+}
+
+[dir="rtl"] .slide-in-left {
+  animation-name: slideInRight;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-in-right,
+  .slide-in-left,
+  [dir="rtl"] .slide-in-right,
+  [dir="rtl"] .slide-in-left {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ===============================================
+   BIDIRECTIONAL TEXT HANDLING
+   =============================================== */
+
+/* Isolate bidirectional text */
+.bidi-isolate {
+  unicode-bidi: isolate;
+}
+
+/* Override bidirectional algorithm */
+.bidi-override {
+  unicode-bidi: bidi-override;
+}
+
+/* Embed bidirectional text */
+.bidi-embed {
+  unicode-bidi: embed;
+}
+
+/* Keep numbers in their natural direction */
+.bidi-plaintext {
+  unicode-bidi: plaintext;
+}
+
+/* ===============================================
+   SPECIFIC ELEMENT FIXES
+   =============================================== */
+
+/* Calendar/date picker */
+[dir="rtl"] .calendar {
+  direction: ltr; /* Keep calendar LTR for consistency */
+}
+
+[dir="rtl"] .calendar .month-name {
+  direction: rtl;
+}
+
+/* Code blocks stay LTR */
+[dir="rtl"] pre,
+[dir="rtl"] code,
+[dir="rtl"] .code-block {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Phone numbers stay LTR */
+[dir="rtl"] .phone-number,
+[dir="rtl"] [data-type="phone"] {
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+/* URLs stay LTR */
+[dir="rtl"] .url,
+[dir="rtl"] [data-type="url"] {
+  direction: ltr;
+  unicode-bidi: embed;
+}

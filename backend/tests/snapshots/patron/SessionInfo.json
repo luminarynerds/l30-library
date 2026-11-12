@@ -1,0 +1,69 @@
+{
+  "$comment": "Auto-generated from app.schemas.user.SessionInfo. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "properties": {
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created At"
+    },
+    "device_info": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Device Info"
+    },
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "ip_address": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Ip Address"
+    },
+    "is_current": {
+      "default": false,
+      "title": "Is Current",
+      "type": "boolean"
+    },
+    "last_active_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Active At"
+    }
+  },
+  "required": [
+    "id",
+    "device_info",
+    "ip_address"
+  ],
+  "title": "SessionInfo",
+  "type": "object"
+}

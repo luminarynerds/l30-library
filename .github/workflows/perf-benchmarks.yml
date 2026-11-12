@@ -1,0 +1,306 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Performance Benchmarks
+
+on:
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    name: Endpoint Performance Regression Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write  # Needed to post PR comments
+
+    services:
+      # Ephemeral CI-only database, created fresh each run and destroyed after workflow completes
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: lsc
+          POSTGRES_PASSWORD: test_password  # Ephemeral CI-only database, destroyed after workflow run
+          POSTGRES_DB: lsc_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+      TEST_DATABASE_URL: postgresql+asyncpg://lsc:test_password@localhost:5432/lsc_test
+      REDIS_URL: redis://localhost:6379/0
+      SECRET_KEY: test-secret-key-do-not-use
+      ENVIRONMENT: test
+      CORS_ORIGINS: http://localhost
+      LOG_LEVEL: WARNING
+      LOG_FORMAT: text
+      SENTRY_DSN: ""
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0  # Need full history to fetch baseline from base branch
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        pip install -e ".[dev]"
+        pip install faker
+
+    - name: Initialize database schema
+      run: |
+        cd backend
+        python scripts/init_db.py
+
+    - name: Load standard seed data
+      run: |
+        cd backend
+        python scripts/seed_comprehensive.py
+        python scripts/seed_test_accounts.py
+
+    # -------------------------------------------------------------------
+    # Seed performance test data (scaled down for CI - 1k/5k/10k)
+    # -------------------------------------------------------------------
+    - name: Seed performance test data
+      run: |
+        cd backend
+        python -m tests.performance.seed_data \
+          --patrons 1000 \
+          --items 5000 \
+          --circulations 10000
+
+    # -------------------------------------------------------------------
+    # Fetch the baseline from the PR's base branch
+    # -------------------------------------------------------------------
+    - name: Fetch baseline from base branch
+      id: baseline
+      run: |
+        BASE_REF="${{ github.event.pull_request.base.ref || 'main' }}"
+        echo "Base branch: $BASE_REF"
+
+        # Try to get baseline from the base branch
+        git fetch origin "$BASE_REF" -- backend/benchmarks/baseline.json 2>/dev/null || true
+
+        if git show "origin/$BASE_REF:backend/benchmarks/baseline.json" > /tmp/baseline.json 2>/dev/null; then
+          echo "baseline_found=true" >> "$GITHUB_OUTPUT"
+          echo "Baseline loaded from $BASE_REF"
+        else
+          # Fall back to the baseline committed in this branch
+          if [ -f backend/benchmarks/baseline.json ]; then
+            cp backend/benchmarks/baseline.json /tmp/baseline.json
+            echo "baseline_found=true" >> "$GITHUB_OUTPUT"
+            echo "Baseline loaded from current branch"
+          else
+            echo "baseline_found=false" >> "$GITHUB_OUTPUT"
+            echo "No baseline found -- benchmark will run but comparison will be skipped"
+          fi
+        fi
+
+    # -------------------------------------------------------------------
+    # Run the performance benchmark suite
+    # -------------------------------------------------------------------
+    - name: Run performance benchmarks
+      id: benchmarks
+      run: |
+        cd backend
+        python -m pytest tests/performance/test_perf_endpoints.py \
+          -v -s \
+          --timeout=300 \
+          --no-header \
+          -p no:cacheprovider \
+          --override-ini="addopts=" \
+          2>&1 | tee benchmark_output.txt
+
+        # Capture exit code (query budget violations cause failure)
+        echo "benchmark_exit_code=$?" >> "$GITHUB_OUTPUT"
+
+    # -------------------------------------------------------------------
+    # Run the legacy benchmark suite too (backwards compatibility)
+    # -------------------------------------------------------------------
+    - name: Run legacy benchmarks
+      if: hashFiles('backend/tests/test_benchmark_endpoints.py') != ''
+      continue-on-error: true
+      run: |
+        cd backend
+        python -m pytest tests/test_benchmark_endpoints.py \
+          -v -s \
+          --timeout=300 \
+          --no-header \
+          -p no:cacheprovider \
+          --override-ini="addopts=" \
+          2>&1 | tee legacy_benchmark_output.txt
+
+    # -------------------------------------------------------------------
+    # Compare against baseline and fail on regression
+    # -------------------------------------------------------------------
+    - name: Check for performance regressions
+      id: regression_check
+      if: steps.baseline.outputs.baseline_found == 'true'
+      run: |
+        cd backend
+        python scripts/compare_benchmarks.py \
+          --baseline /tmp/baseline.json \
+          --current  benchmarks/results.json \
+          --threshold 20 \
+          --metric p95_ms \
+          2>&1 | tee comparison_output.txt
+        echo "regression_exit_code=$?" >> "$GITHUB_OUTPUT"
+
+    # -------------------------------------------------------------------
+    # Store historical performance data
+    # -------------------------------------------------------------------
+    - name: Store performance history
+      if: always() && hashFiles('backend/benchmarks/results.json') != ''
+      run: |
+        cd backend
+        python scripts/store_perf_history.py \
+          --results benchmarks/results.json \
+          --history benchmarks/history.jsonl \
+          --branch "${{ github.head_ref || github.ref_name }}" \
+          --commit "${{ github.sha }}" \
+          --run-id "${{ github.run_id }}"
+
+    # -------------------------------------------------------------------
+    # Post performance summary as PR comment
+    # -------------------------------------------------------------------
+    - name: Generate PR comment body
+      id: comment_body
+      if: github.event_name == 'pull_request' && always()
+      run: |
+        cd backend
+
+        # Build the comment body
+        {
+          echo "## Performance Benchmark Results"
+          echo ""
+
+          if [ -f comparison_output.txt ]; then
+            echo '```'
+            cat comparison_output.txt
+            echo '```'
+            echo ""
+          fi
+
+          if [ -f benchmarks/results.json ]; then
+            echo "<details>"
+            echo "<summary>Full benchmark results</summary>"
+            echo ""
+            echo '```'
+            cat benchmark_output.txt | tail -30
+            echo '```'
+            echo "</details>"
+            echo ""
+          fi
+
+          # Query budget violations
+          if grep -q "QUERY BUDGET VIOLATIONS" benchmark_output.txt 2>/dev/null; then
+            echo "### Query Budget Violations"
+            echo ""
+            grep -A 50 "QUERY BUDGET VIOLATIONS" benchmark_output.txt | head -30
+            echo ""
+          fi
+
+          # Slow query report
+          if [ -f benchmarks/slow_queries.log ]; then
+            SLOW_COUNT=$(wc -l < benchmarks/slow_queries.log)
+            echo "### Slow Queries (>100ms)"
+            echo ""
+            echo "$SLOW_COUNT slow queries detected during benchmarks."
+            echo ""
+            echo "<details>"
+            echo "<summary>View slow queries</summary>"
+            echo ""
+            echo '```json'
+            head -20 benchmarks/slow_queries.log
+            echo '```'
+            echo "</details>"
+          fi
+
+          echo ""
+          echo "---"
+          echo "*Run ID: ${{ github.run_id }} | Commit: ${{ github.sha }}*"
+        } > /tmp/pr_comment.md
+
+        echo "comment_file=/tmp/pr_comment.md" >> "$GITHUB_OUTPUT"
+
+    - name: Post PR comment
+      if: github.event_name == 'pull_request' && always()
+      uses: actions/github-script@v9
+      with:
+        script: |
+          const fs = require('fs');
+          const commentBody = fs.readFileSync('/tmp/pr_comment.md', 'utf8');
+          const prNumber = context.payload.pull_request.number;
+
+          // Find existing perf comment to update (avoid spam)
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: prNumber,
+          });
+
+          const botComment = comments.find(c =>
+            c.user.type === 'Bot' &&
+            c.body.includes('## Performance Benchmark Results')
+          );
+
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: commentBody,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: commentBody,
+            });
+          }
+
+    # -------------------------------------------------------------------
+    # Update baseline on main branch pushes
+    # -------------------------------------------------------------------
+    - name: Update baseline
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        cd backend
+        cp benchmarks/results.json benchmarks/baseline.json
+        echo "Baseline updated from main branch results"
+
+    # -------------------------------------------------------------------
+    # Upload results as artifacts
+    # -------------------------------------------------------------------
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: benchmark-results
+        path: |
+          backend/benchmarks/results.json
+          backend/benchmarks/history.jsonl
+          backend/benchmarks/slow_queries.log
+          backend/benchmark_output.txt
+          backend/comparison_output.txt
+        retention-days: 90

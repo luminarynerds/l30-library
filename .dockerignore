@@ -1,0 +1,55 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies (rebuilt in container)
+node_modules
+frontend/node_modules
+
+# Python artifacts
+__pycache__
+*.py[cod]
+*.egg-info
+.pytest_cache
+.coverage
+htmlcov/
+.hypothesis/
+
+# Build outputs
+frontend/dist
+build
+dist
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# IDE and OS
+.DS_Store
+.vscode
+.idea
+*.swp
+
+# Documentation and audits (not needed in images)
+*.md
+audits/
+docs/
+training/
+CLAUDE.md
+
+# Logs
+logs/
+*.log
+
+# Test artifacts
+coverage/
+e2e/
+playwright-report/
+test-results/
+
+# CI/CD
+.github/
+
+# Monitoring configs (separate compose)
+monitoring/

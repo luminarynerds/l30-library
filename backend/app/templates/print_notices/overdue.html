@@ -1,0 +1,196 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Luminary Nerds
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .notice-header {
+            border-bottom: 2px solid #2C1810;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .library-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #2C1810;
+        }
+        .library-address {
+            font-size: 9pt;
+            color: #666;
+        }
+        .notice-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #C41E3A;
+            margin: 20px 0 10px 0;
+        }
+        .patron-info {
+            margin-bottom: 20px;
+        }
+        .notice-date {
+            font-size: 9pt;
+            color: #666;
+            text-align: right;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .items-table th {
+            background-color: #5C4F3D;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-size: 10pt;
+        }
+        .items-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 10pt;
+        }
+        .items-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .amount-due {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #C41E3A;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #FFF5F5;
+            border: 1px solid #C41E3A;
+        }
+        .action-required {
+            background-color: #FFF9E6;
+            border: 1px solid #E89B44;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .action-required h4 {
+            color: #D97706;
+            margin: 0 0 10px 0;
+        }
+        .contact-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 9pt;
+            color: #666;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="notice-header">
+        <div class="library-name">{{ library_name }}</div>
+        <div class="library-address">
+            {{ library_address }}<br>
+            {{ library_phone }} | {{ library_email }}
+        </div>
+    </div>
+
+    <div class="notice-date">Notice Date: {{ notice_date }}</div>
+
+    <div class="notice-title">OVERDUE NOTICE</div>
+
+    <div class="patron-info">
+        <strong>{{ patron_name }}</strong><br>
+        Library Card: {{ library_card }}
+    </div>
+
+    <p>Dear {{ patron_first_name }},</p>
+
+    <p>This is a friendly reminder that the following item(s) from your library account are past their due date. You can return them at any branch or book drop, or renew them online if no one else is waiting. Late fees are capped at $5.00 per item, so they won't keep growing indefinitely.</p>
+
+    {% if discreet_mode %}
+    <p style="margin: 15px 0; padding: 10px; background-color: #FFF9E6; border: 1px solid #E89B44;">
+        <strong>Privacy Mode Enabled:</strong> Item titles are not shown on this receipt for your privacy.
+        Please contact library staff or check online for details about overdue items.
+    </p>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Item #</th>
+                <th>Due Date</th>
+                <th>Days Overdue</th>
+                <th>Fine</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>Item {{ loop.index }}</td>
+                <td>{{ item.due_date }}</td>
+                <td>{{ item.days_overdue }}</td>
+                <td>${{ item.fine_amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Due Date</th>
+                <th>Days Overdue</th>
+                <th>Fine</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.title }}</td>
+                <td>{{ item.author }}</td>
+                <td>{{ item.due_date }}</td>
+                <td>{{ item.days_overdue }}</td>
+                <td>${{ item.fine_amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if total_fine > 0 %}
+    <div class="amount-due">
+        Total Fines Accrued: ${{ total_fine }}
+    </div>
+    {% endif %}
+
+    <div class="action-required">
+        <h4>What You Can Do</h4>
+        <p>Return the item(s) at any branch or book drop - no questions asked. You can also renew eligible items online at {{ library_website }} or by calling us.</p>
+        <p>Think you've already returned these? No problem - just let us know and we'll look into it. Mistakes happen and we're happy to help sort it out.</p>
+    </div>
+
+    <div class="contact-info">
+        <strong>Questions?</strong><br>
+        Visit us at {{ library_address }}<br>
+        Call us at {{ library_phone }}<br>
+        Email us at {{ library_email }}<br>
+        Library Hours: {{ library_hours }}
+    </div>
+
+    <div class="footer">
+        This notice was generated on {{ generated_date }}.<br>
+        {{ library_name }} - Serving our community since {{ library_since }}.
+    </div>
+</body>
+</html>

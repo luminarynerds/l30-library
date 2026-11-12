@@ -1,0 +1,428 @@
+{
+  "timestamp": "2026-03-03T16:05:52.923Z",
+  "totalCalls": 66,
+  "uniqueEndpoints": 13,
+  "knownEndpoints": 63,
+  "coveragePercentage": 20.63,
+  "criticalCoverage": 2,
+  "criticalCoveragePercentage": 18.18,
+  "calledEndpoints": [
+    "GET ${API_BASE}/catalog",
+    "GET ${API_BASE}/catalog/:id",
+    "GET ${API_BASE}/events",
+    "GET ${API_BASE}/events/audiences",
+    "GET ${API_BASE}/events/categories",
+    "GET ${API_BASE}/events/tags",
+    "GET ${API_BASE}/organization-features",
+    "GET ${API_BASE}/reading-programs/programs",
+    "GET ${API_BASE}/sharing/config",
+    "GET ${API_BASE}/sharing/stats/book/:id",
+    "GET ${API_BASE}/system-status/health-summary",
+    "GET ${API_BASE}/system-status/recent-recoveries",
+    "POST ${API_BASE}/auth/refresh"
+  ],
+  "uncalledKnownEndpoints": [
+    "POST ${API_BASE}/auth/login",
+    "POST ${API_BASE}/auth/register",
+    "POST ${API_BASE}/auth/logout",
+    "POST ${API_BASE}/auth/forgot-password",
+    "POST ${API_BASE}/auth/reset-password",
+    "POST ${API_BASE}/auth/verify-email",
+    "POST ${API_BASE}/auth/resend-verification",
+    "POST ${API_BASE}/auth/change-password",
+    "GET ${API_BASE}/auth/sessions",
+    "DELETE ${API_BASE}/auth/sessions/:id",
+    "GET ${API_BASE}/auth/me",
+    "PUT ${API_BASE}/auth/me",
+    "GET ${API_BASE}/catalog/barcode/:barcode",
+    "GET ${API_BASE}/circulation/checkouts",
+    "GET ${API_BASE}/circulation/holds",
+    "POST ${API_BASE}/circulation/checkout",
+    "POST ${API_BASE}/circulation/holds",
+    "DELETE ${API_BASE}/circulation/holds/:id",
+    "POST ${API_BASE}/circulation/renew/:id",
+    "GET ${API_BASE}/circulation/history",
+    "GET ${API_BASE}/circulation/fines",
+    "GET ${API_BASE}/circulation/fines/summary",
+    "GET ${API_BASE}/reports/analytics/dashboard",
+    "GET ${API_BASE}/reports/analytics/circulation",
+    "GET ${API_BASE}/reports/analytics/collection-health",
+    "GET ${API_BASE}/reports/analytics/drifting-items",
+    "GET ${API_BASE}/reports/analytics/patron-engagement",
+    "GET ${API_BASE}/reports/analytics/top-readers",
+    "GET ${API_BASE}/reports/analytics/reading",
+    "GET ${API_BASE}/reports/analytics/fines",
+    "GET ${API_BASE}/reports/analytics/popular-items",
+    "GET ${API_BASE}/reports/analytics/circulation-trends",
+    "GET ${API_BASE}/events/:id",
+    "POST ${API_BASE}/events/:id/register",
+    "DELETE ${API_BASE}/events/:id/register",
+    "GET ${API_BASE}/reading-programs",
+    "GET ${API_BASE}/reading-programs/:id",
+    "POST ${API_BASE}/reading-programs/:id/enroll",
+    "POST ${API_BASE}/reading-programs/:id/log",
+    "GET ${API_BASE}/reading-programs/:id/logs",
+    "GET ${API_BASE}/reading-programs/:id/leaderboard",
+    "GET ${API_BASE}/favorites",
+    "POST ${API_BASE}/favorites",
+    "DELETE ${API_BASE}/favorites/:id",
+    "GET ${API_BASE}/reading-lists",
+    "POST ${API_BASE}/reading-lists",
+    "GET ${API_BASE}/reading-lists/:id",
+    "PUT ${API_BASE}/reading-lists/:id",
+    "DELETE ${API_BASE}/reading-lists/:id",
+    "POST ${API_BASE}/reading-lists/:id/items",
+    "DELETE ${API_BASE}/reading-lists/:listId/items/:itemId",
+    "GET ${API_BASE}/staff/dashboard",
+    "GET ${API_BASE}/staff/bio",
+    "PUT ${API_BASE}/staff/bio",
+    "POST ${API_BASE}/ai/recommendations",
+    "POST ${API_BASE}/ai/summarize",
+    "GET ${API_BASE}/notifications",
+    "PUT ${API_BASE}/notifications/:id/read",
+    "PUT ${API_BASE}/notifications/read-all"
+  ],
+  "missingCriticalEndpoints": [
+    "POST ${API_BASE}/auth/login",
+    "POST ${API_BASE}/auth/register",
+    "POST ${API_BASE}/auth/logout",
+    "GET ${API_BASE}/auth/me",
+    "GET ${API_BASE}/circulation/checkouts",
+    "GET ${API_BASE}/circulation/holds",
+    "POST ${API_BASE}/circulation/holds",
+    "POST ${API_BASE}/circulation/checkout",
+    "PUT ${API_BASE}/auth/me"
+  ],
+  "allCalls": [
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:38.760Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:38.760Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:38.788Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:38.788Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/catalog",
+      "timestamp": "2026-03-03T16:05:38.788Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/catalog",
+      "timestamp": "2026-03-03T16:05:40.524Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/catalog/:id",
+      "timestamp": "2026-03-03T16:05:41.227Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/sharing/config",
+      "timestamp": "2026-03-03T16:05:41.250Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/sharing/stats/book/:id",
+      "timestamp": "2026-03-03T16:05:41.250Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/catalog",
+      "timestamp": "2026-03-03T16:05:41.250Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/catalog",
+      "timestamp": "2026-03-03T16:05:41.250Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/catalog",
+      "timestamp": "2026-03-03T16:05:41.279Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/catalog",
+      "timestamp": "2026-03-03T16:05:41.300Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:41.781Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:41.782Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:42.373Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:42.373Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:44.044Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:44.044Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:44.060Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:44.060Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:44.577Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:44.577Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:44.577Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:44.577Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:45.102Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:45.102Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:45.116Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:45.116Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:45.626Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:45.626Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:45.634Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:45.634Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:46.187Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:46.187Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:46.195Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:46.195Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:46.700Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:46.700Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:46.711Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:46.711Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:47.240Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:47.240Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:47.277Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:47.277Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/events/tags",
+      "timestamp": "2026-03-03T16:05:47.277Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/events/categories",
+      "timestamp": "2026-03-03T16:05:47.277Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/events/audiences",
+      "timestamp": "2026-03-03T16:05:47.277Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/events",
+      "timestamp": "2026-03-03T16:05:47.277Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:48.417Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:48.417Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:48.430Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:48.430Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/reading-programs/programs",
+      "timestamp": "2026-03-03T16:05:48.430Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:49.503Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:49.503Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:49.520Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:49.520Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:50.632Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:50.632Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:50.664Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:50.664Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/health-summary",
+      "timestamp": "2026-03-03T16:05:51.782Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/system-status/recent-recoveries",
+      "timestamp": "2026-03-03T16:05:51.783Z"
+    },
+    {
+      "method": "GET",
+      "path": "${API_BASE}/organization-features",
+      "timestamp": "2026-03-03T16:05:51.796Z"
+    },
+    {
+      "method": "POST",
+      "path": "${API_BASE}/auth/refresh",
+      "timestamp": "2026-03-03T16:05:51.796Z"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+Contact: mailto:security@l30.org
+Expires: 2027-05-26T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://l30.org/.well-known/security.txt
+Policy: https://l30.org/security

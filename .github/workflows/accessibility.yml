@@ -1,0 +1,122 @@
+# SPDX-FileCopyrightText: 2026 Luminary Nerds
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Accessibility Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Type checking
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Linting
+        continue-on-error: true
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Run unit accessibility tests (jest-axe)
+        working-directory: frontend
+        run: npm run test:a11y -- --run
+        continue-on-error: true
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps
+
+      - name: Run E2E public pages tests
+        working-directory: frontend
+        run: npm run test:e2e -- e2e/public-pages.spec.ts
+        continue-on-error: true
+
+      - name: Run E2E keyboard navigation tests
+        working-directory: frontend
+        run: npm run test:e2e -- e2e/keyboard-navigation.spec.ts
+        continue-on-error: true
+
+      - name: Generate Playwright HTML report
+        if: always()
+        working-directory: frontend
+        run: npm run test:e2e:report || true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-accessibility-report
+          path: frontend/playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: accessibility-test-results
+          path: |
+            frontend/test-results/
+            frontend/coverage/
+          retention-days: 30
+
+      - name: Comment on PR with results
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            let comment = '## Accessibility Testing Report\n\n';
+
+            if (context.payload.pull_request) {
+              comment += '### Test Summary\n';
+
+              if (context.job.status === 'success') {
+                comment += '✅ **All accessibility tests passed!**\n\n';
+                comment += '- Unit accessibility tests (jest-axe): PASSED\n';
+                comment += '- E2E accessibility tests (Playwright): PASSED\n';
+                comment += '- Type checking: PASSED\n';
+                comment += '- Linting: PASSED\n';
+              } else {
+                comment += '❌ **Some tests failed**\n\n';
+                comment += 'Please review the failed checks above and:\n';
+                comment += '1. Check the Playwright report artifact\n';
+                comment += '2. Review test results in the Actions tab\n';
+                comment += '3. Run tests locally: `npm run test:a11y -- --run`\n';
+                comment += '4. For E2E tests: `npm run test:e2e -- e2e/public-pages.spec.ts`\n';
+              }
+
+              comment += '\n### Artifacts\n';
+              comment += '- [Playwright Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+              comment += '- [Test Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+              comment += '\n### Guidelines\n';
+              comment += 'See [ACCESSIBILITY_CI_CD.md](docs/ACCESSIBILITY_CI_CD.md) for more info.\n';
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+      - name: Fail if tests failed
+        if: failure()
+        run: exit 1

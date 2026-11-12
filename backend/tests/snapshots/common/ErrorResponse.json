@@ -1,0 +1,123 @@
+{
+  "$comment": "Auto-generated from app.schemas.common.ErrorResponse. Do not edit manually - run: python scripts/generate_snapshots.py",
+  "$defs": {
+    "ErrorDetail": {
+      "example": {
+        "code": "INVALID_FORMAT",
+        "field": "email",
+        "message": "Invalid email format"
+      },
+      "properties": {
+        "code": {
+          "description": "Error code for programmatic handling",
+          "title": "Code",
+          "type": "string"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field name (if applicable)",
+          "title": "Field"
+        },
+        "message": {
+          "description": "Error message",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message",
+        "code"
+      ],
+      "title": "ErrorDetail",
+      "type": "object"
+    }
+  },
+  "example": {
+    "code": "VALIDATION_FAILED",
+    "details": [
+      {
+        "code": "INVALID_FORMAT",
+        "field": "email",
+        "message": "Invalid email format"
+      }
+    ],
+    "message": "Request validation failed",
+    "request_id": "req_550e8400_e29b_41d4_a716",
+    "status_code": 400,
+    "timestamp": "2026-01-28T10:30:45.123000+00:00",
+    "type": "VALIDATION_ERROR"
+  },
+  "properties": {
+    "code": {
+      "description": "Machine-readable error code for programmatic handling",
+      "title": "Code",
+      "type": "string"
+    },
+    "details": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/ErrorDetail"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Additional error details (e.g., validation errors)",
+      "title": "Details"
+    },
+    "message": {
+      "description": "Human-readable error message",
+      "title": "Message",
+      "type": "string"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Request ID for tracking and debugging",
+      "title": "Request Id"
+    },
+    "status_code": {
+      "description": "HTTP status code",
+      "title": "Status Code",
+      "type": "integer"
+    },
+    "timestamp": {
+      "description": "When the error occurred",
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    },
+    "type": {
+      "description": "Error type (VALIDATION_ERROR, NOT_FOUND, UNAUTHORIZED, SERVER_ERROR, etc.)",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "message",
+    "code",
+    "status_code"
+  ],
+  "title": "ErrorResponse",
+  "type": "object"
+}

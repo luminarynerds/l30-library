@@ -1,0 +1,3 @@
+name,email,barcode,phone,address,patron_type,home_branch
+Test User,testuser@example.com,EXISTING-001,555-9999,"Dup Addr",PATRON,MAIN
+New Person,new@example.com,LSC-NEW-0001,555-8888,"New Addr",PATRON,MAIN

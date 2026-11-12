@@ -1,0 +1,916 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Luminary Nerds
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+/**
+ * Neuro-Inclusive CSS Styles
+ *
+ * Comprehensive styles for neurodivergent accessibility features.
+ * These styles support ADHD, Autism, Dyslexia, and anxiety management.
+ */
+
+/* ===============================================
+   BIONIC READING
+   Bold the first portion of words for faster reading
+   =============================================== */
+
+.bionic-reading .bionic-bold {
+  font-weight: 700;
+}
+
+.bionic-reading .bionic-light {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* Fallback for content not processed by JS */
+.bionic-reading p,
+.bionic-reading li,
+.bionic-reading td,
+.bionic-reading span:not(.bionic-bold):not(.bionic-light) {
+  font-weight: 500;
+}
+
+/* ===============================================
+   BLINDERS / FOCUS TUNNEL
+   Narrow the visible reading area to reduce distraction
+   =============================================== */
+
+.blinders {
+  --blinder-width: 700px;
+  --blinder-opacity: 0.85;
+}
+
+.blinders main,
+.blinders [role="main"] {
+  position: relative;
+  max-width: var(--blinder-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.blinders main::before,
+.blinders main::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: calc((100vw - var(--blinder-width)) / 2);
+  background: rgba(0, 0, 0, var(--blinder-opacity));
+  pointer-events: none;
+  z-index: 100;
+}
+
+.blinders main::before {
+  left: 0;
+}
+
+.blinders main::after {
+  right: 0;
+}
+
+/* Dark mode blinders */
+.dark.blinders main::before,
+.dark.blinders main::after {
+  background: rgba(255, 255, 255, var(--blinder-opacity));
+}
+
+/* High contrast blinders */
+.high-contrast.blinders main::before,
+.high-contrast.blinders main::after {
+  background: #000;
+}
+
+.dark.high-contrast.blinders main::before,
+.dark.high-contrast.blinders main::after {
+  background: #fff;
+}
+
+/* ===============================================
+   LINE FOCUS GUIDE
+   Horizontal highlight following the reading line
+   =============================================== */
+
+.line-focus-guide {
+  --guide-height: 2.5em;
+  --guide-color: rgba(255, 200, 0, 0.15);
+  --guide-border-color: rgba(255, 180, 0, 0.3);
+}
+
+/* The actual guide is positioned via JavaScript */
+.line-focus-guide-element {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: var(--guide-height);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--guide-color) 20%,
+    var(--guide-color) 80%,
+    transparent 100%
+  );
+  border-top: 1px solid var(--guide-border-color);
+  border-bottom: 1px solid var(--guide-border-color);
+  pointer-events: none;
+  z-index: 9998;
+  transition: top 0.1s ease-out;
+}
+
+/* Dark mode guide */
+.dark .line-focus-guide-element {
+  --guide-color: rgba(255, 200, 0, 0.1);
+  --guide-border-color: rgba(255, 180, 0, 0.2);
+}
+
+/* High contrast guide */
+.high-contrast .line-focus-guide-element {
+  --guide-color: rgba(0, 0, 255, 0.2);
+  --guide-border-color: rgba(0, 0, 255, 0.5);
+}
+
+/* ===============================================
+   READING GUIDE (Static horizontal ruler)
+   =============================================== */
+
+.reading-guide {
+  --reading-guide-color: rgba(198, 124, 72, 0.3);
+}
+
+.reading-guide p:hover,
+.reading-guide li:hover,
+.reading-guide td:hover {
+  background: var(--reading-guide-color);
+  border-radius: 4px;
+  outline: 2px solid var(--reading-guide-color);
+}
+
+.dark .reading-guide {
+  --reading-guide-color: rgba(198, 124, 72, 0.2);
+}
+
+/* Reading mask lives in ReadingMask.tsx (class `reading-mask-container`),
+   which positions the panes with inline styles from readingMaskHeight /
+   readingMaskOpacity. The old `.reading-mask-overlay` CSS implementation was
+   removed: the class was never applied to any element, so its --mask-top /
+   --mask-bottom variables were also referenced but never defined. */
+
+/* ===============================================
+   MUTED COLORS
+   Calm color palette using L30 design tokens
+   Uses CSS variable overrides instead of filter hacks
+   =============================================== */
+
+.muted-colors {
+  --bg-cream: #22202A;
+  --text-dark: #E0DCE4;
+  --accent-rose: #B89898;
+  --accent-rose-light: #C8AAAA;
+  --card-white: #282434;
+  --card-white-rgb: 40 36 52;
+  --border-light: #353040;
+  --border-light-rgb: 53 48 64;
+  --text-muted: #908C98;
+  --text-muted-light: #7A7684;
+  --ai-blue: #8AADA5;
+  --foundation-green: #8AADA5;
+  --text-heading: #E0DCE4;
+  --border-medium: #403B4A;
+  --border-subtle: #353040;
+}
+
+.muted-colors.light {
+  --bg-cream: #F8F6F8;
+  --text-dark: #3A3540;
+  --accent-rose: #A07070;
+  --accent-rose-light: #B08888;
+  --card-white: #FFFFFF;
+  --card-white-rgb: 255 255 255;
+  --border-light: #E8E4EC;
+  --border-light-rgb: 232 228 236;
+  --text-muted: #807880;
+  --text-muted-light: #988E98;
+  --text-heading: #3A3540;
+  --border-medium: #D0CCD4;
+  --border-subtle: #E8E4EC;
+  --focus-ring-color: #A07070;
+}
+
+.muted-colors img,
+.muted-colors video {
+  filter: saturate(0.75);
+}
+
+.muted-colors *:focus-visible {
+  filter: none;
+}
+
+/* ===============================================
+   CONTENT DENSITY
+   Spacing adjustments for cognitive comfort
+   =============================================== */
+
+.content-density-compact {
+  --content-spacing: 0.5rem;
+  --card-padding: 0.75rem;
+  --section-gap: 1rem;
+}
+
+.content-density-comfortable {
+  --content-spacing: 1rem;
+  --card-padding: 1.5rem;
+  --section-gap: 2rem;
+}
+
+.content-density-spacious {
+  --content-spacing: 1.5rem;
+  --card-padding: 2rem;
+  --section-gap: 3rem;
+}
+
+/* Apply density variables */
+.content-density-compact main,
+.content-density-comfortable main,
+.content-density-spacious main {
+  gap: var(--section-gap);
+}
+
+.content-density-compact .card,
+.content-density-comfortable .card,
+.content-density-spacious .card {
+  padding: var(--card-padding);
+}
+
+.content-density-compact p,
+.content-density-comfortable p,
+.content-density-spacious p {
+  margin-bottom: var(--content-spacing);
+}
+
+/* ===============================================
+   HIDE DECORATIVE IMAGES
+   =============================================== */
+
+.hide-decorative-images img[aria-hidden="true"],
+.hide-decorative-images img[role="presentation"],
+.hide-decorative-images img.decorative,
+.hide-decorative-images [data-decorative="true"] {
+  display: none !important;
+}
+
+/* ===============================================
+   HIDE ALL IMAGES
+   =============================================== */
+
+.hide-all-images img:not(.essential-image),
+.hide-all-images picture:not(.essential-image),
+.hide-all-images svg:not([role="img"]):not(.icon) {
+  display: none !important;
+}
+
+/* Keep essential UI icons */
+.hide-all-images button svg,
+.hide-all-images a svg,
+.hide-all-images .icon {
+  display: inline-block !important;
+}
+
+/* ===============================================
+   SIMPLIFIED VIEW
+   Remove visual complexity
+   =============================================== */
+
+.simplified-view {
+  --shadow-strength: 0;
+}
+
+.simplified-view .card,
+.simplified-view .modal,
+.simplified-view .dropdown {
+  box-shadow: none !important;
+  border: 1px solid currentColor;
+}
+
+.simplified-view [class*="gradient"] {
+  background-image: none !important;
+  background-color: inherit;
+}
+
+.simplified-view .decorative,
+.simplified-view [aria-hidden="true"]:not(svg):not(.icon) {
+  display: none;
+}
+
+/* ===============================================
+   REMOVE TIME PRESSURE
+   Hide urgency-inducing elements
+   =============================================== */
+
+.remove-time-pressure .countdown,
+.remove-time-pressure .timer,
+.remove-time-pressure [data-urgency],
+.remove-time-pressure .viewers-count,
+.remove-time-pressure .trending-badge,
+.remove-time-pressure .limited-time,
+.remove-time-pressure .hurry,
+.remove-time-pressure .flash-sale {
+  display: none !important;
+}
+
+/* ===============================================
+   NO FOMO (Fear Of Missing Out)
+   Hide anxiety-inducing social proof
+   =============================================== */
+
+.no-fomo .popularity-indicator,
+.no-fomo .social-proof,
+.no-fomo .trending,
+.no-fomo .hot-badge,
+.no-fomo .new-badge,
+.no-fomo .popular-badge,
+.no-fomo [data-fomo],
+.no-fomo .viewers-count,
+.no-fomo .purchase-count {
+  display: none !important;
+}
+
+/* ===============================================
+   PLAIN LANGUAGE
+   Visual indicator for simplified content mode
+   =============================================== */
+
+.plain-language [data-jargon] {
+  display: none;
+}
+
+.plain-language [data-plain] {
+  display: inline;
+}
+
+/* Default: show jargon, hide plain */
+[data-plain] {
+  display: none;
+}
+
+/* ===============================================
+   PREDICTABLE NAVIGATION
+   Always show breadcrumbs and location indicators
+   =============================================== */
+
+.predictable-navigation .breadcrumb {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+.predictable-navigation nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.predictable-navigation .back-button {
+  display: inline-flex !important;
+}
+
+/* ===============================================
+   ENHANCED FOCUS
+   Highlight active element, dim background
+   =============================================== */
+
+/* Only dim siblings of the focused element's container, not everything */
+.enhanced-focus :focus-visible {
+  position: relative;
+  z-index: 100;
+  opacity: 1 !important;
+}
+
+.enhanced-focus :focus-visible ~ * {
+  opacity: var(--enhanced-focus-opacity, 0.6);
+}
+
+.enhanced-focus :focus-within {
+  opacity: 1;
+}
+
+/* Enhanced focus indicator only (no dimming) */
+.enhanced-focus-indicator-only *:focus-visible {
+  outline: 3px solid var(--accent-rose, #8B5E5E) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 6px rgba(124, 101, 69, 0.25) !important;
+}
+
+/* ===============================================
+   QUIET MODE
+   Minimal visual stimulation — L30 design system
+   Uses CSS variable overrides for a cohesive calm feel
+   =============================================== */
+
+.quiet-mode {
+  --bg-cream: #201E28;
+  --text-dark: #D8D4DC;
+  --accent-rose: #A88888;
+  --accent-rose-light: #B89898;
+  --card-white: #262230;
+  --card-white-rgb: 38 34 48;
+  --border-light: #322E3A;
+  --border-light-rgb: 50 46 58;
+  --text-muted: #888490;
+  --text-muted-light: #787480;
+  --ai-blue: #80A8A0;
+  --foundation-green: #80A8A0;
+  --text-heading: #D8D4DC;
+  --border-medium: #3A3642;
+  --border-subtle: #322E3A;
+  --shadow-soft: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+.quiet-mode.light {
+  --bg-cream: #FAF8FA;
+  --text-dark: #484050;
+  --accent-rose: #987070;
+  --accent-rose-light: #A88080;
+  --card-white: #FEFEFE;
+  --card-white-rgb: 254 254 254;
+  --border-light: #ECE8F0;
+  --border-light-rgb: 236 232 240;
+  --text-muted: #888088;
+  --text-muted-light: #A09098;
+  --text-heading: #484050;
+  --border-medium: #D8D4DC;
+  --border-subtle: #ECE8F0;
+  --focus-ring-color: #987070;
+  --shadow-soft: 0 1px 0 0 rgba(0, 0, 0, 0.06);
+}
+
+.quiet-mode .animate-pulse,
+.quiet-mode .animate-bounce,
+.quiet-mode .animate-spin,
+.quiet-mode .animate-ping {
+  animation: none !important;
+}
+
+.quiet-mode .carousel,
+.quiet-mode .slider,
+.quiet-mode [data-auto-scroll] {
+  animation: none !important;
+}
+
+.quiet-mode .notification-badge,
+.quiet-mode .alert-badge {
+  animation: none !important;
+}
+
+/* Quiet mode: soften gradients and glows */
+.quiet-mode .text-gradient-warm {
+  background: linear-gradient(135deg, #A88888 0%, #B89898 40%, #80A8A0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.quiet-mode .card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.16);
+}
+
+.quiet-mode .l30-separator {
+  opacity: 0.12;
+}
+
+.quiet-mode .font-serif {
+  font-family: "Instrument Sans", system-ui, -apple-system, sans-serif;
+}
+
+/* Quiet mode lite — keeps functional animations, gentler palette */
+.quiet-mode-lite {
+  --accent-rose: #B88888;
+  --accent-rose-light: #C89898;
+  --text-muted: #948C98;
+  --text-muted-light: #847C88;
+}
+
+.quiet-mode-lite .decorative-animation {
+  animation: none !important;
+}
+
+/* ===============================================
+   REDUCED COGNITIVE LOAD
+   Simplified layouts and reduced choices
+   =============================================== */
+
+.reduced-cognitive-load .secondary-actions {
+  display: none;
+}
+
+.reduced-cognitive-load .optional-field {
+  display: none;
+}
+
+.reduced-cognitive-load .advanced-options {
+  display: none;
+}
+
+.reduced-cognitive-load nav ul {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Show only primary actions */
+.reduced-cognitive-load .action-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reduced-cognitive-load .action-group > *:not(:first-child):not(:nth-child(2)) {
+  display: none;
+}
+
+/* ===============================================
+   ANONYMOUS MODE
+   Visual privacy indicator
+   =============================================== */
+
+.anonymous-mode::before {
+  content: 'Private Mode';
+  position: fixed;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.25rem 0.5rem 0.25rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0.35rem center;
+  background-size: 12px 12px;
+}
+
+.dark.anonymous-mode::before {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: black;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E");
+}
+
+/* ===============================================
+   SESSION TIME WARNING
+   Visual indicator for extended sessions
+   =============================================== */
+
+.session-time-warning {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Disable animation when reduced motion is preferred */
+@media (prefers-reduced-motion: reduce) {
+  .session-time-warning {
+    animation: none;
+  }
+}
+
+/* In-app toggle mirror */
+.reduce-motion .session-time-warning {
+  animation: none;
+}
+
+.dark .session-time-warning {
+  background: linear-gradient(135deg, #78350f, #92400e);
+  color: #fef3c7;
+}
+
+.session-time-warning button {
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: background 0.2s;
+}
+
+.session-time-warning button:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ===============================================
+   CONTENT COMPLEXITY INDICATOR
+   Visual badges for content difficulty
+   =============================================== */
+
+.complexity-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.complexity-indicator-simple {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.complexity-indicator-moderate {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.complexity-indicator-complex {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.dark .complexity-indicator-simple {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+.dark .complexity-indicator-moderate {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+.dark .complexity-indicator-complex {
+  background: rgba(236, 72, 153, 0.2);
+  color: #f9a8d4;
+}
+
+/* ===============================================
+   LETTER SPACING VARIANTS
+   =============================================== */
+
+.letter-spacing-normal {
+  letter-spacing: 0;
+}
+
+.letter-spacing-wide {
+  letter-spacing: 0.025em;
+}
+
+.letter-spacing-wider {
+  letter-spacing: 0.05em;
+}
+
+.letter-spacing-body-normal p,
+.letter-spacing-body-normal li,
+.letter-spacing-body-normal td {
+  letter-spacing: 0;
+}
+
+.letter-spacing-body-wide p,
+.letter-spacing-body-wide li,
+.letter-spacing-body-wide td {
+  letter-spacing: 0.025em;
+}
+
+.letter-spacing-body-wider p,
+.letter-spacing-body-wider li,
+.letter-spacing-body-wider td {
+  letter-spacing: 0.05em;
+}
+
+.letter-spacing-headers-normal h1,
+.letter-spacing-headers-normal h2,
+.letter-spacing-headers-normal h3,
+.letter-spacing-headers-normal h4,
+.letter-spacing-headers-normal h5,
+.letter-spacing-headers-normal h6 {
+  letter-spacing: 0;
+}
+
+.letter-spacing-headers-wide h1,
+.letter-spacing-headers-wide h2,
+.letter-spacing-headers-wide h3,
+.letter-spacing-headers-wide h4,
+.letter-spacing-headers-wide h5,
+.letter-spacing-headers-wide h6 {
+  letter-spacing: 0.025em;
+}
+
+.letter-spacing-headers-wider h1,
+.letter-spacing-headers-wider h2,
+.letter-spacing-headers-wider h3,
+.letter-spacing-headers-wider h4,
+.letter-spacing-headers-wider h5,
+.letter-spacing-headers-wider h6 {
+  letter-spacing: 0.05em;
+}
+
+/* ===============================================
+   FONT SIZE SCALING
+   Moved to index.css — must be always-loaded, not lazy.
+   See index.css html.font-size-* rules.
+   =============================================== */
+
+/* ===============================================
+   LINE SPACING
+   Moved to index.css — must be always-loaded, not lazy.
+   See index.css html.leading-* rules.
+   =============================================== */
+
+/* ===============================================
+   VOICE CONTROL INDICATOR
+   =============================================== */
+
+.voice-control-active {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  z-index: 9999;
+}
+
+.voice-control-active .pulse {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: voicePulse 1.5s infinite;
+}
+
+@keyframes voicePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-control-active .pulse {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* In-app toggle mirror */
+.reduce-motion .voice-control-active .pulse {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.dark .voice-control-active {
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+}
+
+/* ===============================================
+   CUSTOMIZABLE FOCUS RING
+   =============================================== */
+
+:root {
+  /* Use the LIFTED rose (--accent-rose-text-rgb, raised by BrandingContext in
+     dark mode) rather than the flat --accent-rose. The flat value is #8B5E5E,
+     which measures 2.91:1 against the dark card surface and 2.77:1 under
+     muted-colors - below the 3:1 WCAG 2.2 requires of a focus indicator
+     (SC 1.4.11). The lifted value measures 7.5:1 dark / 7.15:1 dark+muted,
+     and is identical to the flat value in light mode, so light is unchanged.
+     Fallback is the old value, so a missing variable is no worse than before. */
+  --focus-ring-color: rgb(var(--accent-rose-text-rgb, 139 94 94));
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+}
+
+.focus-ring-blue {
+  --focus-ring-color: #3b82f6;
+}
+
+.focus-ring-green {
+  --focus-ring-color: #22c55e;
+}
+
+.focus-ring-purple {
+  --focus-ring-color: #a855f7;
+}
+
+.focus-ring-pink {
+  --focus-ring-color: #ec4899;
+}
+
+.focus-ring-custom {
+  /* Custom color set via inline style */
+}
+
+/* Apply custom focus ring */
+.focus-ring-blue *:focus-visible,
+.focus-ring-green *:focus-visible,
+.focus-ring-purple *:focus-visible,
+.focus-ring-pink *:focus-visible,
+.focus-ring-custom *:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring-offset) var(--bg-cream, #FAFAF8),
+              0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width)) var(--focus-ring-color);
+}
+
+/* ===============================================
+   FOCUS MODE
+   Calm single-column reading view: constrain the
+   patron content column and remove non-functional
+   chrome. Patron-only -- scoped to the standard
+   patron <main>; admin/staff/essentials shells use
+   different mains and are intentionally untouched.
+   (focus-mode previously had no CSS: an inert toggle.)
+   =============================================== */
+
+/* Reading-column width (~896px / max-w-4xl). ID
+   specificity beats the Tailwind max-w-7xl utility,
+   so no !important needed; mx-auto + px-4 preserved. */
+.focus-mode main#main-content.max-w-7xl {
+  max-width: 56rem;
+}
+
+/* Decorative imagery (mirrors .hide-decorative-images). */
+.focus-mode img[aria-hidden="true"],
+.focus-mode img[role="presentation"],
+.focus-mode img.decorative,
+.focus-mode [data-decorative="true"] {
+  display: none !important;
+}
+
+/* Carousels / autoplaying rotators (mirrors .quiet-mode). */
+.focus-mode .carousel,
+.focus-mode .slider,
+.focus-mode [data-auto-scroll] {
+  display: none !important;
+}
+
+/* Explicitly-marked non-functional chrome (marketing
+   modules, secondary rails). Opt-in marker, so primary
+   content / nav / forms are never caught. */
+.focus-mode [data-focus-hide] {
+  display: none !important;
+}
+
+/* ===============================================
+   HIGH CONTRAST x muted palette companions
+   .muted-colors and .quiet-mode declare dark surface tokens as their
+   base (each with a .light companion) but shipped no .high-contrast
+   companion. They load after index.css's .high-contrast block at equal
+   (0,1,0) specificity, so they re-darkened --card-white / --bg-cream while
+   the high-contrast rules still forced text to #222/#000 -> ~1.05:1
+   contrast for anyone running high-contrast + a muted palette. These
+   (0,2,0) companions let high-contrast win the surface, as it must.
+   Scoped :not(.dark) so the existing .dark.high-contrast path is untouched.
+   =============================================== */
+.muted-colors.high-contrast:not(.dark),
+.quiet-mode.high-contrast:not(.dark) {
+  --bg-cream: #FFFFFF;
+  --text-dark: #000000;
+  --accent-rose: #B22222;
+  --accent-rose-light: #CC3333;
+  --card-white: #FFFFFF;
+  --card-white-rgb: 255 255 255;
+  --border-light: #000000;
+  --border-light-rgb: 0 0 0;
+  --text-muted: #222222;
+  --text-muted-light: #333333;
+  --ai-blue: #005500;
+  --foundation-green: #005500;
+  --text-heading: #000000;
+  --border-medium: #000000;
+  --border-subtle: #555555;
+  --focus-ring-color: #0000FF;
+  --shadow-soft: 0 1px 0 0 rgba(0, 0, 0, 0.5);
+}

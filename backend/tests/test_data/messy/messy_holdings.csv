@@ -1,0 +1,5 @@
+item_barcode,catalog_id,condition,status
+COPY-MESSY-001,__CATALOG_ID__,good,available
+COPY-MESSY-002,__CATALOG_ID__,  Fair  ,available
+,__CATALOG_ID__,good,available
+COPY-MESSY-004,abc,good,available

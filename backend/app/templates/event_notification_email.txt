@@ -1,0 +1,47 @@
+{{ event_title }}
+Upcoming Event from {{ library_name }} Library
+
+================================================================================
+
+WHEN:
+{{ event_date_formatted }}
+{% if event_time %}{{ event_time }}{% endif %}
+
+WHERE:
+{{ location }}
+
+{% if category %}CATEGORY:
+{{ category }}
+
+{% endif %}
+{% if audience %}AUDIENCE:
+{{ audience }}
+
+{% endif %}
+{% if registration_required %}REGISTRATION: Required
+
+{% endif %}
+================================================================================
+
+{{ description }}
+
+================================================================================
+
+REGISTER: {{ registration_url }}
+
+{% if hashtags %}SHARE THIS EVENT:
+{% for hashtag in hashtags %}#{{ hashtag }} {% endfor %}
+
+{% endif %}
+
+================================================================================
+
+Questions? Contact us or visit {{ library_website }}
+
+Sent by {{ library_name }} Library
+
+Unsubscribe: {{ unsubscribe_url }}
+Manage preferences: {{ preferences_url }}
+
+We respect your privacy. You'll only receive emails about events you're
+interested in.

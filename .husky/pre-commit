@@ -1,0 +1,388 @@
+#!/bin/sh
+
+# Store the original directory
+ORIGINAL_DIR=$(pwd)
+
+# Flag to track if any checks failed
+CHECKS_FAILED=0
+
+# =============================================================================
+# Backend Route Analysis (API Consistency Check)
+# =============================================================================
+echo ""
+echo "🔍 Analyzing backend routes for 405 error risks..."
+echo ""
+
+# Check if backend files were modified
+if git diff --cached --name-only | grep -q "backend/app/"; then
+  # Run route analysis to detect new gaps
+  if [ -f "backend/app/routes_analyzer.py" ] || [ -f "analyze_routes.py" ]; then
+    echo "📊 Running route analysis to detect potential 405 gaps..."
+
+    # Try both possible locations
+    if [ -f "backend/app/routes_analyzer.py" ]; then
+      python backend/app/routes_analyzer.py --check-for-gaps
+    elif [ -f "analyze_routes.py" ]; then
+      python analyze_routes.py --check-for-gaps
+    fi
+
+    ROUTE_ANALYSIS_EXIT=$?
+
+    if [ $ROUTE_ANALYSIS_EXIT -ne 0 ]; then
+      echo "⚠️  Route analysis detected potential issues"
+      echo "    Review the analysis and ensure all endpoints are properly defined"
+      echo "    Run: python analyze_routes.py"
+      # Don't fail the commit, just warn
+    else
+      echo "✅ Route analysis passed - no new endpoint gaps detected"
+    fi
+  fi
+
+  # Check for CORS configuration changes
+  echo "🔐 Verifying CORS method allowance..."
+  if git diff --cached backend/app/main.py | grep -q "allow_methods"; then
+    echo "⚠️  CORS configuration modified - ensure all required methods are allowed"
+  fi
+fi
+
+# =============================================================================
+# Route Guard Lint (warn-only initially; drain then flip to error)
+# =============================================================================
+if git diff --cached --name-only | grep -q "backend/app/api/"; then
+  echo ""
+  echo "🔒 Linting route guards..."
+  if ! python3 backend/scripts/check_route_guards.py; then
+    echo "❌ Route guard check FAILED"
+    echo "    Add Depends(require_role(...)) / require_staff / require_admin / etc."
+    echo "    or '# noqa: role-check' for public routes"
+    CHECKS_FAILED=1
+  fi
+fi
+
+# =============================================================================
+# Backend Enum Drift Check
+# =============================================================================
+echo ""
+echo "🔍 Checking enum column definitions..."
+
+if git diff --cached --name-only | grep -q "backend/app/models/"; then
+  if [ -f "backend/scripts/check_enum_columns.py" ]; then
+    python3 backend/scripts/check_enum_columns.py 2>&1
+
+    ENUM_CHECK_EXIT=$?
+
+    if [ $ENUM_CHECK_EXIT -ne 0 ]; then
+      echo "❌ Enum column check FAILED"
+      echo "    Run: python3 backend/scripts/check_enum_columns.py --fix-hint"
+      CHECKS_FAILED=1
+    else
+      echo "✅ Enum column check passed!"
+    fi
+  fi
+else
+  echo "⏭️  Skipping enum check (no model changes detected)"
+fi
+
+# =============================================================================
+# Pydantic StrictInputSchema Check (fast, ast-only)
+# =============================================================================
+# Asserts every new/changed input schema under backend/app/schemas/ inherits
+# from StrictInputSchema (extra="forbid"). Waves A-E migrated the existing
+# surface; this lock-in prevents regression. Pure stdlib ast walk, ~1s.
+echo ""
+echo "🛡  Checking input schemas inherit StrictInputSchema..."
+
+if git diff --cached --name-only | grep -q "backend/app/schemas/"; then
+  if [ -f "backend/scripts/check_strict_input_schema.py" ]; then
+    python3 backend/scripts/check_strict_input_schema.py
+    STRICT_CHECK_EXIT=$?
+    if [ $STRICT_CHECK_EXIT -ne 0 ]; then
+      echo "❌ StrictInputSchema check FAILED"
+      echo "    New input schemas (*Create/*Update/*Request/*Filter/*Submit/*Payload/*Input)"
+      echo "    must inherit StrictInputSchema. Import via:"
+      echo "      from app.schemas._base import StrictInputSchema"
+      CHECKS_FAILED=1
+    else
+      echo "✅ StrictInputSchema check passed!"
+    fi
+  fi
+else
+  echo "⏭️  Skipping StrictInputSchema check (no schemas changes detected)"
+fi
+
+# =============================================================================
+# Alembic Migration Idempotency Check
+# =============================================================================
+echo ""
+echo "🔍 Checking alembic migrations for op.create_table() (must use IF NOT EXISTS)..."
+
+if git diff --cached --name-only | grep -q "backend/alembic/versions/"; then
+  if [ -f "backend/scripts/check_alembic_idempotent.py" ]; then
+    python3 backend/scripts/check_alembic_idempotent.py 2>&1
+
+    ALEMBIC_CHECK_EXIT=$?
+
+    if [ $ALEMBIC_CHECK_EXIT -ne 0 ]; then
+      echo "❌ Alembic idempotency check FAILED"
+      echo "    New migrations must use op.execute(\"CREATE TABLE IF NOT EXISTS ...\")"
+      echo "    instead of op.create_table(), because init_db.py auto-creates"
+      echo "    tables from SQLAlchemy models at backend startup."
+      CHECKS_FAILED=1
+    else
+      echo "✅ Alembic idempotency check passed!"
+    fi
+  fi
+
+  # Multi-head divergence: prod `alembic upgrade head` only advances one
+  # lineage, silently skipping the other branch's DDL. See PR #820/#869.
+  echo ""
+  echo "🔍 Checking alembic for multi-head divergence..."
+  if [ -f "backend/scripts/check_alembic_heads.py" ]; then
+    python3 backend/scripts/check_alembic_heads.py
+    ALEMBIC_HEADS_EXIT=$?
+    if [ $ALEMBIC_HEADS_EXIT -ne 0 ]; then
+      echo "❌ Alembic multi-head check FAILED"
+      echo "    Add a mergepoint migration (see script output for the command)."
+      CHECKS_FAILED=1
+    else
+      echo "✅ Alembic single-head check passed!"
+    fi
+  fi
+else
+  echo "⏭️  Skipping alembic check (no migration changes detected)"
+fi
+
+# =============================================================================
+# Frontend Accessibility Tests
+# =============================================================================
+echo ""
+echo "🎯 Running accessibility tests on frontend changes..."
+
+# Check if frontend files were modified
+if git diff --cached --name-only | grep -q "frontend/"; then
+  # Check if we're in frontend directory or need to navigate
+  if [ -f "frontend/package.json" ]; then
+    cd frontend
+  fi
+
+  # Skip if node_modules not installed (containerized dev environment)
+  if [ ! -d "node_modules" ]; then
+    echo "⏭️  Skipping accessibility tests (node_modules not installed on host)"
+  else
+    # Run unit accessibility tests
+    echo "📋 Running jest-axe unit tests..."
+    npm run test:a11y -- --run 2>&1
+
+    A11Y_TEST_EXIT=$?
+
+    if [ $A11Y_TEST_EXIT -ne 0 ]; then
+      echo "❌ Accessibility unit tests failed!"
+      CHECKS_FAILED=1
+    else
+      echo "✅ Accessibility tests passed!"
+    fi
+  fi
+
+  # Return to original directory
+  cd "$ORIGINAL_DIR"
+else
+  echo "⏭️  Skipping accessibility tests (no frontend changes detected)"
+fi
+
+# =============================================================================
+# Frontend TypeScript gate (staged files only, via tsc-files)
+# =============================================================================
+# Why only staged files: full repo `tsc --noEmit` OOMs the VPS. tsc-files
+# runs the compiler scoped to staged files, completing in ~5s with bounded
+# memory. Bypass with `git commit --no-verify` when intentional.
+echo ""
+echo "🔎 Type-checking staged frontend TS files..."
+
+STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM \
+  | grep -E '^frontend/src/.*\.(ts|tsx)$' || true)
+
+if [ -z "$STAGED_TS" ]; then
+  echo "⏭️  No staged frontend .ts/.tsx files"
+else
+  if [ ! -d "frontend/node_modules" ]; then
+    echo "⏭️  Skipping tsc-files (frontend/node_modules missing on host)"
+  else
+    # Strip the leading "frontend/" so paths resolve from inside frontend/.
+    REL_TS=$(echo "$STAGED_TS" | sed 's|^frontend/||')
+    # tsc-files narrows the program's "include" to just the listed files, which
+    # drops ambient global declarations (src/vite-env.d.ts declares
+    # import.meta.env and the Web Speech API globals). Without it, any staged
+    # file that reads import.meta.env false-positives as TS2339. Always pass the
+    # ambient d.ts so the scoped check matches the real `tsc` build.
+    # src/__tests__/setup.ts for the same reason: it carries the
+    # "@testing-library/jest-dom" import whose module augmentation adds
+    # toBeInTheDocument et al to vitest's Assertion type. Narrowing drops it,
+    # so any staged test file using a jest-dom matcher without its own
+    # explicit import false-failed here while the real build was clean.
+    ( cd frontend && npx --no-install tsc-files --noEmit src/vite-env.d.ts src/__tests__/setup.ts $REL_TS )
+    TSC_FILES_EXIT=$?
+    if [ $TSC_FILES_EXIT -ne 0 ]; then
+      echo "❌ tsc-files reported type errors in staged files"
+      echo "    Fix them, or bypass once with: git commit --no-verify"
+      CHECKS_FAILED=1
+    else
+      echo "✅ Staged TS files type-check clean"
+    fi
+  fi
+fi
+
+# =============================================================================
+# Frontend i18n missing-key check (staged files only, warn-only)
+# =============================================================================
+# Scans literal `t('key')` and `getTranslation('key', ...)` calls in staged
+# frontend src files; asserts each dotted key exists in en.json. Warn-only
+# Blocking as of 2026-05-19 (PR #BACKLOG-DRAIN). One known landmine:
+# staffCirculation.quickMessage is both a namespace and a leaf in
+# StaffCirculationPage.tsx:394 - commits touching that file will fail
+# until the component is updated.
+echo ""
+echo "🌐 Checking staged frontend files for missing i18n keys..."
+
+STAGED_FE=$(git diff --cached --name-only --diff-filter=ACM \
+  | grep -E '^frontend/src/.*\.(ts|tsx)$' || true)
+
+if [ -z "$STAGED_FE" ]; then
+  echo "⏭️  No staged frontend .ts/.tsx files"
+else
+  if [ ! -d "frontend/node_modules" ]; then
+    echo "⏭️  Skipping i18n check (frontend/node_modules missing on host)"
+  else
+    ( cd frontend && node scripts/check-i18n-keys.mjs --staged )
+    I18N_EXIT=$?
+    if [ $I18N_EXIT -ne 0 ]; then
+      echo "❌ i18n missing-key check failed for staged files"
+      echo "    Add the missing keys to frontend/src/i18n/translations/en.json"
+      CHECKS_FAILED=1
+    else
+      echo "✅ i18n key check passed"
+    fi
+  fi
+fi
+
+# =============================================================================
+# Frontend Orphan Delta (knip, warn-only)
+# =============================================================================
+STAGED_FE_ANY=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^frontend/' || true)
+if [ -n "$STAGED_FE_ANY" ]; then
+  if [ -x "frontend/node_modules/.bin/knip" ] && [ -f "frontend/.knip-baseline.json" ]; then
+    echo ""
+    echo "🧹 Checking for NEW unused exports/files (knip delta, warn-only)..."
+    ( cd frontend && node scripts/knip-delta.mjs --warn ) || true
+  else
+    echo "⏭️  Skipping knip delta (knip or baseline missing)"
+  fi
+fi
+
+# =============================================================================
+# Frontend tsc Delta (full-repo, warn-only locally — CI blocks on new errors)
+# =============================================================================
+if [ -n "$STAGED_FE_ANY" ]; then
+  if [ -f "frontend/.tsc-baseline.json" ]; then
+    echo ""
+    echo "🔎 Checking for NEW type errors repo-wide (tsc delta, warn-only)..."
+    ( cd frontend && node scripts/tsc-delta.mjs --warn ) || true
+  fi
+fi
+
+# =============================================================================
+# Backend Destyle Ratchet (internal-helper docstrings, warn-only)
+# =============================================================================
+# Scans staged backend/app/*.py for newly-introduced internal-helper
+# docstrings (router-decorated funcs are skipped). Warn-only initially;
+# flip WARN_ONLY=False in scripts/destyle/check_no_internal_docstrings.py
+# once backfill is complete. Uses backend/.venv Python for libcst.
+STAGED_DESTYLE=$(git diff --cached --name-only --diff-filter=ACM \
+  | grep -E '^backend/app/.*\.py$' || true)
+if [ -n "$STAGED_DESTYLE" ]; then
+  if [ -x "backend/.venv/bin/python" ]; then
+    echo ""
+    echo "🧽 Checking staged backend files for internal-helper docstrings (warn-only)..."
+    ./backend/.venv/bin/python scripts/destyle/check_no_internal_docstrings.py $STAGED_DESTYLE || true
+  else
+    echo "⏭️  Skipping destyle ratchet (backend/.venv missing)"
+  fi
+fi
+
+# =============================================================================
+# Backend Format Check (ruff format --check, staged .py files)
+# =============================================================================
+STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^backend/(app|tests)/.*\.py$' || true)
+if [ -n "$STAGED_PY" ]; then
+  echo ""
+  echo "🎨 Checking backend format (ruff format --check)..."
+  if command -v ruff >/dev/null 2>&1 || [ -x "backend/.venv/bin/ruff" ]; then
+    RUFF_BIN=$(command -v ruff || echo "backend/.venv/bin/ruff")
+    if ! "$RUFF_BIN" format --check $STAGED_PY; then
+      echo "❌ ruff format check FAILED"
+      echo "    Run: ruff format $STAGED_PY"
+      CHECKS_FAILED=1
+    else
+      echo "✅ ruff format check passed!"
+    fi
+  else
+    echo "⏭️  Skipping ruff format (ruff not installed)"
+  fi
+fi
+
+# =============================================================================
+# Backend Lint (ruff check, staged .py files)
+# =============================================================================
+if [ -n "$STAGED_PY" ]; then
+  echo ""
+  echo "🔍 Linting backend (ruff check)..."
+  RUFF_BIN=$(command -v ruff || echo "backend/.venv/bin/ruff")
+  if [ -x "$RUFF_BIN" ] || command -v ruff >/dev/null 2>&1; then
+    if ! "$RUFF_BIN" check $STAGED_PY; then
+      echo "❌ ruff check FAILED"
+      CHECKS_FAILED=1
+    else
+      echo "✅ ruff check passed!"
+    fi
+  else
+    echo "⏭️  Skipping ruff check (ruff not installed)"
+  fi
+fi
+
+# =============================================================================
+# Frontend Lint (eslint, staged .ts/.tsx files)
+# =============================================================================
+STAGED_ESLINT=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^frontend/src/.*\.(ts|tsx)$' || true)
+if [ -n "$STAGED_ESLINT" ]; then
+  echo ""
+  echo "🔍 Linting staged frontend files (eslint)..."
+  if [ -d "frontend/node_modules" ]; then
+    REL_ESLINT=$(echo "$STAGED_ESLINT" | sed 's|^frontend/||')
+    ( cd frontend && npx --no-install eslint $REL_ESLINT --report-unused-disable-directives )
+    ESLINT_EXIT=$?
+    if [ $ESLINT_EXIT -ne 0 ]; then
+      echo "❌ eslint FAILED"
+      CHECKS_FAILED=1
+    else
+      echo "✅ eslint passed!"
+    fi
+  else
+    echo "⏭️  Skipping eslint (frontend/node_modules missing on host)"
+  fi
+fi
+
+# =============================================================================
+# Summary
+# =============================================================================
+echo ""
+if [ $CHECKS_FAILED -eq 0 ]; then
+  echo "✅ All pre-commit checks passed!"
+  exit 0
+else
+  echo "❌ Pre-commit checks failed!"
+  echo ""
+  echo "Please fix the issues above and try again:"
+  echo "  - Frontend accessibility: npm run test:a11y -- --run"
+  echo "  - Backend routes: python analyze_routes.py"
+  echo "  - Frontend types:        cd frontend && npx tsc-files --noEmit <files>"
+  exit 1
+fi

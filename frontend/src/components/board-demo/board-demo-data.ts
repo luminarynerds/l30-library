@@ -1,0 +1,147 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Luminary Nerds
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+import {
+  BookOpen, Zap, BookMarked, BarChart3, Heart, Search,
+  Accessibility, Shield, Sparkles,
+} from 'lucide-react'
+import type { DemoScene } from './types'
+
+export const SCENES: DemoScene[] = [
+  {
+    id: 0,
+    title: 'Welcome',
+    subtitle: 'The Library System That Serves Our Community',
+    icon: BookOpen,
+    color: 'text-status-warning-600',
+    bgGradient: 'from-status-warning-50 to-orange-50 dark:from-status-warning-900/30 dark:to-orange-950/30',
+    durationMinutes: 2,
+    talkingPoints: [
+      'Welcome, board members. Today we\'ll walk through what L30 does for our community.',
+      'Every feature you\'ll see was built to answer a real need from our patrons and staff.',
+      'Let\'s tell the story of how technology serves our community.',
+    ],
+  },
+  {
+    id: 1,
+    title: 'Patron Checkout',
+    subtitle: 'Smooth, Fast, Delightful',
+    icon: Zap,
+    color: 'text-lsc-rose dark:text-lsc-rose-light',
+    bgGradient: 'from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30',
+    durationMinutes: 4,
+    talkingPoints: [
+      'A patron walks up with 3 books. Watch how fast this goes.',
+      'Barcode scan \u2192 instant patron lookup \u2192 items checked out in under 10 seconds.',
+      'Audio feedback confirms each scan. The patron barely has to wait.',
+      'Self-checkout kiosk integration is on our roadmap.',
+    ],
+  },
+  {
+    id: 2,
+    title: 'Staff Holds',
+    subtitle: 'Efficient Workflow, Happy Patrons',
+    icon: BookMarked,
+    color: 'text-violet-600',
+    bgGradient: 'from-violet-50 to-category-50 dark:from-violet-950/30 dark:to-category-900/30',
+    durationMinutes: 3,
+    talkingPoints: [
+      'When a popular book comes in, staff can place a hold in 2 clicks.',
+      'The system automatically notifies the next patron in the queue.',
+      'Hold expiration is managed automatically\u2014no sticky notes, no forgotten holds.',
+      'Patrons get SMS, email, or push notification\u2014their choice.',
+    ],
+  },
+  {
+    id: 3,
+    title: 'Impact Dashboard',
+    subtitle: 'Numbers That Tell Our Story',
+    icon: BarChart3,
+    color: 'text-emerald-600',
+    bgGradient: 'from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30',
+    durationMinutes: 5,
+    talkingPoints: [
+      'Real-time metrics: checkouts, active patrons, collection health, program attendance.',
+      'Trend lines show growth\u2014this isn\'t static data, it\'s a living picture.',
+      'Staff can drill down by branch, by week, by demographic.',
+      'This dashboard replaces the old quarterly spreadsheet\u2014always current, always accurate.',
+    ],
+  },
+  {
+    id: 4,
+    title: 'Community Value',
+    subtitle: 'Proving Our Worth in Dollars and Lives',
+    icon: Heart,
+    color: 'text-rose-700',
+    bgGradient: 'from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30',
+    durationMinutes: 4,
+    talkingPoints: [
+      'The system calculates community ROI automatically. Example: for every $1 invested, a library our size returns $4.62 in value.',
+      'We calculate this from: materials borrowed, programs attended, computer hours, room bookings.',
+      'This report is board-ready\u2014exportable as PDF for grant applications and council meetings.',
+      'Last year: $1.2M in community value from a $260K budget.',
+    ],
+  },
+  {
+    id: 5,
+    title: 'Catalog Search',
+    subtitle: 'Finding What Matters, Fast',
+    icon: Search,
+    color: 'text-sky-600',
+    bgGradient: 'from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30',
+    durationMinutes: 3,
+    talkingPoints: [
+      'Patrons type naturally: "mystery books like Louise Penny" \u2192 instant results.',
+      'Faceted search: filter by format, availability, branch, language, reading level.',
+      'Popular items surface first. New arrivals are highlighted.',
+      'Search is fast and intuitive, with faceted filtering by format, availability, and more.',
+    ],
+  },
+  {
+    id: 6,
+    title: 'Accessibility',
+    subtitle: 'A Library for Every Patron',
+    icon: Accessibility,
+    color: 'text-teal-600',
+    bgGradient: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30',
+    durationMinutes: 3,
+    talkingPoints: [
+      'Meet Margaret, 74, legally blind. She uses our screen reader-compatible catalog daily.',
+      'Every page passes WCAG 2.1 AA\u2014automated testing on every code change.',
+      'High contrast mode, keyboard navigation, reduced motion\u2014all built in, not bolted on.',
+      'Margaret told us: "This is the first library website I can actually use."',
+    ],
+  },
+  {
+    id: 7,
+    title: 'Security & Privacy',
+    subtitle: 'Protecting Patron Trust',
+    icon: Shield,
+    color: 'text-indigo-600',
+    bgGradient: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/30',
+    durationMinutes: 3,
+    talkingPoints: [
+      'Reading history is private by default\u2014patrons opt in, never forced.',
+      'Law enforcement requests go through a documented compliance workflow.',
+      'Rate limiting stops automated attacks. Security headers block common exploits.',
+      'The privacy ledger tracks every data access\u2014full transparency.',
+    ],
+  },
+  {
+    id: 8,
+    title: 'The Wow Factor',
+    subtitle: 'What Makes L30 Special',
+    icon: Sparkles,
+    color: 'text-status-warning-600',
+    bgGradient: 'from-status-warning-50 to-yellow-50 dark:from-status-warning-900/30 dark:to-yellow-950/30',
+    durationMinutes: 3,
+    talkingPoints: [
+      'Patron notifications for holds, due dates, and events\u2014delivered by email, SMS, or push.',
+      'Barcode and inventory scanning tools for efficient shelf reading and weeding.',
+      'Reading recommendations based on borrowing patterns, with privacy controls.',
+      'Designed for reliability\u2014the system is self-hosted and doesn\'t depend on external cloud services.',
+      'This system was built for our community. It knows what we need.',
+    ],
+  },
+]

@@ -1,0 +1,54 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# TypeScript build info
+.tsbuildinfo
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS files
+Thumbs.db
+
+# Test outputs
+playwright-report/
+test-results/
+.lighthouseci/
+coverage/
+linkinator-report.json
+test-results.json
+
+# Bundle analysis
+bundle-stats.html
+
+# Local audit artifacts
+reports/ui-api-coverage.json
+reports/ui-api-coverage.md
+e2e/.auth/
+e2e/smoke/.auth/
