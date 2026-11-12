@@ -382,7 +382,7 @@ const SharingAnalyticsDashboard: React.FC = () => {
                     color: textColor,
                   }}
                   formatter={(value) => [value, 'Shares']}
-                  labelFormatter={(date) => `Date: ${formatDate(date)}`}
+                  labelFormatter={(date) => `Date: ${formatDate(String(date))}`}
                 />
                 <Legend wrapperStyle={{ color: textColor }} />
                 {/* Total Shares — solid line, circle dots */}

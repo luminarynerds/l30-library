@@ -48,7 +48,7 @@ export function NoShowWeeklyTrendChart({
                 border: `1px solid ${COLORS.tooltipBorder}`,
                 borderRadius: "8px",
               }}
-              labelFormatter={(value) => `Week of ${new Date(value).toLocaleDateString()}`}
+              labelFormatter={(value) => `Week of ${new Date(String(value)).toLocaleDateString()}`}
             />
             <Legend />
             <Line

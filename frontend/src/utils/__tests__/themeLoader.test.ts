@@ -34,14 +34,6 @@ function createdLink(index: number): LinkStub {
 let reloadSpy: ReturnType<typeof vi.fn>;
 const realCreateElement = document.createElement.bind(document);
 
-function createdLink(index: number): LinkStub {
-  const link = createdLinks[index];
-  if (!link) {
-    throw new Error(`Expected stylesheet link at index ${index}`);
-  }
-  return link;
-}
-
 beforeEach(async () => {
   vi.resetModules();
   ({ loadTheme } = await import('../themeLoader'));
