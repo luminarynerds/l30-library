@@ -44,7 +44,7 @@ jobs:
     - uses: actions/checkout@v7
 
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         # Matches Dockerfile.prod (python:3.12-slim) and ci.yml/drift-check.yml.
         # 3.11 broke collection of app/api/v1/stanza_import.py and
