@@ -57,7 +57,7 @@ propcache==0.5.4
 psycopg2-binary==2.9.13
 pycparser==3.12
 pycryptodomex==3.24.1
-pydantic==2.14.1
+pydantic==2.14.3
 pydantic-core==2.50.1
 pydantic-settings==2.16.1
 pyjwt==2.15.1
